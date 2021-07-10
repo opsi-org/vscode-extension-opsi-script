@@ -7,32 +7,272 @@
     ".ins"
   ],
   "repository": {
-    "keywords": {
+    "core": {
       "patterns": [
         {
-          "name": "keyword.control.opsi-script",
-          "match": "\\b(if|while|for|return)\\b"
+          "include": "#literal-keywords"
+        },
+        {
+          "include": "#expression"
         }
       ]
     },
-    "strings": {
-      "name": "string.quoted.double.opsi-script",
-      "begin": "\\\"",
-      "end": "\\\"",
+    "expression": {
       "patterns": [
         {
-          "name": "constant.character.escape.opsi-script",
-          "match\"": "\\\\."
+          "include": "#support"
+        },
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#brackets"
+        },
+        {
+          "include": "#literal-functions"
+        },
+        {
+          "include": "#literal-operators"
+        },
+        {
+          "include": "#literal-string"
+        },
+        {
+          "include": "#literal-number"
+        },
+        {
+          "include": "#literal-constant"
+        },
+        {
+          "include": "#literal-variable"
+        }
+      ]
+    },
+    "round-brackets": {
+      "patterns": [
+        {
+          "name": "meta.group.braces.round",
+          "begin": "\\(",
+          "beginCaptures": {
+            "0": {
+              "name": "meta.brace.round.opsi-script"
+            }
+          },
+          "end": "\\)",
+          "endCaptures": {
+            "0": {
+              "name": "meta.brace.round.opsi-script"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#expression"
+            }
+          ]
+        }
+      ]
+    },
+    "brackets": {
+      "patterns": [
+        {
+          "include": "#round-brackets"
+        }
+      ]
+    },
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.semicolon.opsi-script",
+          "match": "^(;).*$\\n?",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.comment.opsi-script"
+            }
+          }
+        }
+      ]
+    },
+    "literal-functions": {
+      "patterns": [
+        {
+          "name": "meta.function.opsi-script",
+          "match": "^(\\[)([^\\]]+)(\\])",
+          "captures": {
+            "1": {
+              "name": "storage.type.function.opsi-script"
+            },
+            "2": {
+              "name": "entity.name.function.opsi-script"
+            },
+            "3": {
+              "name": "storage.type.function.opsi-script"
+            }
+          }
+        }
+      ]
+    },
+    "literal-keyword-storage": {
+      "patterns": [
+        {
+          "name": "storage.type.js",
+          "match": "(?i)(?<!\\.)\\b(DefVar|DefStringList|Set)\\b"
+        }
+      ]
+    },
+    "literal-keywords": {
+      "patterns": [
+        {
+          "include": "#literal-keyword-storage"
+        },
+        {
+          "name": "keyword.control.opsi-script",
+          "match": "(?i)\\b(if|else|endif)\\b"
+        }
+      ]
+    },
+    "literal-operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.wordlike.opsi-script",
+          "match": "\\b(and|or|not)\\b"
+        }
+      ]
+    },
+    "literal-string": {
+      "patterns": [
+        {
+          "name": "string.quoted.single.opsi-script",
+          "begin": "'",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.opsi-script"
+            }
+          },
+          "end": "(')|(\\n)",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.string.end.opsi-script"
+            },
+            "2": {
+              "name": "invalid.illegal.newline.opsi-script"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#string-content"
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.double.opsi-script",
+          "begin": "\"",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.opsi-script"
+            }
+          },
+          "end": "(\")|(\\n)",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.string.end.opsi-script"
+            },
+            "2": {
+              "name": "invalid.illegal.newline.opsi-script"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#string-content"
+            }
+          ]
+        }
+      ]
+    },
+    "string-content": {
+      "patterns": [
+        {
+          "name": "constant.character.escape.newline.opsi-script",
+          "match": "\\\\\\s*\\n"
+        },
+        {
+          "name": "constant.character.escape.js",
+          "match": "\\\\(x[\\da-fA-F]{2}|u[\\da-fA-F]{4}|.)"
+        }
+      ]
+    },
+    "literal-number": {
+      "patterns": [
+        {
+          "name": "constant.numeric.js",
+          "match": "(?xi)\\b[0-9]+"
+        }
+      ]
+    },
+    "literal-constant": {
+      "patterns": [
+        {
+          "name": "constant.language.builtin.percent.opsi-script",
+          "match": "(%)[^%]+(%)",
+          "captures": {
+            "1": {
+              "name": "punctuation.percent.opsi-script"
+            },
+            "2": {
+              "name": "punctuation.percent.opsi-script"
+            }
+          }
+        }
+      ]
+    },
+    "literal-variable": {
+      "patterns": [
+        {
+          "name": "variable.other.dollar.opsi-script",
+          "match": "(\\$)[$\\w]+",
+          "captures": {
+            "1": {
+              "name": "punctuation.dollar.opsi-script"
+            }
+          }
+        }
+      ]
+    },
+    "support": {
+      "patterns": [
+        {
+          "name": "support.variable.builtin.js",
+          "match": "(?<!\\.)(?i)\\b(SetLogLevel)\\b"
+        },
+        {
+          "name": "support.function.builtin.logging.js",
+          "match": "(?<!\\.)(?i)\\b(comment|LogError|isFatalError)\\b"
+        },
+        {
+          "name": "support.function.builtin.list.js",
+          "match": "(?<!\\.)(?i)\\b(takeString|getValue)\\b"
+        },
+        {
+          "name": "support.function.builtin.string.js",
+          "match": "(?<!\\.)(?i)\\b(asConfidential|strPart|strLength|isRegexMatch)\\b"
+        },
+        {
+          "name": "support.function.builtin.numeric.js",
+          "match": "(?<!\\.)(?i)\\b(calculate)\\b"
+        },
+        {
+          "name": "support.function.builtin.service.js",
+          "match": "(?<!\\.)(?i)\\b(GetProductProperty)\\b"
+        },
+        {
+          "name": "support.function.builtin.subprocess.js",
+          "match": "(?<!\\.)(?i)\\b(ShellCall|GetLastExitcode)\\b"
         }
       ]
     }
   },
   "patterns": [
     {
-      "include": "#keywords"
-    },
-    {
-      "include": "#strings"
+      "include": "#core"
     }
   ]
 }
