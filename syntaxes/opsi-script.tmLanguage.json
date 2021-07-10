@@ -1,0 +1,38 @@
+{
+  "scopeName": "source.opsi-script",
+  "name": "opsi-script",
+  "uuid": "08cd1012-1f35-44bf-a64a-ebf3f82c8978",
+  "fileTypes": [
+    ".opsiscript",
+    ".ins"
+  ],
+  "repository": {
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.opsi-script",
+          "match": "\\b(if|while|for|return)\\b"
+        }
+      ]
+    },
+    "strings": {
+      "name": "string.quoted.double.opsi-script",
+      "begin": "\\\"",
+      "end": "\\\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.opsi-script",
+          "match\"": "\\\\."
+        }
+      ]
+    }
+  },
+  "patterns": [
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#strings"
+    }
+  ]
+}

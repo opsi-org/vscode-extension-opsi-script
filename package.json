@@ -1,0 +1,38 @@
+{
+    "name": "opsi-script",
+    "displayName": "opsi-script",
+    "description": "opsi script support",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.58.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [
+            {
+                "id": "opsi-script",
+                "aliases": [
+                    "opsi-script",
+                    "opsi-script"
+                ],
+                "extensions": [
+                    ".opsiscript",
+                    ".ins"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "opsi-script",
+                "scopeName": "source.opsi-script",
+                "path": "./syntaxes/opsi-script.tmLanguage.json"
+            }
+        ]
+    },
+    "devDependencies": {
+        "js-yaml": "^4.1.0"
+    }
+}
