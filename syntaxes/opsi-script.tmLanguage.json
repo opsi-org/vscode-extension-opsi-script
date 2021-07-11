@@ -10,32 +10,26 @@
     "core": {
       "patterns": [
         {
-          "include": "#literal-keywords"
+          "include": "#comments"
         },
         {
-          "include": "#expression"
+          "include": "#primary-sections"
+        },
+        {
+          "include": "#secondary-sections"
         }
       ]
     },
-    "expression": {
+    "expressions": {
       "patterns": [
-        {
-          "include": "#support"
-        },
-        {
-          "include": "#comments"
-        },
         {
           "include": "#brackets"
         },
         {
-          "include": "#section-calls"
+          "include": "#literal-keywords"
         },
         {
           "include": "#literal-operators"
-        },
-        {
-          "include": "#literal-string"
         },
         {
           "include": "#literal-number"
@@ -45,9 +39,6 @@
         },
         {
           "include": "#literal-variable"
-        },
-        {
-          "include": "#sections"
         }
       ]
     },
@@ -69,7 +60,7 @@
           },
           "patterns": [
             {
-              "include": "#expression"
+              "include": "#expressions"
             }
           ]
         }
@@ -95,7 +86,105 @@
         }
       ]
     },
-    "section-calls": {
+    "primary-section": {
+      "patterns": [
+        {
+          "name": "support.variable.builtin.opsi-script",
+          "match": "(?<!\\.)(?i)\\b(SetLogLevel)\\b"
+        },
+        {
+          "name": "support.function.builtin.logging.opsi-script",
+          "match": "(?<!\\.)(?i)\\b(comment|LogError|isFatalError)\\b"
+        },
+        {
+          "name": "support.function.builtin.list.opsi-script",
+          "match": "(?<!\\.)(?i)\\b(takeString|getValue)\\b"
+        },
+        {
+          "name": "support.function.builtin.string.opsi-script",
+          "match": "(?<!\\.)(?i)\\b(asConfidential|strPart|strLength|isRegexMatch)\\b"
+        },
+        {
+          "name": "support.function.builtin.numeric.opsi-script",
+          "match": "(?<!\\.)(?i)\\b(calculate)\\b"
+        },
+        {
+          "name": "support.function.builtin.service.opsi-script",
+          "match": "(?<!\\.)(?i)\\b(GetProductProperty)\\b"
+        },
+        {
+          "name": "support.function.builtin.subprocess.opsi-script",
+          "match": "(?<!\\.)(?i)\\b(ShellCall|GetLastExitcode)\\b"
+        },
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#primary-section-string"
+        },
+        {
+          "include": "#expressions"
+        },
+        {
+          "include": "#secondary-section-calls"
+        }
+      ]
+    },
+    "secondary-section-patchtextfile": {
+      "patterns": [
+        {
+          "name": "support.function.builtin.secondary-section.patchtextfile.opsi-script",
+          "match": "(?<!\\.)(?i)\\b(FindLine_Containing|DeleteTheLine|InsertLine)\\b"
+        }
+      ]
+    },
+    "primary-sections": {
+      "patterns": [
+        {
+          "name": "meta.primary-section.actions.opsi-script",
+          "begin": "(?i)^(\\[)(Actions|Aktionen)(\\])",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.other.section-bracket-open.opsi-script"
+            },
+            "2": {
+              "name": "entity.name.function.opsi-script"
+            },
+            "3": {
+              "name": "keyword.other.section-bracket-close.opsi-script"
+            }
+          },
+          "while": "^(?!\\[.*\\]$)",
+          "patterns": [
+            {
+              "include": "#primary-section"
+            }
+          ]
+        },
+        {
+          "name": "meta.primary-section.sub.opsi-script",
+          "begin": "(?i)^(\\[)(Sub\\S+)(\\])",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.other.section-bracket-open.opsi-script"
+            },
+            "2": {
+              "name": "entity.name.function.opsi-script"
+            },
+            "3": {
+              "name": "keyword.other.section-bracket-close.opsi-script"
+            }
+          },
+          "while": "^(?!\\[.*\\]$)",
+          "patterns": [
+            {
+              "include": "#primary-section"
+            }
+          ]
+        }
+      ]
+    },
+    "secondary-section-calls": {
       "patterns": [
         {
           "name": "meta.section-call.without-arguments.opsi-script",
@@ -108,10 +197,26 @@
         }
       ]
     },
-    "sections": {
+    "secondary-section": {
       "patterns": [
         {
-          "name": "meta.function.shellinanicon.opsi-script",
+          "include": "#comments"
+        },
+        {
+          "include": "#secondary-section-string"
+        },
+        {
+          "include": "#literal-constant"
+        },
+        {
+          "include": "#literal-variable"
+        }
+      ]
+    },
+    "secondary-sections": {
+      "patterns": [
+        {
+          "name": "meta.secondary-section.shell-in-an-icon.opsi-script",
           "begin": "^(\\[)(ShellInAnIcon[^\\]]+)(\\])",
           "beginCaptures": {
             "1": {
@@ -128,7 +233,7 @@
           "contentName": "meta.embedded.block.shellscript",
           "patterns": [
             {
-              "include": "#literal-variable"
+              "include": "#secondary-section"
             },
             {
               "include": "source.shell"
@@ -136,7 +241,7 @@
           ]
         },
         {
-          "name": "meta.function.patchtextfile.opsi-script",
+          "name": "meta.secondary-section.patch-text-file.opsi-script",
           "begin": "^(\\[)(PatchTextFile[^\\]]+)(\\])",
           "beginCaptures": {
             "1": {
@@ -152,10 +257,10 @@
           "while": "^(?!\\[.*\\]$)",
           "patterns": [
             {
-              "include": "#literal-variable"
+              "include": "#secondary-section"
             },
             {
-              "include": "#support-secsub-patchtextfile"
+              "include": "#secondary-section-patchtextfile"
             }
           ]
         }
@@ -188,7 +293,7 @@
         }
       ]
     },
-    "literal-string": {
+    "primary-section-string": {
       "patterns": [
         {
           "name": "string.quoted.single.opsi-script",
@@ -209,7 +314,7 @@
           },
           "patterns": [
             {
-              "include": "#string-content"
+              "include": "#literal-constant"
             }
           ]
         },
@@ -232,21 +337,65 @@
           },
           "patterns": [
             {
-              "include": "#string-content"
+              "include": "#literal-constant"
             }
           ]
         }
       ]
     },
-    "string-content": {
+    "secondary-section-string": {
       "patterns": [
         {
-          "name": "constant.character.escape.newline.opsi-script",
-          "match": "\\\\\\s*\\n"
+          "name": "string.quoted.single.opsi-script",
+          "begin": "'",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.opsi-script"
+            }
+          },
+          "end": "(')|(\\n)",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.string.end.opsi-script"
+            },
+            "2": {
+              "name": "invalid.illegal.newline.opsi-script"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#literal-constant"
+            },
+            {
+              "include": "#literal-variable"
+            }
+          ]
         },
         {
-          "name": "constant.character.escape.js",
-          "match": "\\\\(x[\\da-fA-F]{2}|u[\\da-fA-F]{4}|.)"
+          "name": "string.quoted.double.opsi-script",
+          "begin": "\"",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.opsi-script"
+            }
+          },
+          "end": "(\")|(\\n)",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.string.end.opsi-script"
+            },
+            "2": {
+              "name": "invalid.illegal.newline.opsi-script"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#literal-constant"
+            },
+            {
+              "include": "#literal-variable"
+            }
+          ]
         }
       ]
     },
@@ -262,7 +411,7 @@
       "patterns": [
         {
           "name": "constant.language.builtin.percent.opsi-script",
-          "match": "(%)[^%]+(%)",
+          "match": "(?i)(%)(HostID|ScriptPath)(%)",
           "captures": {
             "1": {
               "name": "punctuation.percent.opsi-script"
@@ -287,46 +436,6 @@
               "name": "punctuation.dollar.opsi-script"
             }
           }
-        }
-      ]
-    },
-    "support": {
-      "patterns": [
-        {
-          "name": "support.variable.builtin.opsi-script",
-          "match": "(?<!\\.)(?i)\\b(SetLogLevel)\\b"
-        },
-        {
-          "name": "support.function.builtin.logging.opsi-script",
-          "match": "(?<!\\.)(?i)\\b(comment|LogError|isFatalError)\\b"
-        },
-        {
-          "name": "support.function.builtin.list.opsi-script",
-          "match": "(?<!\\.)(?i)\\b(takeString|getValue)\\b"
-        },
-        {
-          "name": "support.function.builtin.string.opsi-script",
-          "match": "(?<!\\.)(?i)\\b(asConfidential|strPart|strLength|isRegexMatch)\\b"
-        },
-        {
-          "name": "support.function.builtin.numeric.opsi-script",
-          "match": "(?<!\\.)(?i)\\b(calculate)\\b"
-        },
-        {
-          "name": "support.function.builtin.service.opsi-script",
-          "match": "(?<!\\.)(?i)\\b(GetProductProperty)\\b"
-        },
-        {
-          "name": "support.function.builtin.subprocess.opsi-script",
-          "match": "(?<!\\.)(?i)\\b(ShellCall|GetLastExitcode)\\b"
-        }
-      ]
-    },
-    "support-secsub-patchtextfile": {
-      "patterns": [
-        {
-          "name": "support.function.builtin.secsub.patchtextfile.opsi-script",
-          "match": "(?<!\\.)(?i)\\b(FindLine_Containing|DeleteTheLine|InsertLine)\\b"
         }
       ]
     }

@@ -13,22 +13,18 @@ fileTypes: [.opsiscript, .ins]
 repository:
   core:
     patterns:
-    - include: '#literal-keywords'
-    - include: '#expression'
-
-  expression:
-    patterns:
-    - include: '#support'
     - include: '#comments'
+    - include: '#primary-sections'
+    - include: '#secondary-sections'
+
+  expressions:
+    patterns:
     - include: '#brackets'
-    - include: '#section-calls'
+    - include: '#literal-keywords'
     - include: '#literal-operators'
-    - include: '#literal-string'
     - include: '#literal-number'
     - include: '#literal-constant'
     - include: '#literal-variable'
-
-    - include: '#sections'
 
   round-brackets:
     patterns:
@@ -40,7 +36,7 @@ repository:
       endCaptures:
         '0': {name: meta.brace.round.opsi-script}
       patterns:
-      - include: '#expression'
+      - include: '#expressions'
 
   brackets:
     patterns:
@@ -53,17 +49,72 @@ repository:
       captures:
         '1': {name: punctuation.definition.comment.opsi-script}
 
-  section-calls:
+  primary-section:
+    patterns:
+    # built-ins # entity.name.function.preprocessor
+    - name: support.variable.builtin.opsi-script
+      match: (?<!\.)(?i)\b(SetLogLevel)\b
+    - name: support.function.builtin.logging.opsi-script
+      match: (?<!\.)(?i)\b(comment|LogError|isFatalError)\b
+    - name: support.function.builtin.list.opsi-script
+      match: (?<!\.)(?i)\b(takeString|getValue)\b
+    - name: support.function.builtin.string.opsi-script
+      match: (?<!\.)(?i)\b(asConfidential|strPart|strLength|isRegexMatch)\b
+    - name: support.function.builtin.numeric.opsi-script
+      match: (?<!\.)(?i)\b(calculate)\b
+    - name: support.function.builtin.service.opsi-script
+      match: (?<!\.)(?i)\b(GetProductProperty)\b
+    - name: support.function.builtin.subprocess.opsi-script
+      match: (?<!\.)(?i)\b(ShellCall|GetLastExitcode)\b
+    - include: '#comments'
+    - include: '#primary-section-string'
+    - include: '#expressions'
+    - include: '#secondary-section-calls'
+
+  secondary-section-patchtextfile:
+    patterns:
+    - name: support.function.builtin.secondary-section.patchtextfile.opsi-script
+      match: (?<!\.)(?i)\b(FindLine_Containing|DeleteTheLine|InsertLine)\b
+
+  primary-sections:
+    patterns:
+    - name: meta.primary-section.actions.opsi-script
+      begin: (?i)^(\[)(Actions|Aktionen)(\])
+      beginCaptures:
+        '1': {name: keyword.other.section-bracket-open.opsi-script}
+        '2': {name: entity.name.function.opsi-script}
+        '3': {name: keyword.other.section-bracket-close.opsi-script}
+      while: ^(?!\[.*\]$)
+      patterns:
+      - include: '#primary-section'
+    - name: meta.primary-section.sub.opsi-script
+      begin: (?i)^(\[)(Sub\S+)(\])
+      beginCaptures:
+        '1': {name: keyword.other.section-bracket-open.opsi-script}
+        '2': {name: entity.name.function.opsi-script}
+        '3': {name: keyword.other.section-bracket-close.opsi-script}
+      while: ^(?!\[.*\]$)
+      patterns:
+      - include: '#primary-section'
+
+  secondary-section-calls:
     patterns:
     - name: meta.section-call.without-arguments.opsi-script
       match: (?i)\b(ShellInAnIcon\S+|PatchTextFile\S+)\b
       captures:
         '1': {name: entity.name.function.opsi-script}
 
-  sections:
+  secondary-section:
+    patterns:
+    - include: '#comments'
+    - include: '#secondary-section-string'
+    - include: '#literal-constant'
+    - include: '#literal-variable'
+
+  secondary-sections:
     patterns:
 
-    - name: meta.function.shellinanicon.opsi-script
+    - name: meta.secondary-section.shell-in-an-icon.opsi-script
       begin: ^(\[)(ShellInAnIcon[^\]]+)(\])
       beginCaptures:
         '1': {name: keyword.other.section-bracket-open.opsi-script}
@@ -72,10 +123,10 @@ repository:
       while: ^(?!\[.*\]$)
       contentName: meta.embedded.block.shellscript
       patterns:
-      - include: '#literal-variable'
+      - include: '#secondary-section'
       - include: source.shell
 
-    - name: meta.function.patchtextfile.opsi-script
+    - name: meta.secondary-section.patch-text-file.opsi-script
       begin: ^(\[)(PatchTextFile[^\]]+)(\])
       beginCaptures:
         '1': {name: keyword.other.section-bracket-open.opsi-script}
@@ -83,8 +134,8 @@ repository:
         '3': {name: keyword.other.section-bracket-close.opsi-script}
       while: ^(?!\[.*\]$)
       patterns:
-      - include: '#literal-variable'
-      - include: '#support-secsub-patchtextfile'
+      - include: '#secondary-section'
+      - include: '#secondary-section-patchtextfile'
 
   literal-keyword-storage:
     patterns:
@@ -116,7 +167,7 @@ repository:
     #    (?x)
     #      =(?!=)| # assignment      right-to-left   both
 
-  literal-string:
+  primary-section-string:
     patterns:
     - name: string.quoted.single.opsi-script
       begin: "'"
@@ -127,7 +178,7 @@ repository:
         '1': {name: punctuation.definition.string.end.opsi-script}
         '2': {name: invalid.illegal.newline.opsi-script}
       patterns:
-      - include: '#string-content'
+      - include: '#literal-constant'
 
     - name: string.quoted.double.opsi-script
       begin: '"'
@@ -138,15 +189,33 @@ repository:
         '1': {name: punctuation.definition.string.end.opsi-script}
         '2': {name: invalid.illegal.newline.opsi-script}
       patterns:
-      - include: '#string-content'
+      - include: '#literal-constant'
 
-  string-content:
+  secondary-section-string:
     patterns:
-    - name: constant.character.escape.newline.opsi-script
-      match: \\\s*\n
+    - name: string.quoted.single.opsi-script
+      begin: "'"
+      beginCaptures:
+        '0': {name: punctuation.definition.string.begin.opsi-script}
+      end: (')|(\n)
+      endCaptures:
+        '1': {name: punctuation.definition.string.end.opsi-script}
+        '2': {name: invalid.illegal.newline.opsi-script}
+      patterns:
+      - include: '#literal-constant'
+      - include: '#literal-variable'
 
-    - name: constant.character.escape.js
-      match: \\(x[\da-fA-F]{2}|u[\da-fA-F]{4}|.)
+    - name: string.quoted.double.opsi-script
+      begin: '"'
+      beginCaptures:
+        '0': {name: punctuation.definition.string.begin.opsi-script}
+      end: (")|(\n)
+      endCaptures:
+        '1': {name: punctuation.definition.string.end.opsi-script}
+        '2': {name: invalid.illegal.newline.opsi-script}
+      patterns:
+      - include: '#literal-constant'
+      - include: '#literal-variable'
 
   literal-number:
     patterns:
@@ -156,7 +225,8 @@ repository:
   literal-constant:
     patterns:
     - name: constant.language.builtin.percent.opsi-script
-      match: '(%)[^%]+(%)'
+      #match: '(%)[^%]+(%)'
+      match: '(?i)(%)(HostID|ScriptPath)(%)'
       captures:
         '1': {name: punctuation.percent.opsi-script}
         '2': {name: punctuation.percent.opsi-script}
@@ -173,28 +243,6 @@ repository:
     #  captures:
     #    '1': {name: punctuation.dollar.opsi-script}
 
-  support:
-    patterns:
-    # built-ins # entity.name.function.preprocessor
-    - name: support.variable.builtin.opsi-script
-      match: (?<!\.)(?i)\b(SetLogLevel)\b
-    - name: support.function.builtin.logging.opsi-script
-      match: (?<!\.)(?i)\b(comment|LogError|isFatalError)\b
-    - name: support.function.builtin.list.opsi-script
-      match: (?<!\.)(?i)\b(takeString|getValue)\b
-    - name: support.function.builtin.string.opsi-script
-      match: (?<!\.)(?i)\b(asConfidential|strPart|strLength|isRegexMatch)\b
-    - name: support.function.builtin.numeric.opsi-script
-      match: (?<!\.)(?i)\b(calculate)\b
-    - name: support.function.builtin.service.opsi-script
-      match: (?<!\.)(?i)\b(GetProductProperty)\b
-    - name: support.function.builtin.subprocess.opsi-script
-      match: (?<!\.)(?i)\b(ShellCall|GetLastExitcode)\b
-
-  support-secsub-patchtextfile:
-    patterns:
-    - name: support.function.builtin.secsub.patchtextfile.opsi-script
-      match: (?<!\.)(?i)\b(FindLine_Containing|DeleteTheLine|InsertLine)\b
 
 patterns:
   - include: '#core'
