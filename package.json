@@ -1,8 +1,9 @@
 {
     "name": "opsi-script",
     "displayName": "opsi-script",
-    "description": "opsi script support",
+    "description": "Provides syntax highlighting and code snippets for opsi script",
     "version": "0.0.1",
+    "publisher": "uib",
     "engines": {
         "vscode": "^1.58.0"
     },

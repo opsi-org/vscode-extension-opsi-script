@@ -35,6 +35,9 @@
           "include": "#primary-section-number"
         },
         {
+          "include": "#primary-section-string"
+        },
+        {
           "include": "#literal-constant"
         },
         {
@@ -121,44 +124,16 @@
     "primary-section": {
       "patterns": [
         {
-          "name": "support.variable.builtin.opsi-script",
-          "match": "(?<!\\.)(?i)\\b(SetLogLevel)\\b"
-        },
-        {
-          "name": "support.function.builtin.logging.opsi-script",
-          "match": "(?<!\\.)(?i)\\b(comment|LogError|isFatalError)\\b"
-        },
-        {
-          "name": "support.function.builtin.list.opsi-script",
-          "match": "(?<!\\.)(?i)\\b(takeString|getValue)\\b"
-        },
-        {
-          "name": "support.function.builtin.string.opsi-script",
-          "match": "(?<!\\.)(?i)\\b(asConfidential|strPart|strLength|isRegexMatch)\\b"
-        },
-        {
-          "name": "support.function.builtin.numeric.opsi-script",
-          "match": "(?<!\\.)(?i)\\b(calculate)\\b"
-        },
-        {
-          "name": "support.function.builtin.service.opsi-script",
-          "match": "(?<!\\.)(?i)\\b(GetProductProperty)\\b"
-        },
-        {
-          "name": "support.function.builtin.subprocess.opsi-script",
-          "match": "(?<!\\.)(?i)\\b(ShellCall|GetLastExitcode)\\b"
-        },
-        {
           "include": "#comments"
-        },
-        {
-          "include": "#primary-section-string"
         },
         {
           "include": "#expressions"
         },
         {
           "include": "#secondary-section-calls"
+        },
+        {
+          "include": "#primary-section-functions"
         }
       ]
     },
@@ -196,6 +171,38 @@
         }
       ]
     },
+    "primary-section-functions": {
+      "patterns": [
+        {
+          "name": "support.variable.builtin.opsi-script",
+          "match": "(?<!\\.)(?i)\\b(SetLogLevel)\\b"
+        },
+        {
+          "name": "support.function.builtin.logging.opsi-script",
+          "match": "(?<!\\.)(?i)\\b(comment|LogError|isFatalError)\\b"
+        },
+        {
+          "name": "support.function.builtin.list.opsi-script",
+          "match": "(?<!\\.)(?i)\\b(takeString|getValue)\\b"
+        },
+        {
+          "name": "support.function.builtin.string.opsi-script",
+          "match": "(?<!\\.)(?i)\\b(asConfidential|strPart|strLength|isRegexMatch)\\b"
+        },
+        {
+          "name": "support.function.builtin.numeric.opsi-script",
+          "match": "(?<!\\.)(?i)\\b(calculate)\\b"
+        },
+        {
+          "name": "support.function.builtin.service.opsi-script",
+          "match": "(?<!\\.)(?i)\\b(GetProductProperty)\\b"
+        },
+        {
+          "name": "support.function.builtin.subprocess.opsi-script",
+          "match": "(?<!\\.)(?i)\\b(ShellCall|GetLastExitcode)\\b"
+        }
+      ]
+    },
     "primary-section-keyword-storage": {
       "patterns": [
         {
@@ -226,7 +233,7 @@
     "primary-section-string": {
       "patterns": [
         {
-          "name": "string.quoted.single.opsi-script",
+          "name": "string.quoted.single.primary-section-string.opsi-script",
           "begin": "'",
           "beginCaptures": {
             "0": {
@@ -249,7 +256,7 @@
           ]
         },
         {
-          "name": "string.quoted.double.opsi-script",
+          "name": "string.quoted.double.primary-section-string.opsi-script",
           "begin": "\"",
           "beginCaptures": {
             "0": {
@@ -416,7 +423,7 @@
     "secondary-section-string": {
       "patterns": [
         {
-          "name": "string.quoted.single.opsi-script",
+          "name": "string.quoted.single.secondary-section-string.opsi-script",
           "begin": "'",
           "beginCaptures": {
             "0": {
@@ -442,7 +449,7 @@
           ]
         },
         {
-          "name": "string.quoted.double.opsi-script",
+          "name": "string.quoted.double.secondary-section-string.opsi-script",
           "begin": "\"",
           "beginCaptures": {
             "0": {
