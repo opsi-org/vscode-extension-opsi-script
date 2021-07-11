@@ -91,18 +91,20 @@ repository:
     - name: meta.primary-section.actions.opsi-script
       begin: (?i)^(\[)(Actions|Aktionen)(\])
       beginCaptures:
-        '1': {name: keyword.other.section-bracket-open.opsi-script}
-        '2': {name: entity.name.function.opsi-script}
-        '3': {name: keyword.other.section-bracket-close.opsi-script}
+        #'1': {name: keyword.other.section-bracket-open.opsi-script}
+        #'2': {name: entity.name.function.opsi-script}
+        '2': {name: entity.name.type.primary-section.opsi-script}
+        #'3': {name: keyword.other.section-bracket-close.opsi-script}
       while: ^(?!\[.*\]$)
       patterns:
       - include: '#primary-section'
     - name: meta.primary-section.sub.opsi-script
       begin: (?i)^(\[)(Sub\S+)(\])
       beginCaptures:
-        '1': {name: keyword.other.section-bracket-open.opsi-script}
-        '2': {name: entity.name.function.opsi-script}
-        '3': {name: keyword.other.section-bracket-close.opsi-script}
+        #'1': {name: keyword.other.section-bracket-open.opsi-script}
+        #'2': {name: entity.name.function.opsi-script}
+        '2': {name: entity.name.type.primary-section.opsi-script}
+        #'3': {name: keyword.other.section-bracket-close.opsi-script}
       while: ^(?!\[.*\]$)
       patterns:
       - include: '#primary-section'
@@ -155,10 +157,11 @@ repository:
 
   secondary-section-calls:
     patterns:
-    - name: meta.section-call.without-arguments.opsi-script
+    - name: meta.secondary-section-call.without-arguments.opsi-script
       match: (?i)\b(ShellInAnIcon\S+|PatchTextFile\S+)\b
       captures:
-        '1': {name: entity.name.function.opsi-script}
+        #'1': {name: entity.name.function.opsi-script}
+        '1': {name: entity.name.type.secondary-section-call.opsi-script}
 
   secondary-sections:
     patterns:
@@ -166,9 +169,10 @@ repository:
     - name: meta.secondary-section.shell-in-an-icon.opsi-script
       begin: ^(\[)(ShellInAnIcon[^\]]+)(\])
       beginCaptures:
-        '1': {name: keyword.other.section-bracket-open.opsi-script}
-        '2': {name: entity.name.function.opsi-script}
-        '3': {name: keyword.other.section-bracket-close.opsi-script}
+        #'1': {name: keyword.other.section-bracket-open.opsi-script}
+        #'2': {name: entity.name.function.opsi-script}
+        '2': {name: entity.name.type.secondary-section-shell-in-an-icon.opsi-script}
+        #'3': {name: keyword.other.section-bracket-close.opsi-script}
       while: ^(?!\[.*\]$)
       contentName: meta.embedded.block.shellscript
       patterns:
@@ -178,13 +182,14 @@ repository:
     - name: meta.secondary-section.patch-text-file.opsi-script
       begin: ^(\[)(PatchTextFile[^\]]+)(\])
       beginCaptures:
-        '1': {name: keyword.other.section-bracket-open.opsi-script}
-        '2': {name: entity.name.function.opsi-script}
-        '3': {name: keyword.other.section-bracket-close.opsi-script}
+        #'1': {name: keyword.other.section-bracket-open.opsi-script}
+        #'2': {name: entity.name.function.opsi-script}
+        '2': {name: entity.name.type.secondary-section-patch-text-file.opsi-script}
+        #'3': {name: keyword.other.section-bracket-close.opsi-script}
       while: ^(?!\[.*\]$)
       patterns:
       - include: '#secondary-section'
-      - include: '#secondary-section-patchtextfile'
+      - include: '#secondary-section-patch-text-file'
 
   secondary-section:
     patterns:
@@ -193,7 +198,7 @@ repository:
     - include: '#literal-constant'
     - include: '#literal-variable'
 
-  secondary-section-patchtextfile:
+  secondary-section-patch-text-file:
     patterns:
     - name: support.function.builtin.secondary-section.patchtextfile.opsi-script
       match: (?<!\.)(?i)\b(FindLine_Containing|DeleteTheLine|InsertLine)\b
