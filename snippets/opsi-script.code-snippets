@@ -1,0 +1,12 @@
+{
+	"Insert PatchTextFile": {
+		"prefix": "[PatchTextFile",
+		"body": [
+			"[PatchTextFile_snippet]",
+			"FindLine_Containing 'config-value = 10'",
+			"DeleteTheLine",
+			"InsertLine 'config-value = 99'",
+			""
+		]
+	}
+}
