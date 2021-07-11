@@ -9,6 +9,7 @@ build:extension:
     - npm install -g vsce
     - vsce package
   artifacts:
+    name: 'vscode-extension-opsi-script'
     paths:
       - '*.vsix'
     expire_in: 2 days
