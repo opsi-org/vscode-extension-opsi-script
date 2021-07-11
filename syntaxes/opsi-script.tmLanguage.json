@@ -285,7 +285,7 @@
       "patterns": [
         {
           "name": "meta.secondary-section-call.without-arguments.opsi-script",
-          "match": "(?i)\\b(ShellInAnIcon\\S+|PatchTextFile\\S+)\\b",
+          "match": "(?i)\\b(ShellBatch\\S+|ShellInAnIcon\\S+|DosBatch\\S+|DosInAnIcon\\S+|ExecWith\\S+|PatchTextFile\\S+)\\b",
           "captures": {
             "1": {
               "name": "entity.name.type.secondary-section-call.opsi-script"
@@ -297,11 +297,11 @@
     "secondary-sections": {
       "patterns": [
         {
-          "name": "meta.secondary-section.shell-in-an-icon.opsi-script",
-          "begin": "^(\\[)(ShellInAnIcon[^\\]]+)(\\])",
+          "name": "meta.secondary-section.shell-batch.opsi-script",
+          "begin": "(?i)^(\\[)(ShellBatch[^\\]]+|ShellInAnIcon[^\\]]+)(\\])",
           "beginCaptures": {
             "2": {
-              "name": "entity.name.type.secondary-section-shell-in-an-icon.opsi-script"
+              "name": "entity.name.type.secondary-section-shell-batch.opsi-script"
             }
           },
           "while": "^(?!\\[.*\\]$)",
@@ -316,8 +316,62 @@
           ]
         },
         {
+          "name": "meta.secondary-section.dos-batch.opsi-script",
+          "begin": "(?i)^(\\[)(DosBatch[^\\]]+|DosInAnIcon[^\\]]+)(\\])",
+          "beginCaptures": {
+            "2": {
+              "name": "entity.name.type.secondary-section-dos-batch.opsi-script"
+            }
+          },
+          "while": "^(?!\\[.*\\]$)",
+          "contentName": "meta.embedded.block.dosbatch",
+          "patterns": [
+            {
+              "include": "#secondary-section"
+            },
+            {
+              "include": "source.batchfile"
+            }
+          ]
+        },
+        {
+          "name": "meta.secondary-section.exec-with-powershell.opsi-script",
+          "begin": "(?i)^(\\[)(ExecWith[^\\]]*powershell[^\\]]*)(\\])",
+          "beginCaptures": {
+            "2": {
+              "name": "entity.name.type.secondary-section-exec-with-powershell.opsi-script"
+            }
+          },
+          "while": "^(?!\\[.*\\]$)",
+          "contentName": "meta.embedded.block.powershell",
+          "patterns": [
+            {
+              "include": "#secondary-section"
+            },
+            {
+              "include": "source.powershell"
+            }
+          ]
+        },
+        {
+          "name": "meta.secondary-section.exec-with-general.opsi-script",
+          "begin": "(?i)^(\\[)(ExecWith[^\\]]+)(\\])",
+          "beginCaptures": {
+            "2": {
+              "name": "entity.name.type.secondary-section-exec-with-general.opsi-script"
+            }
+          },
+          "while": "^(?!\\[.*\\]$)",
+          "contentName": "meta.embedded.block.general",
+          "patterns": [
+            {
+              "include": "#secondary-section"
+            }
+          ]
+        },
+        {
           "name": "meta.secondary-section.patch-text-file.opsi-script",
-          "begin": "^(\\[)(PatchTextFile[^\\]]+)(\\])",
+          "begin": "(?i)^(\\[)(PatchTextFile[^\\]]+)(\\])",
           "beginCaptures": {
             "2": {
               "name": "entity.name.type.secondary-section-patch-text-file.opsi-script"

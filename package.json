@@ -30,7 +30,9 @@
                 "scopeName": "source.opsi-script",
                 "path": "./syntaxes/opsi-script.tmLanguage.json",
                 "embeddedLanguages": {
-                    "meta.embedded.block.shellscript": "shellscript"
+                    "meta.embedded.block.shellscript": "shellscript",
+                    "meta.embedded.block.dosbatch": "dosbatch",
+                    "meta.embedded.block.powershell": "powershell"
                 }
             }
         ],
