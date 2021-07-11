@@ -20,11 +20,22 @@ repository:
   expressions:
     patterns:
     - include: '#brackets'
-    - include: '#literal-keywords'
-    - include: '#literal-operators'
-    - include: '#literal-number'
+    - include: '#primary-section-keywords'
+    - include: '#primary-section-operators'
+    - include: '#primary-section-number'
     - include: '#literal-constant'
     - include: '#literal-variable'
+
+  comments:
+    patterns:
+    - name: comment.line.semicolon.opsi-script
+      match: ^(;).*$\n?
+      captures:
+        '1': {name: punctuation.definition.comment.opsi-script}
+
+  brackets:
+    patterns:
+    - include: '#round-brackets'
 
   round-brackets:
     patterns:
@@ -38,20 +49,24 @@ repository:
       patterns:
       - include: '#expressions'
 
-  brackets:
+  literal-constant:
     patterns:
-    - include: '#round-brackets'
-
-  comments:
-    patterns:
-    - name: comment.line.semicolon.opsi-script
-      match: ^(;).*$\n?
+    - name: constant.language.builtin.percent.opsi-script
+      match: '(?i)(%)(HostID|ScriptPath)(%)'
       captures:
-        '1': {name: punctuation.definition.comment.opsi-script}
+        '1': {name: punctuation.percent.opsi-script}
+        '2': {name: punctuation.percent.opsi-script}
+
+  literal-variable:
+    patterns:
+    - name: variable.other.dollar.opsi-script
+      match: '(\$)[$\w]+(\$)'
+      captures:
+        '1': {name: punctuation.dollar.opsi-script}
+        '2': {name: punctuation.dollar.opsi-script}
 
   primary-section:
     patterns:
-    # built-ins # entity.name.function.preprocessor
     - name: support.variable.builtin.opsi-script
       match: (?<!\.)(?i)\b(SetLogLevel)\b
     - name: support.function.builtin.logging.opsi-script
@@ -70,11 +85,6 @@ repository:
     - include: '#primary-section-string'
     - include: '#expressions'
     - include: '#secondary-section-calls'
-
-  secondary-section-patchtextfile:
-    patterns:
-    - name: support.function.builtin.secondary-section.patchtextfile.opsi-script
-      match: (?<!\.)(?i)\b(FindLine_Containing|DeleteTheLine|InsertLine)\b
 
   primary-sections:
     patterns:
@@ -97,19 +107,58 @@ repository:
       patterns:
       - include: '#primary-section'
 
+  primary-section-keyword-storage:
+    patterns:
+    - name: storage.type.opsi-script
+      match: (?i)(?<!\.)\b(DefVar|DefStringList|Set)\b
+
+  primary-section-keywords:
+    patterns:
+    - include: '#primary-section-keyword-storage'
+
+    - name: keyword.control.opsi-script
+      match: (?i)\b(if|else|endif)\b
+
+  primary-section-operators:
+    patterns:
+    - name: keyword.operator.wordlike.opsi-script
+      match: \b(and|or|not)\b
+
+  primary-section-string:
+    patterns:
+    - name: string.quoted.single.opsi-script
+      begin: "'"
+      beginCaptures:
+        '0': {name: punctuation.definition.string.begin.opsi-script}
+      end: (')|(\n)
+      endCaptures:
+        '1': {name: punctuation.definition.string.end.opsi-script}
+        '2': {name: invalid.illegal.newline.opsi-script}
+      patterns:
+      - include: '#literal-constant'
+
+    - name: string.quoted.double.opsi-script
+      begin: '"'
+      beginCaptures:
+        '0': {name: punctuation.definition.string.begin.opsi-script}
+      end: (")|(\n)
+      endCaptures:
+        '1': {name: punctuation.definition.string.end.opsi-script}
+        '2': {name: invalid.illegal.newline.opsi-script}
+      patterns:
+      - include: '#literal-constant'
+
+  primary-section-number:
+    patterns:
+    - name: constant.numeric.js
+      match: (?xi)\b[0-9]+
+
   secondary-section-calls:
     patterns:
     - name: meta.section-call.without-arguments.opsi-script
       match: (?i)\b(ShellInAnIcon\S+|PatchTextFile\S+)\b
       captures:
         '1': {name: entity.name.function.opsi-script}
-
-  secondary-section:
-    patterns:
-    - include: '#comments'
-    - include: '#secondary-section-string'
-    - include: '#literal-constant'
-    - include: '#literal-variable'
 
   secondary-sections:
     patterns:
@@ -137,59 +186,17 @@ repository:
       - include: '#secondary-section'
       - include: '#secondary-section-patchtextfile'
 
-  literal-keyword-storage:
+  secondary-section:
     patterns:
-    - name: storage.type.opsi-script
-      match: (?i)(?<!\.)\b(DefVar|DefStringList|Set)\b
+    - include: '#comments'
+    - include: '#secondary-section-string'
+    - include: '#literal-constant'
+    - include: '#literal-variable'
 
-  literal-keywords:
+  secondary-section-patchtextfile:
     patterns:
-    - include: '#literal-keyword-storage'
-
-    - name: keyword.control.opsi-script
-      match: (?i)\b(if|else|endif)\b
-
-  literal-operators:
-    patterns:
-    - name: keyword.operator.wordlike.opsi-script
-      #match: (?<!\.)\b(and|or|not)\b
-      match: \b(and|or|not)\b
-
-    #- name: keyword.operator.opsi-script
-    #  match: (?<!\.)\b(delete|in|instanceof|new|of|typeof|void|with)\b
-
-    #- name: keyword.operator.logical.opsi-script
-    #  #match: (?<!\.)\b(and|or|not|==)\b
-    #  match: (and|or|not)
-
-    #- name: keyword.operator.assignment.opsi-script
-    #  match: >-
-    #    (?x)
-    #      =(?!=)| # assignment      right-to-left   both
-
-  primary-section-string:
-    patterns:
-    - name: string.quoted.single.opsi-script
-      begin: "'"
-      beginCaptures:
-        '0': {name: punctuation.definition.string.begin.opsi-script}
-      end: (')|(\n)
-      endCaptures:
-        '1': {name: punctuation.definition.string.end.opsi-script}
-        '2': {name: invalid.illegal.newline.opsi-script}
-      patterns:
-      - include: '#literal-constant'
-
-    - name: string.quoted.double.opsi-script
-      begin: '"'
-      beginCaptures:
-        '0': {name: punctuation.definition.string.begin.opsi-script}
-      end: (")|(\n)
-      endCaptures:
-        '1': {name: punctuation.definition.string.end.opsi-script}
-        '2': {name: invalid.illegal.newline.opsi-script}
-      patterns:
-      - include: '#literal-constant'
+    - name: support.function.builtin.secondary-section.patchtextfile.opsi-script
+      match: (?<!\.)(?i)\b(FindLine_Containing|DeleteTheLine|InsertLine)\b
 
   secondary-section-string:
     patterns:
@@ -217,33 +224,5 @@ repository:
       - include: '#literal-constant'
       - include: '#literal-variable'
 
-  literal-number:
-    patterns:
-    - name: constant.numeric.js
-      match: (?xi)\b[0-9]+
-
-  literal-constant:
-    patterns:
-    - name: constant.language.builtin.percent.opsi-script
-      #match: '(%)[^%]+(%)'
-      match: '(?i)(%)(HostID|ScriptPath)(%)'
-      captures:
-        '1': {name: punctuation.percent.opsi-script}
-        '2': {name: punctuation.percent.opsi-script}
-
-  literal-variable:
-    patterns:
-    - name: variable.other.dollar.opsi-script
-      match: '(\$)[$\w]+(\$)'
-      captures:
-        '1': {name: punctuation.dollar.opsi-script}
-        '2': {name: punctuation.dollar.opsi-script}
-    #- name: variable.other.dollar.opsi-script
-    #  match: '(\$)[$\w]+'
-    #  captures:
-    #    '1': {name: punctuation.dollar.opsi-script}
-
-
 patterns:
   - include: '#core'
-
