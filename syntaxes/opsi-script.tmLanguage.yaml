@@ -1,9 +1,14 @@
+# https://code.visualstudio.com/api/language-extensions/syntax-highlight-guide
+# https://www.apeth.com/nonblog/stories/textmatebundle.html
+#
 # npx js-yaml syntaxes/opsi-script.tmLanguage.yaml > syntaxes/opsi-script.tmLanguage.json
 
 scopeName: source.opsi-script
 name: opsi-script
 uuid: 08cd1012-1f35-44bf-a64a-ebf3f82c8978
 fileTypes: [.opsiscript, .ins]
+#foldingStartMarker: ^\[[^\]]+\]
+#foldingStopMarker: ^\[[^\]]+\]
 
 repository:
   core:
@@ -16,12 +21,14 @@ repository:
     - include: '#support'
     - include: '#comments'
     - include: '#brackets'
-    - include: '#literal-functions'
+    - include: '#section-calls'
     - include: '#literal-operators'
     - include: '#literal-string'
     - include: '#literal-number'
     - include: '#literal-constant'
     - include: '#literal-variable'
+
+    - include: '#sections'
 
   round-brackets:
     patterns:
@@ -46,18 +53,42 @@ repository:
       captures:
         '1': {name: punctuation.definition.comment.opsi-script}
 
-  literal-functions:
+  section-calls:
     patterns:
-    - name: meta.function.opsi-script
-      match: ^(\[)([^\]]+)(\])
+    - name: meta.section-call.without-arguments.opsi-script
+      match: (?i)\b(ShellInAnIcon\S+|PatchTextFile\S+)\b
       captures:
-        '1': {name: storage.type.function.opsi-script}
+        '1': {name: entity.name.function.opsi-script}
+
+  sections:
+    patterns:
+
+    - name: meta.function.shellinanicon.opsi-script
+      begin: ^(\[)(ShellInAnIcon[^\]]+)(\])
+      beginCaptures:
+        '1': {name: keyword.other.section-bracket-open.opsi-script}
         '2': {name: entity.name.function.opsi-script}
-        '3': {name: storage.type.function.opsi-script}
+        '3': {name: keyword.other.section-bracket-close.opsi-script}
+      while: ^(?!\[.*\]$)
+      contentName: meta.embedded.block.shellscript
+      patterns:
+      - include: '#literal-variable'
+      - include: source.shell
+
+    - name: meta.function.patchtextfile.opsi-script
+      begin: ^(\[)(PatchTextFile[^\]]+)(\])
+      beginCaptures:
+        '1': {name: keyword.other.section-bracket-open.opsi-script}
+        '2': {name: entity.name.function.opsi-script}
+        '3': {name: keyword.other.section-bracket-close.opsi-script}
+      while: ^(?!\[.*\]$)
+      patterns:
+      - include: '#literal-variable'
+      - include: '#support-secsub-patchtextfile'
 
   literal-keyword-storage:
     patterns:
-    - name: storage.type.js
+    - name: storage.type.opsi-script
       match: (?i)(?<!\.)\b(DefVar|DefStringList|Set)\b
 
   literal-keywords:
@@ -133,28 +164,37 @@ repository:
   literal-variable:
     patterns:
     - name: variable.other.dollar.opsi-script
-      match: '(\$)[$\w]+'
+      match: '(\$)[$\w]+(\$)'
       captures:
         '1': {name: punctuation.dollar.opsi-script}
+        '2': {name: punctuation.dollar.opsi-script}
+    #- name: variable.other.dollar.opsi-script
+    #  match: '(\$)[$\w]+'
+    #  captures:
+    #    '1': {name: punctuation.dollar.opsi-script}
 
   support:
     patterns:
     # built-ins # entity.name.function.preprocessor
-    - name: support.variable.builtin.js
+    - name: support.variable.builtin.opsi-script
       match: (?<!\.)(?i)\b(SetLogLevel)\b
-    - name: support.function.builtin.logging.js
+    - name: support.function.builtin.logging.opsi-script
       match: (?<!\.)(?i)\b(comment|LogError|isFatalError)\b
-    - name: support.function.builtin.list.js
+    - name: support.function.builtin.list.opsi-script
       match: (?<!\.)(?i)\b(takeString|getValue)\b
-    - name: support.function.builtin.string.js
+    - name: support.function.builtin.string.opsi-script
       match: (?<!\.)(?i)\b(asConfidential|strPart|strLength|isRegexMatch)\b
-    - name: support.function.builtin.numeric.js
+    - name: support.function.builtin.numeric.opsi-script
       match: (?<!\.)(?i)\b(calculate)\b
-    - name: support.function.builtin.service.js
+    - name: support.function.builtin.service.opsi-script
       match: (?<!\.)(?i)\b(GetProductProperty)\b
-    - name: support.function.builtin.subprocess.js
+    - name: support.function.builtin.subprocess.opsi-script
       match: (?<!\.)(?i)\b(ShellCall|GetLastExitcode)\b
 
+  support-secsub-patchtextfile:
+    patterns:
+    - name: support.function.builtin.secsub.patchtextfile.opsi-script
+      match: (?<!\.)(?i)\b(FindLine_Containing|DeleteTheLine|InsertLine)\b
 
 patterns:
   - include: '#core'
