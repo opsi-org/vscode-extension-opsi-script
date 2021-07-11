@@ -1,0 +1,14 @@
+image: node:14-slim
+
+stages:
+  - build
+
+build:extension:
+  stage: build
+  script:
+    - npm install -g vsce
+    - vsce package
+  artifacts:
+    paths:
+      - '*.vsix'
+    expire_in: 2 days
