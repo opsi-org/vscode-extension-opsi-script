@@ -136,7 +136,6 @@ repository:
        match: (?i)\b(Sub)\b
      - name: support.function.builtin.constants.opsi-script
        match: (?i)\b(replaceOpsiConstants)\b
-    # TODO: chmod in Files_
     # 2.4. By Topic
      - name: support.function.builtin.compare.opsi-script
        match: (?i)\b(CompareDotSeparatedStrings|CompareDotSeparatedStrings|CompareDotSeparatedNumbers|CompareDotSeparatedNumbers|boolToString|stringToBool)\b
@@ -277,7 +276,7 @@ repository:
 
   secondary-section-param-let-them-go:
     patterns:
-    - name: constant.character.opsi-script
+    - name: constant.character.param.let-them-go.opsi-script
       match: (?i)\/LetThemGo\b
 
   secondary-section-param-timeout-seconds:
@@ -419,7 +418,7 @@ repository:
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
         '2':
-          name: meta.secondary-section-call.win-batch.params
+          name: meta.secondary-section-call.win-batch.params.opsi-script
           patterns:
           - include: '#secondary-section-params-win-batch'
 
@@ -428,7 +427,7 @@ repository:
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
         '2':
-          name: meta.secondary-section-call.shell-batch.params
+          name: meta.secondary-section-call.shell-batch.params.opsi-script
           patterns:
           - include: '#secondary-section-params-shell-batch'
 
@@ -437,11 +436,11 @@ repository:
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
         '2':
-          name: meta.secondary-section-call.exec-with.interpreter
+          name: meta.secondary-section-call.exec-with.interpreter.opsi-script
           patterns:
           - include: '#primary-section-string'
         '3':
-          name: meta.secondary-section-call.exec-with.params
+          name: meta.secondary-section-call.exec-with.params.opsi-script
           patterns:
           - include: '#secondary-section-params-exec-with'
 
@@ -450,7 +449,7 @@ repository:
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
         '2':
-          name: meta.secondary-section-call.files.params
+          name: meta.secondary-section-call.files.params.opsi-script
           patterns:
           - include: '#secondary-section-params-files'
 
@@ -459,7 +458,7 @@ repository:
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
         '2':
-          name: meta.secondary-section-call.registry.params
+          name: meta.secondary-section-call.registry.params.opsi-script
           patterns:
           - include: '#secondary-section-params-registry'
 
@@ -468,7 +467,7 @@ repository:
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
         '2':
-          name: meta.secondary-section-call.patches.params
+          name: meta.secondary-section-call.patches.params.opsi-script
           patterns:
           - include: '#secondary-section-params-patches'
 
@@ -477,7 +476,7 @@ repository:
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
         '2':
-          name: meta.secondary-section-call.patch-text-file.params
+          name: meta.secondary-section-call.patch-text-file.params.opsi-script
           patterns:
           - include: '#secondary-section-params-patch-text-file'
 
@@ -554,9 +553,18 @@ repository:
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-exec-with-general.opsi-script}
       while: ^(?!\[.*\]$)
-      contentName: meta.embedded.block.general
+      contentName: meta.embedded.block.general.opsi-script
       patterns:
       - include: '#secondary-section'
+
+    - name: meta.secondary-section.files.opsi-script
+      begin: (?i)^(\[)(Files[^\]]+)(\])
+      beginCaptures:
+        '2': {name: entity.name.type.secondary-section-files.opsi-script}
+      while: ^(?!\[.*\]$)
+      patterns:
+      - include: '#secondary-section'
+      - include: '#secondary-section-files'
 
     - name: meta.secondary-section.patch-text-file.opsi-script
       begin: (?i)^(\[)(PatchTextFile[^\]]+)(\])
@@ -573,11 +581,6 @@ repository:
     - include: '#secondary-section-string'
     - include: '#literal-constant'
     - include: '#literal-variable'
-
-  secondary-section-patch-text-file:
-    patterns:
-    - name: support.function.builtin.secondary-section.patchtextfile.opsi-script
-      match: (?<!\.)(?i)\b(FindLine_Containing|DeleteTheLine|InsertLine)\b
 
   secondary-section-string:
     patterns:
@@ -604,6 +607,31 @@ repository:
       patterns:
       - include: '#literal-constant'
       - include: '#literal-variable'
+
+  secondary-section-files:
+    patterns:
+    - name: support.variable.builtin.secondary-section.files.opsi-script
+      match: (?i)\b(checkTargetPath)\b
+    - name: meta.function.builtin.secondary-section.files.copy.opsi-script
+      match: \b((?i)copy)\b(\s+-[sVvcduxwnrh]+)?\s+("[^"]*"|'[^']*'|[^"'\s]*)\s+("[^"]*"|'[^']*'|[^"'\s]*)\s*(\S*.*)
+      captures:
+        '1': {name: support.function.builtin.secondary-section.files.copy.opsi-script}
+        '2': {name: constant.character.secondary-section.files.copy.arguments.opsi-script}
+        '3':
+          name: meta.secondary-section.files.copy.source.opsi-script
+          patterns:
+          - include: '#secondary-section-string'
+        '4':
+          name: meta.secondary-section.files.copy.destination.opsi-script
+          patterns:
+          - include: '#secondary-section-string'
+        '5': {name: invalid.illegal.arguments.opsi-script}
+
+  secondary-section-patch-text-file:
+    patterns:
+    - name: support.function.builtin.secondary-section.patchtextfile.opsi-script
+      match: (?i)\b(FindLine_Containing|DeleteTheLine|InsertLine)\b
+  # TODO: chmod in Files_
 
 patterns:
   - include: '#core'
