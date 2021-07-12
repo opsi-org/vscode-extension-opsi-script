@@ -2,6 +2,7 @@
 	"Insert PatchTextFile": {
 		"prefix": "[PatchTextFile",
 		"body": [
+			"; https://download.uib.de/opsi_stable/doc/html/opsi-winst-manual/opsi-winst-manual.html#opsi-script-rc-patchtextfile",
 			"[PatchTextFile_snippet]",
 			"FindLine_Containing 'config-value = 10'",
 			"DeleteTheLine",
