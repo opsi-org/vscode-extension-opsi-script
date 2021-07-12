@@ -270,6 +270,10 @@ repository:
     - name: constant.numeric.opsi-script
       match: (?xi)\b[0-9]+
 
+  secondary-section-param-winst:
+    patterns:
+    - name: constant.character.param.winst.opsi-script
+      match: (?i)\bwinst\b
 
   secondary-section-param-let-them-go:
     patterns:
@@ -326,32 +330,191 @@ repository:
     - name: constant.character.param.32bit.opsi-script
       match: (?i)\/(32Bit|64Bit|SysNative)\b
 
-  secondary-section-params-winbatch:
+  secondary-section-param-show-output:
     patterns:
-    - include: "#secondary-section-param-let-them-go"
-    - include: "#secondary-section-param-wait-for-process-ending"
+    - name: constant.character.param.show-output.opsi-script
+      match: (?i)\/ShowOutput\b
+
+  secondary-section-param-escape-strings:
+    patterns:
+    - name: constant.character.param.escape-strings.opsi-script
+      match: (?i)\/EscapeStrings\b
+
+  secondary-section-param-all-nt-user-profiles:
+    patterns:
+    - name: constant.character.param.all-nt-user-profiles.opsi-script
+      match: (?i)\/AllNTUserProfiles\b
+
+  secondary-section-param-all-nt-user-send-to:
+    patterns:
+    - name: constant.character.param.all-nt-user-send-to.opsi-script
+      match: (?i)\/AllNTUserSendTo\b
+
+  secondary-section-param-all-nt-user-dats:
+    patterns:
+    - name: constant.character.param.all-nt-user-dats.opsi-script
+      match: (?i)\/AllNTUserDats\b
+
+  secondary-section-param-encoding:
+    patterns:
+    - name: constant.character.param.encoding.opsi-script
+      match: (?i)\/encoding\b\s\S+
+
+  secondary-section-params-win-batch:
+    patterns:
+    - include: "#secondary-section-param-winst"
+    - include: "#secondary-section-param-architecture"
     - include: "#secondary-section-param-timeout-seconds"
+    - include: "#secondary-section-param-run-elevated"
+    - include: "#secondary-section-param-wait-for-process-ending"
     - include: "#secondary-section-param-wait-for-window-appearing"
     - include: "#secondary-section-param-wait-for-window-vanish"
-    - include: "#secondary-section-param-run-elevated"
+    - include: "#secondary-section-param-let-them-go"
     - include: "#secondary-section-param-run-as-logged-on-user"
+
+  secondary-section-params-shell-batch:
+    patterns:
+    - include: "#secondary-section-param-winst"
     - include: "#secondary-section-param-architecture"
+    - include: "#secondary-section-param-timeout-seconds"
+    - include: "#secondary-section-param-run-elevated"
+    - include: "#secondary-section-param-wait-for-process-ending"
+    - include: "#secondary-section-param-show-output"
+
+  secondary-section-params-exec-with:
+    patterns:
+    - include: "#secondary-section-param-winst"
+    - include: "#secondary-section-param-architecture"
+    - include: "#secondary-section-param-let-them-go"
+    - include: "#secondary-section-param-escape-strings"
+
+  secondary-section-params-files:
+    patterns:
+    - include: "#secondary-section-param-winst"
+    - include: "#secondary-section-param-architecture"
+    - include: "#secondary-section-param-all-nt-user-profiles"
+    - include: "#secondary-section-param-all-nt-user-send-to"
+
+  secondary-section-params-registry:
+    patterns:
+    - include: "#secondary-section-param-winst"
+    - include: "#secondary-section-param-architecture"
+    - include: "#secondary-section-param-all-nt-user-dats"
+
+  secondary-section-params-patches:
+    patterns:
+    - include: "#secondary-section-param-winst"
+    - include: "#secondary-section-param-all-nt-user-profiles"
+
+  secondary-section-params-patch-text-file:
+    patterns:
+    - include: "#secondary-section-param-winst"
+    - include: "#secondary-section-param-all-nt-user-profiles"
+    - include: "#secondary-section-param-encoding"
 
   secondary-section-calls:
     patterns:
-    - name: meta.secondary-section-call.without-arguments.opsi-script
-      match: (?i)\b(ShellBatch\S+|ShellInAnIcon\S+|DosBatch\S+|DosInAnIcon\S+|ExecWith\S+|PatchTextFile\S+)\b
-      captures:
-        #'1': {name: entity.name.function.opsi-script}
-        '1': {name: entity.name.type.secondary-section-call.opsi-script}
-    - name: meta.secondary-section-call.winbatch.opsi-script
-      match: (?i)\b(Winbatch\S+)\s*(.*)
+    - name: meta.secondary-section-call.win-batch.opsi-script
+      match: (?i)\b(Winbatch\S+)\b\s*(.*)
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
         '2':
-          name: meta.secondary-section-call.winbatch.params
+          name: meta.secondary-section-call.win-batch.params
           patterns:
-          - include: '#secondary-section-params-winbatch'
+          - include: '#secondary-section-params-win-batch'
+
+    - name: meta.secondary-section-call.shell-batch.opsi-script
+      match: (?i)\b(ShellBatch\S+|ShellInAnIcon\S+|DosBatch\S+|DosInAnIcon\S+)\b\s*(.*)
+      captures:
+        '1': {name: entity.name.type.secondary-section-call.opsi-script}
+        '2':
+          name: meta.secondary-section-call.shell-batch.params
+          patterns:
+          - include: '#secondary-section-params-shell-batch'
+
+    - name: meta.secondary-section-call.exec-with.opsi-script
+      match: (?i)\b(ExecWith\S+)\b\s*(["'].*["'])\s*(.*)
+      captures:
+        '1': {name: entity.name.type.secondary-section-call.opsi-script}
+        '2':
+          name: meta.secondary-section-call.exec-with.interpreter
+          patterns:
+          - include: '#primary-section-string'
+        '3':
+          name: meta.secondary-section-call.exec-with.params
+          patterns:
+          - include: '#secondary-section-params-exec-with'
+
+    - name: meta.secondary-section-call.files.opsi-script
+      match: (?i)\b(Files\S+)\b\s*(.*)
+      captures:
+        '1': {name: entity.name.type.secondary-section-call.opsi-script}
+        '2':
+          name: meta.secondary-section-call.files.params
+          patterns:
+          - include: '#secondary-section-params-files'
+
+    - name: meta.secondary-section-call.registry.opsi-script
+      match: (?i)\b(Registry\S+)\b\s*(.*)
+      captures:
+        '1': {name: entity.name.type.secondary-section-call.opsi-script}
+        '2':
+          name: meta.secondary-section-call.registry.params
+          patterns:
+          - include: '#secondary-section-params-registry'
+
+    - name: meta.secondary-section-call.patches.opsi-script
+      match: (?i)\b(Patches\S+)\b\s*(.*)
+      captures:
+        '1': {name: entity.name.type.secondary-section-call.opsi-script}
+        '2':
+          name: meta.secondary-section-call.patches.params
+          patterns:
+          - include: '#secondary-section-params-patches'
+
+    - name: meta.secondary-section-call.patch-text-file.opsi-script
+      match: (?i)\b(PatchTextFile\S+)\b\s*(.*)
+      captures:
+        '1': {name: entity.name.type.secondary-section-call.opsi-script}
+        '2':
+          name: meta.secondary-section-call.patch-text-file.params
+          patterns:
+          - include: '#secondary-section-params-patch-text-file'
+
+    - name: meta.secondary-section-call.link-folder.opsi-script
+      match: (?i)\b(LinkFolder\S+)\b
+      captures:
+        '1': {name: entity.name.type.secondary-section-call.opsi-script}
+
+    - name: meta.secondary-section-call.opsi-service-call.opsi-script
+      match: (?i)\b(OpsiServiceCall\S+)\b
+      captures:
+        '1': {name: entity.name.type.secondary-section-call.opsi-script}
+
+    - name: meta.secondary-section-call.patch-hosts.opsi-script
+      match: (?i)\b(PatchHosts\S+)\b
+      captures:
+        '1': {name: entity.name.type.secondary-section-call.opsi-script}
+
+    - name: meta.secondary-section-call.xml2.opsi-script
+      match: (?i)\b(XML2\S+)\b
+      captures:
+        '1': {name: entity.name.type.secondary-section-call.opsi-script}
+
+    - name: meta.secondary-section-call.xml-patch.opsi-script
+      match: (?i)\b(XMLPatch\S+)\b
+      captures:
+        '1': {name: invalid.deprecated.opsi-script}
+
+    - name: meta.secondary-section-call.exec-python.opsi-script
+      match: (?i)\b(ExecPython\S+)\b
+      captures:
+        '1': {name: entity.name.type.secondary-section-call.opsi-script}
+
+    - name: meta.secondary-section-call.ldap-search.opsi-script
+      match: (?i)\b(LDAPSearch\S+)\b
+      captures:
+        '1': {name: entity.name.type.secondary-section-call.opsi-script}
 
   secondary-sections:
     patterns:
