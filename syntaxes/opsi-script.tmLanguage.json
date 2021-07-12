@@ -237,6 +237,9 @@
           "include": "#primary-section-function-powershellcall"
         },
         {
+          "include": "#primary-section-function-registry"
+        },
+        {
           "name": "invalid.deprecated.opsi-script",
           "match": "(?i)\\b(LogLevel)\\b"
         },
@@ -428,6 +431,41 @@
         }
       ]
     },
+    "primary-section-function-registry": {
+      "patterns": [
+        {
+          "name": "meta.function.registry.opsi-script",
+          "match": "(?i)\\b(Registry)\\b\\s+(loadUnicodeTextFile)\\(([^\\)]+)\\)\\s+(/regedit|/addreg)\\s*(\\S*.*)",
+          "captures": {
+            "1": {
+              "name": "support.function.builtin.registry.opsi-script"
+            },
+            "2": {
+              "name": "support.function.builtin.load-unicode-text-file.opsi-script"
+            },
+            "3": {
+              "name": "meta.function.registry.filename.opsi-script",
+              "patterns": [
+                {
+                  "include": "#primary-section-string"
+                }
+              ]
+            },
+            "4": {
+              "name": "constant.character.opsi-script",
+              "patterns": [
+                {
+                  "include": "#secondary-section-string"
+                }
+              ]
+            },
+            "5": {
+              "name": "invalid.illegal.arguments.opsi-script"
+            }
+          }
+        }
+      ]
+    },
     "primary-section-keyword-storage": {
       "patterns": [
         {
@@ -502,6 +540,12 @@
               "include": "#literal-constant"
             }
           ]
+        },
+        {
+          "include": "#literal-constant"
+        },
+        {
+          "include": "#literal-variable"
         }
       ]
     },
@@ -1078,6 +1122,24 @@
           ]
         },
         {
+          "name": "meta.secondary-section.registry.opsi-script",
+          "begin": "(?i)^(\\[)(Registry[^\\]]+)(\\])",
+          "beginCaptures": {
+            "2": {
+              "name": "entity.name.type.secondary-section-registry.opsi-script"
+            }
+          },
+          "while": "^(?!\\[.*\\]$)",
+          "patterns": [
+            {
+              "include": "#secondary-section"
+            },
+            {
+              "include": "#secondary-section-registry"
+            }
+          ]
+        },
+        {
           "name": "meta.secondary-section.patch-text-file.opsi-script",
           "begin": "(?i)^(\\[)(PatchTextFile[^\\]]+)(\\])",
           "beginCaptures": {
@@ -1142,6 +1204,12 @@
           ]
         },
         {
+          "include": "#literal-constant"
+        },
+        {
+          "include": "#literal-variable"
+        },
+        {
           "name": "string.quoted.double.secondary-section-string.opsi-script",
           "begin": "\"",
           "beginCaptures": {
@@ -1173,11 +1241,11 @@
       "patterns": [
         {
           "name": "support.variable.builtin.secondary-section.files.opsi-script",
-          "match": "(?i)\\b(checkTargetPath)\\b"
+          "match": "(?i)\\b(SourcePath|checkTargetPath)\\b"
         },
         {
           "name": "meta.function.builtin.secondary-section.files.copy.opsi-script",
-          "match": "\\b((?i)copy)\\b(\\s+-[sVvcduxwnrh]+)?\\s+(\"[^\"]*\"|'[^']*'|[^\"'\\s]*)\\s+(\"[^\"]*\"|'[^']*'|[^\"'\\s]*)\\s*(\\S*.*)",
+          "match": "\\b((?i)copy)\\b(\\s+-[seVvduxwncrh]+)?\\s+(\"[^\"]*\"|'[^']*'|[^\"'\\s]*)\\s+(\"[^\"]*\"|'[^']*'|[^\"'\\s]*)\\s*(\\S*.*)",
           "captures": {
             "1": {
               "name": "support.function.builtin.secondary-section.files.copy.opsi-script"
@@ -1202,6 +1270,220 @@
               ]
             },
             "5": {
+              "name": "invalid.illegal.arguments.opsi-script"
+            }
+          }
+        },
+        {
+          "name": "meta.function.builtin.secondary-section.files.delete.opsi-script",
+          "match": "\\b((?i)Del(?:ete)?)\\b(\\s+-(?:s|f|c|d\\d*)+)?\\s+(\"[^\"]*\"|'[^']*'|[^\"'\\s]*)\\s*(\\S*.*)",
+          "captures": {
+            "1": {
+              "name": "support.function.builtin.secondary-section.files.delete.opsi-script"
+            },
+            "2": {
+              "name": "constant.character.secondary-section.files.delete.arguments.opsi-script"
+            },
+            "3": {
+              "name": "meta.secondary-section.files.delete.path.opsi-script",
+              "patterns": [
+                {
+                  "include": "#secondary-section-string"
+                }
+              ]
+            },
+            "4": {
+              "name": "invalid.illegal.arguments.opsi-script"
+            }
+          }
+        },
+        {
+          "name": "meta.function.builtin.secondary-section.files.chmod.opsi-script",
+          "match": "\\b((?i)chmod)\\b\\s+([0-8]{3,4})\\s+(\"[^\"]*\"|'[^']*'|[^\"'\\s]*)\\s*(\\S*.*)",
+          "captures": {
+            "1": {
+              "name": "support.function.builtin.secondary-section.files.chmod.opsi-script"
+            },
+            "2": {
+              "name": "constant.character.secondary-section.files.chmod.mask.opsi-script"
+            },
+            "3": {
+              "name": "meta.secondary-section.files.chmod.path.opsi-script",
+              "patterns": [
+                {
+                  "include": "#secondary-section-string"
+                }
+              ]
+            },
+            "4": {
+              "name": "invalid.illegal.arguments.opsi-script"
+            }
+          }
+        },
+        {
+          "name": "meta.function.builtin.secondary-section.files.link-move-zip.opsi-script",
+          "match": "(?i)\\b(hardlink|symlink|rename|move|zipfile|unzipfile)\\b\\s+(\"[^\"]*\"|'[^']*'|[^\"'\\s]*)\\s+(\"[^\"]*\"|'[^']*'|[^\"'\\s]*)\\s*(\\S*.*)",
+          "captures": {
+            "1": {
+              "name": "support.function.builtin.secondary-section.files.link-move-zip.opsi-script"
+            },
+            "2": {
+              "name": "meta.secondary-section.files.link-move-zip.source.opsi-script",
+              "patterns": [
+                {
+                  "include": "#secondary-section-string"
+                }
+              ]
+            },
+            "3": {
+              "name": "meta.secondary-section.files.link-move-zip.destination.opsi-script",
+              "patterns": [
+                {
+                  "include": "#secondary-section-string"
+                }
+              ]
+            },
+            "4": {
+              "name": "invalid.illegal.arguments.opsi-script"
+            }
+          }
+        }
+      ]
+    },
+    "secondary-section-registry": {
+      "patterns": [
+        {
+          "name": "meta.function.builtin.secondary-section.registry.flush-key.opsi-script",
+          "match": "(?i)\\b(FlushKey)\\b",
+          "captures": {
+            "1": {
+              "name": "support.function.builtin.secondary-section.registry.flush-key.opsi-script"
+            }
+          }
+        },
+        {
+          "name": "meta.function.builtin.secondary-section.registry.open-delete-key.opsi-script",
+          "match": "(?i)\\b(OpenKey|DeleteKey)\\b\\s+\\[([^\\]]+)\\]\\s*(\\S*.*)",
+          "captures": {
+            "1": {
+              "name": "support.function.builtin.secondary-section.registry.open-delete-key.opsi-script"
+            },
+            "2": {
+              "name": "meta.secondary-section.registry.open-delete-key.key.opsi-script",
+              "patterns": [
+                {
+                  "include": "#secondary-section-string"
+                }
+              ]
+            },
+            "3": {
+              "name": "invalid.illegal.arguments.opsi-script"
+            }
+          }
+        },
+        {
+          "name": "meta.function.builtin.secondary-section.registry.set-add.opsi-script",
+          "match": "(?i)\\b(Set|Add)\\b\\s+(\\\"[^\"]+\\\")\\s+=\\s+(?:(REG_SZ|REG_EXPAND_SZ|REG_DWORD|REG_BINARY|REG_MULTI_SZ)\\s*:)?\\s*(.*)",
+          "captures": {
+            "1": {
+              "name": "support.function.builtin.secondary-section.registry.set-add.opsi-script"
+            },
+            "2": {
+              "name": "meta.secondary-section.registry.set-add.key.opsi-script",
+              "patterns": [
+                {
+                  "include": "#secondary-section-string"
+                }
+              ]
+            },
+            "3": {
+              "name": "constant.character.secondary-section.registry.set-add.type.opsi-script"
+            },
+            "4": {
+              "name": "meta.secondary-section.registry.set-add.value.opsi-script",
+              "patterns": [
+                {
+                  "include": "#secondary-section-string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "meta.function.builtin.secondary-section.registry.delete-var.opsi-script",
+          "match": "(?i)\\b(DeleteVar)\\b\\s+(\"[^\"]*\"|'[^']*'|[^\"'\\s]*)\\s*(\\S*.*)",
+          "captures": {
+            "1": {
+              "name": "support.function.builtin.secondary-section.registry.delete-var.opsi-script"
+            },
+            "2": {
+              "name": "meta.secondary-section.registry.delete-var.name.opsi-script",
+              "patterns": [
+                {
+                  "include": "#secondary-section-string"
+                }
+              ]
+            },
+            "3": {
+              "name": "invalid.illegal.arguments.opsi-script"
+            }
+          }
+        },
+        {
+          "name": "meta.function.builtin.secondary-section.registry.supp.opsi-script",
+          "match": "(?i)\\b(Supp)\\b\\s+(\"[^\"]*\"|'[^']*'|[^\"'\\s]*)\\s+(\\S)\\s+(\"[^\"]*\"|'[^']*'|[^\"'\\s]*)\\s*(\\S*.*)",
+          "captures": {
+            "1": {
+              "name": "support.function.builtin.secondary-section.registry.supp.opsi-script"
+            },
+            "2": {
+              "name": "meta.secondary-section.registry.supp.varname.opsi-script",
+              "patterns": [
+                {
+                  "include": "#secondary-section-string"
+                }
+              ]
+            },
+            "3": {
+              "name": "constant.character.opsi-script"
+            },
+            "4": {
+              "name": "meta.secondary-section.registry.supp.supplement.opsi-script",
+              "patterns": [
+                {
+                  "include": "#secondary-section-string"
+                }
+              ]
+            },
+            "5": {
+              "name": "invalid.illegal.arguments.opsi-script"
+            }
+          }
+        },
+        {
+          "name": "meta.function.builtin.secondary-section.registry.file.opsi-script",
+          "match": "(?i)\\b(GetMultiSZFromFile|SaveValueToFile)\\b\\s+(\"[^\"]*\"|'[^']*'|[^\"'\\s]*)\\s+(\"[^\"]*\"|'[^']*'|[^\"'\\s]*)\\s*(\\S*.*)",
+          "captures": {
+            "1": {
+              "name": "support.function.builtin.secondary-section.registry.file.opsi-script"
+            },
+            "2": {
+              "name": "meta.secondary-section.registry.file.varname.opsi-script",
+              "patterns": [
+                {
+                  "include": "#secondary-section-string"
+                }
+              ]
+            },
+            "3": {
+              "name": "meta.secondary-section.registry.file.filename.opsi-script",
+              "patterns": [
+                {
+                  "include": "#secondary-section-string"
+                }
+              ]
+            },
+            "4": {
               "name": "invalid.illegal.arguments.opsi-script"
             }
           }
