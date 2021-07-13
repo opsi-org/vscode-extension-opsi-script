@@ -136,7 +136,7 @@
       "patterns": [
         {
           "name": "variable.other.dollar.opsi-script",
-          "match": "(\\$)[$\\w]+(\\$)",
+          "match": "(\\$)[$\\w-]+(\\$)",
           "captures": {
             "1": {
               "name": "punctuation.dollar.opsi-script"
@@ -369,30 +369,18 @@
       "patterns": [
         {
           "name": "meta.function.shellcall.opsi-script",
-          "match": "(?i)\\b(shellCall)\\s*\\(\\s*([\"'])(.*)([\"'])\\s*\\)",
+          "match": "(?i)\\b(shellCall)\\s*\\(\\s*([\"'].*[\"'])\\s*\\)",
           "captures": {
             "1": {
               "name": "support.function.builtin.shellcall.opsi-script"
             },
             "2": {
-              "name": "punctuation.definition.string.begin.opsi-script"
-            },
-            "3": {
               "name": "meta.embedded.block.shellscript",
               "patterns": [
                 {
-                  "include": "#literal-constant"
-                },
-                {
-                  "include": "#literal-variable"
-                },
-                {
-                  "include": "source.shell"
+                  "include": "#primary-section-string"
                 }
               ]
-            },
-            "4": {
-              "name": "punctuation.definition.string.end.opsi-script"
             }
           }
         }
@@ -402,30 +390,18 @@
       "patterns": [
         {
           "name": "meta.function.powershellcall.opsi-script",
-          "match": "(?i)\\b(powershellcall)\\s*\\(\\s*([\"'])(.*)([\"'])\\s*\\)",
+          "match": "(?i)\\b(powershellcall)\\s*\\(\\s*([\"'].*[\"'])\\s*\\)",
           "captures": {
             "1": {
               "name": "support.function.builtin.powershell.opsi-script"
             },
             "2": {
-              "name": "punctuation.definition.string.begin.opsi-script"
-            },
-            "3": {
               "name": "meta.embedded.block.powershell",
               "patterns": [
                 {
-                  "include": "#literal-constant"
-                },
-                {
-                  "include": "#literal-variable"
-                },
-                {
-                  "include": "source.powershell"
+                  "include": "#primary-section-string"
                 }
               ]
-            },
-            "4": {
-              "name": "punctuation.definition.string.end.opsi-script"
             }
           }
         }
@@ -1245,7 +1221,7 @@
         },
         {
           "name": "meta.function.builtin.secondary-section.files.copy.opsi-script",
-          "match": "\\b((?i)copy)\\b(\\s+-[seVvduxwncrh]+)?\\s+(\"[^\"]*\"|'[^']*'|[^\"'\\s]*)\\s+(\"[^\"]*\"|'[^']*'|[^\"'\\s]*)\\s*(\\S*.*)",
+          "match": "\\b((?i)copy)\\b(\\s+-[seVvduxwncrh]+)?\\s+(\"(?:(?:\\\\\"|(?:(?!\")).)*)\"|'(?:(?:\\\\'|(?:(?!')).)*)'|[^\"'\\s]*)\\s+(\"(?:(?:\\\\\"|(?:(?!\")).)*)\"|'(?:(?:\\\\'|(?:(?!')).)*)'|[^\"'\\s]*)\\s*(\\S*.*)",
           "captures": {
             "1": {
               "name": "support.function.builtin.secondary-section.files.copy.opsi-script"
@@ -1276,7 +1252,7 @@
         },
         {
           "name": "meta.function.builtin.secondary-section.files.delete.opsi-script",
-          "match": "\\b((?i)Del(?:ete)?)\\b(\\s+-(?:s|f|c|d\\d*)+)?\\s+(\"[^\"]*\"|'[^']*'|[^\"'\\s]*)\\s*(\\S*.*)",
+          "match": "\\b((?i)Del(?:ete)?)\\b(\\s+-(?:s|f|c|d\\d*)+)?\\s+(\"(?:(?:\\\\\"|(?:(?!\")).)*)\"|'(?:(?:\\\\'|(?:(?!')).)*)'|[^\"'\\s]*)\\s*(\\S*.*)",
           "captures": {
             "1": {
               "name": "support.function.builtin.secondary-section.files.delete.opsi-script"
@@ -1299,7 +1275,7 @@
         },
         {
           "name": "meta.function.builtin.secondary-section.files.chmod.opsi-script",
-          "match": "\\b((?i)chmod)\\b\\s+([0-8]{3,4})\\s+(\"[^\"]*\"|'[^']*'|[^\"'\\s]*)\\s*(\\S*.*)",
+          "match": "\\b((?i)chmod)\\b\\s+([0-8]{3,4})\\s+(\"(?:(?:\\\\\"|(?:(?!\")).)*)\"|'(?:(?:\\\\'|(?:(?!')).)*)'|[^\"'\\s]*)\\s*(\\S*.*)",
           "captures": {
             "1": {
               "name": "support.function.builtin.secondary-section.files.chmod.opsi-script"
@@ -1322,7 +1298,7 @@
         },
         {
           "name": "meta.function.builtin.secondary-section.files.link-move-zip.opsi-script",
-          "match": "(?i)\\b(hardlink|symlink|rename|move|zipfile|unzipfile)\\b\\s+(\"[^\"]*\"|'[^']*'|[^\"'\\s]*)\\s+(\"[^\"]*\"|'[^']*'|[^\"'\\s]*)\\s*(\\S*.*)",
+          "match": "(?i)\\b(hardlink|symlink|rename|move|zipfile|unzipfile)\\b\\s+(\"(?:(?:\\\\\"|(?:(?!\")).)*)\"|'(?:(?:\\\\'|(?:(?!')).)*)'|[^\"'\\s]*)\\s+(\"(?:(?:\\\\\"|(?:(?!\")).)*)\"|'(?:(?:\\\\'|(?:(?!')).)*)'|[^\"'\\s]*)\\s*(\\S*.*)",
           "captures": {
             "1": {
               "name": "support.function.builtin.secondary-section.files.link-move-zip.opsi-script"
@@ -1411,7 +1387,7 @@
         },
         {
           "name": "meta.function.builtin.secondary-section.registry.delete-var.opsi-script",
-          "match": "(?i)\\b(DeleteVar)\\b\\s+(\"[^\"]*\"|'[^']*'|[^\"'\\s]*)\\s*(\\S*.*)",
+          "match": "(?i)\\b(DeleteVar)\\b\\s+(\"(?:(?:\\\\\"|(?:(?!\")).)*)\"|'(?:(?:\\\\'|(?:(?!')).)*)'|[^\"'\\s]*)\\s*(\\S*.*)",
           "captures": {
             "1": {
               "name": "support.function.builtin.secondary-section.registry.delete-var.opsi-script"
@@ -1431,7 +1407,7 @@
         },
         {
           "name": "meta.function.builtin.secondary-section.registry.supp.opsi-script",
-          "match": "(?i)\\b(Supp)\\b\\s+(\"[^\"]*\"|'[^']*'|[^\"'\\s]*)\\s+(\\S)\\s+(\"[^\"]*\"|'[^']*'|[^\"'\\s]*)\\s*(\\S*.*)",
+          "match": "(?i)\\b(Supp)\\b\\s+(\"(?:(?:\\\\\"|(?:(?!\")).)*)\"|'(?:(?:\\\\'|(?:(?!')).)*)'|[^\"'\\s]*)\\s+(\\S)\\s+(\"(?:(?:\\\\\"|(?:(?!\")).)*)\"|'(?:(?:\\\\'|(?:(?!')).)*)'|[^\"'\\s]*)\\s*(\\S*.*)",
           "captures": {
             "1": {
               "name": "support.function.builtin.secondary-section.registry.supp.opsi-script"
@@ -1462,7 +1438,7 @@
         },
         {
           "name": "meta.function.builtin.secondary-section.registry.file.opsi-script",
-          "match": "(?i)\\b(GetMultiSZFromFile|SaveValueToFile)\\b\\s+(\"[^\"]*\"|'[^']*'|[^\"'\\s]*)\\s+(\"[^\"]*\"|'[^']*'|[^\"'\\s]*)\\s*(\\S*.*)",
+          "match": "(?i)\\b(GetMultiSZFromFile|SaveValueToFile)\\b\\s+(\"(?:(?:\\\\\"|(?:(?!\")).)*)\"|'(?:(?:\\\\'|(?:(?!')).)*)'|[^\"'\\s]*)\\s+(\"(?:(?:\\\\\"|(?:(?!\")).)*)\"|'(?:(?:\\\\'|(?:(?!')).)*)'|[^\"'\\s]*)\\s*(\\S*.*)",
           "captures": {
             "1": {
               "name": "support.function.builtin.secondary-section.registry.file.opsi-script"

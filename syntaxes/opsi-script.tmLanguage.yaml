@@ -3,6 +3,13 @@
 # https://github.com/microsoft/vscode/tree/main/extensions/markdown-basics
 #
 # npx js-yaml syntaxes/opsi-script.tmLanguage.yaml > syntaxes/opsi-script.tmLanguage.json
+#
+# "(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*
+# matches:
+#  "double quote (\") string"
+#  'single quote (\') string'
+#  string_without_quotes_and_whitespace
+
 
 scopeName: source.opsi-script
 name: opsi-script
@@ -80,7 +87,7 @@ repository:
   literal-variable:
     patterns:
     - name: variable.other.dollar.opsi-script
-      match: '(\$)[$\w]+(\$)'
+      match: '(\$)[$\w-]+(\$)'
       captures:
         '1': {name: punctuation.dollar.opsi-script}
         '2': {name: punctuation.dollar.opsi-script}
@@ -198,33 +205,30 @@ repository:
   primary-section-function-shellcall:
     patterns:
     - name: meta.function.shellcall.opsi-script
-      # ("[^"]*"|'[^']*'|[^"'\s]*)
-      match: (?i)\b(shellCall)\s*\(\s*(["'])(.*)(["'])\s*\)
+      match: (?i)\b(shellCall)\s*\(\s*(["'].*["'])\s*\)
       captures:
         '1': {name: support.function.builtin.shellcall.opsi-script}
-        '2': {name: punctuation.definition.string.begin.opsi-script}
-        '3':
+        '2':
           name: meta.embedded.block.shellscript
           patterns:
-          - include: '#literal-constant'
-          - include: '#literal-variable'
-          - include: source.shell
-        '4': {name: punctuation.definition.string.end.opsi-script}
+          - include: '#primary-section-string'
+          #- include: '#literal-constant'
+          #- include: '#literal-variable'
+          #- include: source.shell
 
   primary-section-function-powershellcall:
     patterns:
     - name: meta.function.powershellcall.opsi-script
-      match: (?i)\b(powershellcall)\s*\(\s*(["'])(.*)(["'])\s*\)
+      match: (?i)\b(powershellcall)\s*\(\s*(["'].*["'])\s*\)
       captures:
         '1': {name: support.function.builtin.powershell.opsi-script}
-        '2': {name: punctuation.definition.string.begin.opsi-script}
-        '3':
+        '2':
           name: meta.embedded.block.powershell
           patterns:
-          - include: '#literal-constant'
-          - include: '#literal-variable'
-          - include: source.powershell
-        '4': {name: punctuation.definition.string.end.opsi-script}
+          - include: '#primary-section-string'
+          #- include: '#literal-constant'
+          #- include: '#literal-variable'
+          #- include: source.powershell
 
   primary-section-function-registry:
     patterns:
@@ -647,7 +651,7 @@ repository:
       match: (?i)\b(SourcePath|checkTargetPath)\b
 
     - name: meta.function.builtin.secondary-section.files.copy.opsi-script
-      match: \b((?i)copy)\b(\s+-[seVvduxwncrh]+)?\s+("[^"]*"|'[^']*'|[^"'\s]*)\s+("[^"]*"|'[^']*'|[^"'\s]*)\s*(\S*.*)
+      match: \b((?i)copy)\b(\s+-[seVvduxwncrh]+)?\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s*(\S*.*)
       captures:
         '1': {name: support.function.builtin.secondary-section.files.copy.opsi-script}
         '2': {name: constant.character.secondary-section.files.copy.arguments.opsi-script}
@@ -662,7 +666,7 @@ repository:
         '5': {name: invalid.illegal.arguments.opsi-script}
 
     - name: meta.function.builtin.secondary-section.files.delete.opsi-script
-      match: \b((?i)Del(?:ete)?)\b(\s+-(?:s|f|c|d\d*)+)?\s+("[^"]*"|'[^']*'|[^"'\s]*)\s*(\S*.*)
+      match: \b((?i)Del(?:ete)?)\b(\s+-(?:s|f|c|d\d*)+)?\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s*(\S*.*)
       captures:
         '1': {name: support.function.builtin.secondary-section.files.delete.opsi-script}
         '2': {name: constant.character.secondary-section.files.delete.arguments.opsi-script}
@@ -673,7 +677,7 @@ repository:
         '4': {name: invalid.illegal.arguments.opsi-script}
 
     - name: meta.function.builtin.secondary-section.files.chmod.opsi-script
-      match: \b((?i)chmod)\b\s+([0-8]{3,4})\s+("[^"]*"|'[^']*'|[^"'\s]*)\s*(\S*.*)
+      match: \b((?i)chmod)\b\s+([0-8]{3,4})\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s*(\S*.*)
       captures:
         '1': {name: support.function.builtin.secondary-section.files.chmod.opsi-script}
         '2': {name: constant.character.secondary-section.files.chmod.mask.opsi-script}
@@ -684,7 +688,7 @@ repository:
         '4': {name: invalid.illegal.arguments.opsi-script}
 
     - name: meta.function.builtin.secondary-section.files.link-move-zip.opsi-script
-      match: (?i)\b(hardlink|symlink|rename|move|zipfile|unzipfile)\b\s+("[^"]*"|'[^']*'|[^"'\s]*)\s+("[^"]*"|'[^']*'|[^"'\s]*)\s*(\S*.*)
+      match: (?i)\b(hardlink|symlink|rename|move|zipfile|unzipfile)\b\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s*(\S*.*)
       captures:
         '1': {name: support.function.builtin.secondary-section.files.link-move-zip.opsi-script}
         '2':
@@ -730,7 +734,7 @@ repository:
           - include: '#secondary-section-string'
 
     - name: meta.function.builtin.secondary-section.registry.delete-var.opsi-script
-      match: (?i)\b(DeleteVar)\b\s+("[^"]*"|'[^']*'|[^"'\s]*)\s*(\S*.*)
+      match: (?i)\b(DeleteVar)\b\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s*(\S*.*)
       captures:
         '1': {name: support.function.builtin.secondary-section.registry.delete-var.opsi-script}
         '2':
@@ -740,7 +744,7 @@ repository:
         '3': {name: invalid.illegal.arguments.opsi-script}
 
     - name: meta.function.builtin.secondary-section.registry.supp.opsi-script
-      match: (?i)\b(Supp)\b\s+("[^"]*"|'[^']*'|[^"'\s]*)\s+(\S)\s+("[^"]*"|'[^']*'|[^"'\s]*)\s*(\S*.*)
+      match: (?i)\b(Supp)\b\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s+(\S)\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s*(\S*.*)
       captures:
         '1': {name: support.function.builtin.secondary-section.registry.supp.opsi-script}
         '2':
@@ -755,7 +759,7 @@ repository:
         '5': {name: invalid.illegal.arguments.opsi-script}
 
     - name: meta.function.builtin.secondary-section.registry.file.opsi-script
-      match: (?i)\b(GetMultiSZFromFile|SaveValueToFile)\b\s+("[^"]*"|'[^']*'|[^"'\s]*)\s+("[^"]*"|'[^']*'|[^"'\s]*)\s*(\S*.*)
+      match: (?i)\b(GetMultiSZFromFile|SaveValueToFile)\b\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s*(\S*.*)
       captures:
         '1': {name: support.function.builtin.secondary-section.registry.file.opsi-script}
         '2':
