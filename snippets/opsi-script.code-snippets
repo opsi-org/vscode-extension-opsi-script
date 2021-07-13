@@ -1,8 +1,38 @@
 {
-	"Insert PatchTextFile": {
-		"prefix": "[PatchTextFile",
+	"Insert Registry section": {
+		"prefix": "[Registry",
+		"body": [
+			"; https://download.uib.de/opsi_stable/doc/html/opsi-winst-manual/opsi-winst-manual.html#opsi-script-rc-registry",
+			"[Registry_snippet]",
+			"DeleteKey [\"HKLM\\Software\\\\\\$test$\"]",
+			"OpenKey [\"HKLM\\Software\\\\\\$test$\"]",
+			"Set \"var1\" = REG_SZ:\"my string\"",
+			"Set \"var2\" = REG_DWORD:123",
+			""
+		]
+	},
+	"Insert LinkFolder section": {
+		"prefix": "[LinkFolder",
 		"body": [
 			"; https://download.uib.de/opsi_stable/doc/html/opsi-winst-manual/opsi-winst-manual.html#opsi-script-rc-patchtextfile",
+			"[LinkFolder_snippet]",
+			"set_basefolder common_startmenu",
+			"set_subfolder \"My program folder\"",
+			"set_link",
+			"\tname:        \"My program\"",
+			"\ttarget:      \"$InstallDir$\\myprog.exe\"",
+			"\tparameters:  /param",
+			"\tworking_dir: \"$InstallDir$\"",
+			"\ticon_file:   \"$InstallDir$\\myprog.exe\"",
+			"\ticon_index:  0",
+			"end_link",
+			""
+		]
+	},
+	"Insert PatchTextFile section": {
+		"prefix": "[PatchTextFile",
+		"body": [
+			"; https://download.uib.de/opsi_stable/doc/html/opsi-winst-manual/opsi-winst-manual.html#opsi-script-rc-LinkFolder",
 			"[PatchTextFile_snippet]",
 			"FindLine_Containing 'config-value = 10'",
 			"DeleteTheLine",
