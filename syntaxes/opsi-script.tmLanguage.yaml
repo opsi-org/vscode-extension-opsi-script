@@ -190,7 +190,7 @@ repository:
      - name: support.function.builtin.regex.opsi-script
        match: (?i)\b(isRegexMatch|getSubListByContainingRegex|getRegexMatchList|removeFromListByContainingRegex|stringReplaceRegex|stringReplaceRegexInList)\b
      - name: support.function.builtin.win-registry.opsi-script
-       match: (?i)\b(getRegistryValue|GetRegistrystringvalue|GetRegistryStringValue32|GetRegistryStringValue64|GetRegistryStringValueSysNative|getRegistryKeyList32|getRegistryKeyList64|getRegistryKeyListSysnative|getRegistryVarList32|getRegistryVarList64|getRegistryVarListSysnative|getRegistryVarMap32|getRegistryVarMap64|getRegistryVarMapSysnative|RegKeyExists|RegVarExists)\b
+       match: (?i)\b(getRegistryValue|GetRegistryStringValue|GetRegistryStringValue32|GetRegistryStringValue64|GetRegistryStringValueSysNative|getRegistryKeyList32|getRegistryKeyList64|getRegistryKeyListSysnative|getRegistryVarList32|getRegistryVarList64|getRegistryVarListSysnative|getRegistryVarMap32|getRegistryVarMap64|getRegistryVarMapSysnative|RegKeyExists|RegVarExists)\b
      - name: support.function.builtin.string-handling.opsi-script
        match: (?i)\b(splitString|splitStringOnWhiteSpace|getIndexFromListByContaining|contains|isNumber|trim|lower|upper|unquote|unquote2|stringReplace|strLength|strPos|strPart|getValue|getValueBySeparator|getValueFromFile|getValueFromFileBySeparator|EscapeString)\b
      - name: support.function.builtin.stringlist-handling.opsi-script
@@ -250,7 +250,7 @@ repository:
   primary-section-keyword-storage:
     patterns:
     - name: storage.type.opsi-script
-      match: (?i)(?<!\.)\b(DefVar|DefStringList|Set)\b
+      match: (?i)\b(DefVar|DefStringList|Set)\b
 
   primary-section-keywords:
     patterns:
