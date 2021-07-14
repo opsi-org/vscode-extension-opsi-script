@@ -102,34 +102,34 @@ repository:
   primary-sections:
     patterns:
     - name: meta.primary-section.initial.opsi-script
-      begin: (?i)^(\[)(Initial)(\])
+      begin: (?i)^\s*(\[)(Initial)(\])
       beginCaptures:
         '2': {name: entity.name.type.primary-section.opsi-script}
-      while: ^(?!\[.*\]$)
+      while: ^(?!\s*\[.*\]$)
       patterns:
       - include: '#primary-section'
     - name: meta.primary-section.actions.opsi-script
-      begin: (?i)^(\[)(Actions|Aktionen)(\])
+      begin: (?i)^\s*(\[)(Actions|Aktionen)(\])
       beginCaptures:
         #'1': {name: keyword.other.section-bracket-open.opsi-script}
         #'2': {name: entity.name.function.opsi-script}
         '2': {name: entity.name.type.primary-section.opsi-script}
         #'3': {name: keyword.other.section-bracket-close.opsi-script}
-      while: ^(?!\[.*\]$)
+      while: ^(?!\s*\[.*\]$)
       patterns:
       - include: '#primary-section'
     - name: meta.primary-section.sub.opsi-script
-      begin: (?i)^(\[)(Sub\S+)(\])
+      begin: (?i)^\s*(\[)(Sub\S+)(\])
       beginCaptures:
         '2': {name: entity.name.type.primary-section.opsi-script}
-      while: ^(?!\[.*\]$)
+      while: ^(?!\s*\[.*\]$)
       patterns:
       - include: '#primary-section'
     - name: meta.primary-section.profile-actions.opsi-script
-      begin: (?i)^(\[)(ProfileActions)(\])
+      begin: (?i)^\s*(\[)(ProfileActions)(\])
       beginCaptures:
         '2': {name: entity.name.type.primary-section.opsi-script}
-      while: ^(?!\[.*\]$)
+      while: ^(?!\s*\[.*\]$)
       patterns:
       - include: '#primary-section'
 
@@ -544,67 +544,67 @@ repository:
     patterns:
 
     - name: meta.secondary-section.shell-batch.opsi-script
-      begin: (?i)^(\[)(ShellBatch[^\]]+|ShellInAnIcon[^\]]+)(\])
+      begin: (?i)^\s*(\[)(ShellBatch[^\]]+|ShellInAnIcon[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-shell-batch.opsi-script}
-      while: ^(?!\[.*\]$)
+      while: ^(?!\s*\[.*\]$)
       contentName: meta.embedded.block.shellscript
       patterns:
       - include: '#secondary-section'
       - include: source.shell
 
     - name: meta.secondary-section.dos-batch.opsi-script
-      begin: (?i)^(\[)(DosBatch[^\]]+|DosInAnIcon[^\]]+)(\])
+      begin: (?i)^\s*(\[)(DosBatch[^\]]+|DosInAnIcon[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-dos-batch.opsi-script}
-      while: ^(?!\[.*\]$)
+      while: ^(?!\s*\[.*\]$)
       contentName: meta.embedded.block.dosbatch
       patterns:
       - include: '#secondary-section'
       - include: source.batchfile
 
     - name: meta.secondary-section.exec-with-powershell.opsi-script
-      begin: (?i)^(\[)(ExecWith[^\]]*powershell[^\]]*)(\])
+      begin: (?i)^\s*(\[)(ExecWith[^\]]*powershell[^\]]*)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-exec-with-powershell.opsi-script}
-      while: ^(?!\[.*\]$)
+      while: ^(?!\s*\[.*\]$)
       contentName: meta.embedded.block.powershell
       patterns:
       - include: '#secondary-section'
       - include: source.powershell
 
     - name: meta.secondary-section.exec-with-general.opsi-script
-      begin: (?i)^(\[)(ExecWith[^\]]+)(\])
+      begin: (?i)^\s*(\[)(ExecWith[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-exec-with-general.opsi-script}
-      while: ^(?!\[.*\]$)
+      while: ^(?!\s*\[.*\]$)
       contentName: meta.embedded.block.general.opsi-script
       patterns:
       - include: '#secondary-section'
 
     - name: meta.secondary-section.files.opsi-script
-      begin: (?i)^(\[)(Files[^\]]+)(\])
+      begin: (?i)^\s*(\[)(Files[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-files.opsi-script}
-      while: ^(?!\[.*\]$)
+      while: ^(?!\s*\[.*\]$)
       patterns:
       - include: '#secondary-section'
       - include: '#secondary-section-files'
 
     - name: meta.secondary-section.registry.opsi-script
-      begin: (?i)^(\[)(Registry[^\]]+)(\])
+      begin: (?i)^\s*(\[)(Registry[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-registry.opsi-script}
-      while: ^(?!\[.*\]$)
+      while: ^(?!\s*\[.*\]$)
       patterns:
       - include: '#secondary-section'
       - include: '#secondary-section-registry'
 
     - name: meta.secondary-section.patch-text-file.opsi-script
-      begin: (?i)^(\[)(PatchTextFile[^\]]+)(\])
+      begin: (?i)^\s*(\[)(PatchTextFile[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-patch-text-file.opsi-script}
-      while: ^(?!\[.*\]$)
+      while: ^(?!\s*\[.*\]$)
       patterns:
       - include: '#secondary-section'
       - include: '#secondary-section-patch-text-file'
