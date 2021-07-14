@@ -1,16 +1,4 @@
 {
-	"Insert Registry section": {
-		"prefix": "[Registry",
-		"body": [
-			"; https://download.uib.de/opsi_stable/doc/html/opsi-winst-manual/opsi-winst-manual.html#opsi-script-rc-registry",
-			"[Registry_snippet]",
-			"DeleteKey [\"HKLM\\Software\\\\\\$test$\"]",
-			"OpenKey [\"HKLM\\Software\\\\\\$test$\"]",
-			"Set \"var1\" = REG_SZ:\"my string\"",
-			"Set \"var2\" = REG_DWORD:123",
-			""
-		]
-	},
 	"Insert LinkFolder section": {
 		"prefix": "[LinkFolder",
 		"body": [
