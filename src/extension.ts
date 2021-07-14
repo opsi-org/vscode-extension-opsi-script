@@ -58,8 +58,8 @@ export function activate(context: vscode.ExtensionContext) {
 				if (!pattern["match"]) continue;
 				for (let name of pattern["match"].replace(/.+\(%\)\(/, '').replace(/\)\(%\).*/, '').split('|')) {
 					let startChar = null;
-					if (position.character > 0) {
-						startChar = document.lineAt(position).text.substr(position.character-2, position.character-1);
+					if (position.character > 1) {
+						startChar = document.lineAt(position).text.substr(position.character-2, 1);
 					}
 					let completion = new vscode.CompletionItem(`%${name}%`);
 					if (startChar == "%") {
