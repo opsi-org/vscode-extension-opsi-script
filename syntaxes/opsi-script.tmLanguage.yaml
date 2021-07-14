@@ -83,7 +83,6 @@ repository:
     - name: constant.language.builtin.service-data.opsi-script
       match: '(?i)(%)(HostID|opsiserviceURL|opsiServer|opsiDepotId|opsiserviceUser|opsiservicePassword|installingProdName|installingProdVersion|installingProduct)(%)'
 
-
   literal-variable:
     patterns:
     - name: variable.other.dollar.opsi-script
@@ -701,8 +700,14 @@ repository:
           - include: '#secondary-section-string'
         '4': {name: invalid.illegal.arguments.opsi-script}
 
+  secondary-section-registry-constants:
+    patterns:
+    - name: constant.language.builtin.registry-type.opsi-script
+      match: '(?i)\b(REG_SZ|REG_EXPAND_SZ|REG_DWORD|REG_BINARY|REG_MULTI_SZ)'
+
   secondary-section-registry:
     patterns:
+    - include: '#secondary-section-registry-constants'
 
     - name: meta.function.builtin.secondary-section.registry.flush-key.opsi-script
       match: (?i)\b(FlushKey)\b

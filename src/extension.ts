@@ -31,12 +31,13 @@ export function activate(context: vscode.ExtensionContext) {
 			token: vscode.CancellationToken,
 			context: vscode.CompletionContext
 		) {
-			let completions = [];
+			let completions:vscode.CompletionItem[] = [];
+			let labels:string[] = [];
 
-			var secondarySectionType = null;
+			let secondarySectionType = null;
 			let range = new vscode.Range(0, 0, document.lineAt(position).lineNumber, 0);
 			let text = document.getText(range);
-			var matches = text.match(/^\s*\[[^\]]+\]\s*$/gm);
+			let matches = text.match(/^\s*\[[^\]]+\]\s*$/gm);
 
 			if (matches) {
 				let section = matches[matches.length-1].trim().toLowerCase().replace(/[\[\]]/g, "");
@@ -57,11 +58,13 @@ export function activate(context: vscode.ExtensionContext) {
 			for (let pattern of tmLang["repository"]["literal-constant"]["patterns"]) {
 				if (!pattern["match"]) continue;
 				for (let name of pattern["match"].replace(/.+\(%\)\(/, '').replace(/\)\(%\).*/, '').split('|')) {
+					if (labels.includes(name)) continue;
+					labels.push(name);
 					let startChar = null;
 					if (position.character > 1) {
 						startChar = document.lineAt(position).text.substr(position.character-2, 1);
 					}
-					let completion = new vscode.CompletionItem(`%${name}%`);
+					let completion = new vscode.CompletionItem(`%${name}%`, vscode.CompletionItemKind.Constant);
 					if (startChar == "%") {
 						completion.insertText = `${name}%`;
 					}
@@ -72,11 +75,15 @@ export function activate(context: vscode.ExtensionContext) {
 				}
 			}
 
-			let functionEntries = [];
-			let keywordEntries = [];
+			let entries: { [kind: string]: string[] } = {
+				Function: [],
+				Constant: [],
+				Keyword: []
+			};
+
 			if (!secondarySectionType) {
 				// In primary section
-				let completion = new vscode.CompletionItem("[Registry_<identifier>]");
+				let completion = new vscode.CompletionItem("[Registry_<identifier>]", vscode.CompletionItemKind.Snippet);
 				completion.insertText = new vscode.SnippetString(
 					'[Registry_${1}]\nOpenKey ["HKLM\\Software"]\nSet "var" = REG_DWORD:1\n'
 				);
@@ -85,29 +92,30 @@ export function activate(context: vscode.ExtensionContext) {
 				];
 				completions.push(completion);
 
-				functionEntries.push("primary-section-functions");
-				keywordEntries.push("primary-section-keyword-storage");
+				entries.Function.push("primary-section-functions");
+				entries.Keyword.push("primary-section-keyword-storage");
 			}
 			else if (secondarySectionType == "registry") {
-				functionEntries.push("secondary-section-registry");
+				entries.Function.push("secondary-section-registry");
+				entries.Constant.push("secondary-section-registry-constants");
 			}
 
-			for (let functionEntry of functionEntries) {
-				for (let pattern of tmLang["repository"][functionEntry]["patterns"]) {
-					if (!pattern["match"]) continue;
-					for (let name of pattern["match"].replace(/^.+\\b\(/, '').replace(/\).*/, '').split('|')) {
-						let completion = new vscode.CompletionItem(name);
-						//completion.insertText = new vscode.SnippetString(name + '("${1}")');
-						completions.push(completion);
-					}
-				}
-			}
-			for (let keywordEntry of keywordEntries) {
-				for (let pattern of tmLang["repository"][keywordEntry]["patterns"]) {
-					if (!pattern["match"]) continue;
-					for (let name of pattern["match"].replace(/^.+\\b\(/, '').replace(/\).*/, '').split('|')) {
-						let completion = new vscode.CompletionItem(name);
-						completions.push(completion);
+			for (let kindName in entries) {
+				let kind;
+				if (kindName == "Function") kind = vscode.CompletionItemKind.Function;
+				else if (kindName == "Constant") kind = vscode.CompletionItemKind.Constant;
+				else if (kindName == "Keyword") kind = vscode.CompletionItemKind.Keyword;
+
+				for (let entry of entries[kindName]) {
+					for (let pattern of tmLang["repository"][entry]["patterns"]) {
+						if (!pattern["match"]) continue;
+						for (let name of pattern["match"].replace(/^.+\\b\(/, '').replace(/\).*/, '').split('|')) {
+							if (labels.includes(name)) continue;
+							labels.push(name);
+							let completion = new vscode.CompletionItem(name, kind);
+							//completion.insertText = new vscode.SnippetString(name + '("${1}")');
+							completions.push(completion);
+						}
 					}
 				}
 			}
