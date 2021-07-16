@@ -46,7 +46,10 @@ export function activate(context: vscode.ExtensionContext) {
 				}
 				else {
 					secondarySectionType = "unhandled";
-					for (let secType of ["files", "registry", "patches", "patchtextfile", "linkfolder", "opsiservicecall"]) {
+					for (let secType of [
+						"files", "registry", "patches", "patchtextfile", "linkfolder",
+						"opsiservicecall", "patchhost", "xml2", "ldapsearch"
+					]) {
 						if (section.startsWith(secType)) {
 							secondarySectionType = secType;
 							break;
@@ -65,6 +68,7 @@ export function activate(context: vscode.ExtensionContext) {
 						startChar = document.lineAt(position).text.substr(position.character-2, 1);
 					}
 					let completion = new vscode.CompletionItem(`%${name}%`, vscode.CompletionItemKind.Constant);
+					completion.sortText = `4_${name}%`
 					if (startChar == "%") {
 						completion.insertText = `${name}%`;
 					}
@@ -116,12 +120,33 @@ export function activate(context: vscode.ExtensionContext) {
 				entries.Function.push("secondary-section-opsi-service-call");
 				entries.Constant.push("secondary-section-opsi-service-call-constants");
 			}
+			else if (secondarySectionType == "patchhost") {
+				entries.Function.push("secondary-section-patch-host");
+			}
+			else if (secondarySectionType == "xml2") {
+				entries.Function.push("secondary-section-xml2");
+				entries.Constant.push("secondary-section-xml2-constants");
+			}
+			else if (secondarySectionType == "ldapsearch") {
+				entries.Function.push("secondary-section-ldap-search");
+				entries.Keyword.push("secondary-section-ldap-search-keywords");
+			}
 
 			for (let kindName in entries) {
 				let kind;
-				if (kindName == "Function") kind = vscode.CompletionItemKind.Function;
-				else if (kindName == "Constant") kind = vscode.CompletionItemKind.Constant;
-				else if (kindName == "Keyword") kind = vscode.CompletionItemKind.Keyword;
+				let sortPrefix = "";
+				if (kindName == "Function") {
+					kind = vscode.CompletionItemKind.Function;
+					sortPrefix = "1_";
+				}
+				else if (kindName == "Keyword") {
+					kind = vscode.CompletionItemKind.Keyword;
+					sortPrefix = "2_";
+				}
+				else if (kindName == "Constant") {
+					kind = vscode.CompletionItemKind.Constant;
+					sortPrefix = "3_";
+				}
 
 				for (let entry of entries[kindName]) {
 					//console.log(entry);
@@ -132,6 +157,7 @@ export function activate(context: vscode.ExtensionContext) {
 							if (labels.includes(name)) continue;
 							labels.push(name);
 							let completion = new vscode.CompletionItem(name, kind);
+							completion.sortText = `${sortPrefix}${name}`
 							//completion.insertText = new vscode.SnippetString(name + '("${1}")');
 							completions.push(completion);
 						}

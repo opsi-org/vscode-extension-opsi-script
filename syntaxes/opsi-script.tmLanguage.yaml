@@ -635,6 +635,43 @@ repository:
       - include: '#secondary-section'
       - include: '#secondary-section-opsi-service-call'
 
+    - name: meta.secondary-section.patch-host.opsi-script
+      begin: (?i)^\s*(\[)(PatchHost[^\]]+)(\])
+      beginCaptures:
+        '2': {name: entity.name.type.secondary-section-patch-host.opsi-script}
+      while: ^(?!\s*\[.*\]$)
+      patterns:
+      - include: '#secondary-section'
+      - include: '#secondary-section-patch-host'
+
+    - name: meta.secondary-section.xml2.opsi-script
+      begin: (?i)^\s*(\[)(XML2[^\]]+)(\])
+      beginCaptures:
+        '2': {name: entity.name.type.secondary-section-xml2.opsi-script}
+      while: ^(?!\s*\[.*\]$)
+      patterns:
+      - include: '#secondary-section'
+      - include: '#secondary-section-xml2'
+
+    - name: meta.secondary-section.exec-python.opsi-script
+      begin: (?i)^\s*(\[)(ExecPython[^\]]+)(\])
+      beginCaptures:
+        '2': {name: entity.name.type.secondary-section-exec-python.opsi-script}
+      while: ^(?!\s*\[.*\]$)
+      contentName: meta.embedded.block.python
+      patterns:
+      - include: '#secondary-section'
+      - include: source.python
+
+    - name: meta.secondary-section.ldap-search.opsi-script
+      begin: (?i)^\s*(\[)(LDAPSearch[^\]]+)(\])
+      beginCaptures:
+        '2': {name: entity.name.type.secondary-section-ldap-search.opsi-script}
+      while: ^(?!\s*\[.*\]$)
+      patterns:
+      - include: '#secondary-section'
+      - include: '#secondary-section-ldap-search'
+
   secondary-section:
     patterns:
     - include: '#comments'
@@ -848,13 +885,41 @@ repository:
 
   secondary-section-opsi-service-call-constants:
     patterns:
-    - name: constant.language.secondary-section.link-folder.predefined-virtual-system-folders-windows.opsi-script
+    - name: constant.language.secondary-section.opsi-service-call.opsi-script
       match: '(?i)\b("method":|"params":)'
 
   secondary-section-opsi-service-call:
     patterns:
       - include: "#secondary-section-opsi-service-call-constants"
 
+  secondary-section-patch-host:
+    patterns:
+    - name: support.function.secondary-section.patch-host.opsi-script
+      match: (?i)\b(SetAddr|SetName|SetAlias|DelAlias|DelHost|SetComment)\b
+
+  secondary-section-xml2-constants:
+    patterns:
+    - name: constant.language.secondary-section.xml2.opsi-script
+      match: '(?i)\b(true|false)'
+
+  secondary-section-xml2:
+    patterns:
+    - include: "#secondary-section-xml2-constants"
+
+    - name: support.variable.secondary-section.xml2.opsi-script
+      match: (?i)\b(strictMode)\b
+
+    - name: support.function.secondary-section.xml2.opsi-script
+      match: (?i)\b(OpenNode|SetAttribute|AddAttribute|DeleteAttribute|AddNewNode|SetNodeText|DeleteNode|GotoParentNode)\b
+
+  secondary-section-ldap-search-keywords:
+    patterns:
+    - name: keyword.other.secondary-section.ldap-search.opsi-script
+      match: '(?i)\b(targethost|targetport|user|password|dn|attributes|filter)'
+
+  secondary-section-ldap-search:
+    patterns:
+    - include: "#secondary-section-ldap-search-keywords"
 
 patterns:
   - include: '#core'
