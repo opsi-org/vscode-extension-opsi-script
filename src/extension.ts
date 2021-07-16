@@ -46,7 +46,7 @@ export function activate(context: vscode.ExtensionContext) {
 				}
 				else {
 					secondarySectionType = "unhandled";
-					for (let secType of ["files", "registry", "linkfolder"]) {
+					for (let secType of ["files", "registry", "patches", "patchtextfile", "linkfolder", "opsiservicecall"]) {
 						if (section.startsWith(secType)) {
 							secondarySectionType = secType;
 							break;
@@ -100,10 +100,21 @@ export function activate(context: vscode.ExtensionContext) {
 				entries.Function.push("secondary-section-registry");
 				entries.Constant.push("secondary-section-registry-constants");
 			}
+			else if (secondarySectionType == "patches") {
+				entries.Function.push("secondary-section-patches");
+			}
+			else if (secondarySectionType == "patchtextfile") {
+				entries.Function.push("secondary-section-patch-text-file");
+				entries.Constant.push("secondary-section-patch-text-file-constants");
+			}
 			else if (secondarySectionType == "linkfolder") {
 				entries.Function.push("secondary-section-link-folder");
 				entries.Constant.push("secondary-section-link-folder-constants");
 				entries.Keyword.push("secondary-section-link-folder-attributes");
+			}
+			else if (secondarySectionType == "opsiservicecall") {
+				entries.Function.push("secondary-section-opsi-service-call");
+				entries.Constant.push("secondary-section-opsi-service-call-constants");
 			}
 
 			for (let kindName in entries) {

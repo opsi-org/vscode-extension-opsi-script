@@ -599,6 +599,15 @@ repository:
       - include: '#secondary-section'
       - include: '#secondary-section-registry'
 
+    - name: meta.secondary-section.patches.opsi-script
+      begin: (?i)^\s*(\[)(Patches[^\]]+)(\])
+      beginCaptures:
+        '2': {name: entity.name.type.secondary-section-patches.opsi-script}
+      while: ^(?!\s*\[.*\]$)
+      patterns:
+      - include: '#secondary-section'
+      - include: '#secondary-section-patches'
+
     - name: meta.secondary-section.patch-text-file.opsi-script
       begin: (?i)^\s*(\[)(PatchTextFile[^\]]+)(\])
       beginCaptures:
@@ -616,6 +625,15 @@ repository:
       patterns:
       - include: '#secondary-section'
       - include: '#secondary-section-link-folder'
+
+    - name: meta.secondary-section.opsi-service-call.opsi-script
+      begin: (?i)^\s*(\[)(OpsiServiceCall[^\]]+)(\])
+      beginCaptures:
+        '2': {name: entity.name.type.secondary-section-opsi-service-call.opsi-script}
+      while: ^(?!\s*\[.*\]$)
+      patterns:
+      - include: '#secondary-section'
+      - include: '#secondary-section-opsi-service-call'
 
   secondary-section:
     patterns:
@@ -786,6 +804,26 @@ repository:
           - include: '#secondary-section-string'
         '4': {name: invalid.illegal.arguments.opsi-script}
 
+  secondary-section-patches:
+    patterns:
+    - name: support.function.secondary-section.patches.opsi-script
+      match: (?i)\b(Add|Set|AddNew|Del|DelSec|Replace)\b
+
+  secondary-section-patch-text-file-constants:
+    patterns:
+    - name: constant.language.secondary-section.patch-text-file.mozilla-preference-types.opsi-script
+      match: '(?i)\b(pref|user_pref|lock_pref|lockPref)'
+
+  secondary-section-patch-text-file:
+    patterns:
+    - include: "#secondary-section-patch-text-file-constants"
+
+    - name: support.function.secondary-section.patch-text-file.mozilla.opsi-script
+      match: (?i)\b(AddStringListElement_To_Mozilla_Pref|Set_Netscape_User_Pref|AddstringListElement_To_Netscape_User_Pref)\b
+
+    - name: support.function.secondary-section.patch-text-file.opsi-script
+      match: (?i)\b(FindLine|FindLine_StartingWith|FindLine_Containing|GoToTop|AdvanceLine|GoToBottom|DeleteTheLine|AddLine_|Add_Line_|InsertLine|AppendLine|Append_Line|Append_File|Subtract_File|SaveToFile|Sorted|setKeyValueSeparator|setValueByKey)\b
+
   secondary-section-link-folder-constants:
     patterns:
     - name: constant.language.secondary-section.link-folder.predefined-virtual-system-folders-windows.opsi-script
@@ -808,10 +846,15 @@ repository:
     - name: support.function.secondary-section.link-folder.opsi-script
       match: (?i)\b(set_basefolder|set_subfolder|set_link|end_link|delete_element|delete_subfolder)\b
 
-  secondary-section-patch-text-file:
+  secondary-section-opsi-service-call-constants:
     patterns:
-    - name: support.function.secondary-section.patchtextfile.opsi-script
-      match: (?i)\b(FindLine_Containing|DeleteTheLine|InsertLine)\b
+    - name: constant.language.secondary-section.link-folder.predefined-virtual-system-folders-windows.opsi-script
+      match: '(?i)\b("method":|"params":)'
+
+  secondary-section-opsi-service-call:
+    patterns:
+      - include: "#secondary-section-opsi-service-call-constants"
+
 
 patterns:
   - include: '#core'

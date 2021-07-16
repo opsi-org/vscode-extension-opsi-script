@@ -14,3 +14,5 @@
 - Debug Syntax Highlighting: <F1> "Developer: Inspect Editor Tokens and Scopes"
 - Package extension: `vsce package`
 
+# ToDo
+- OpsiServiceCall call parameters (/interactive, /opsiclientd, ...)
