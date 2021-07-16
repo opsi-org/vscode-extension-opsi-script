@@ -46,7 +46,7 @@ export function activate(context: vscode.ExtensionContext) {
 				}
 				else {
 					secondarySectionType = "unhandled";
-					for (let secType of ["files", "registry"]) {
+					for (let secType of ["files", "registry", "linkfolder"]) {
 						if (section.startsWith(secType)) {
 							secondarySectionType = secType;
 							break;
@@ -81,6 +81,7 @@ export function activate(context: vscode.ExtensionContext) {
 				Keyword: []
 			};
 
+			console.log(`secondarySectionType: ${secondarySectionType}`)
 			if (!secondarySectionType) {
 				// In primary section
 				let completion = new vscode.CompletionItem("[Registry_<identifier>]", vscode.CompletionItemKind.Snippet);
@@ -99,6 +100,11 @@ export function activate(context: vscode.ExtensionContext) {
 				entries.Function.push("secondary-section-registry");
 				entries.Constant.push("secondary-section-registry-constants");
 			}
+			else if (secondarySectionType == "linkfolder") {
+				entries.Function.push("secondary-section-link-folder");
+				entries.Constant.push("secondary-section-link-folder-constants");
+				entries.Keyword.push("secondary-section-link-folder-attributes");
+			}
 
 			for (let kindName in entries) {
 				let kind;
@@ -107,7 +113,9 @@ export function activate(context: vscode.ExtensionContext) {
 				else if (kindName == "Keyword") kind = vscode.CompletionItemKind.Keyword;
 
 				for (let entry of entries[kindName]) {
+					//console.log(entry);
 					for (let pattern of tmLang["repository"][entry]["patterns"]) {
+						//console.log(pattern);
 						if (!pattern["match"]) continue;
 						for (let name of pattern["match"].replace(/^.+\\b\(/, '').replace(/\).*/, '').split('|')) {
 							if (labels.includes(name)) continue;

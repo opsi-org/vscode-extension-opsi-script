@@ -11,5 +11,6 @@
 - Convert TextMate yaml to json: `js-yaml syntaxes/opsi-script.tmLanguage.yaml > syntaxes/opsi-script.tmLanguage.json`
 - Compile extension code: `tsc -p ./`
 - Debug: <F5>
+- Debug Syntax Highlighting: <F1> "Developer: Inspect Editor Tokens and Scopes"
 - Package extension: `vsce package`
 

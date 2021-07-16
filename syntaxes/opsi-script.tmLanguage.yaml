@@ -61,26 +61,26 @@ repository:
 
   literal-constant:
     patterns:
-    - name: constant.language.builtin.win-system-directories.opsi-script
+    - name: constant.language.win-system-directories.opsi-script
       match: '(?i)(%)(ProgramFilesDir|ProgramFiles32Dir|ProgramFiles64Dir|ProgramFilesSysnativeDir|Systemroot|System|Systemdrive|ProfileDir)(%)'
       #captures:
       #  '1': {name: punctuation.percent.opsi-script}
       #  '2': {name: punctuation.percent.opsi-script}
-    - name: constant.language.builtin.win-common-user.opsi-script
+    - name: constant.language.win-common-user.opsi-script
       match: '(?i)(%)(AllUsersProfileDir|CommonProfileDir|CommonStartMenuPath|CommonStartmenuDir|CommonAppdataDir|CommonDesktopDir|CommonStartupDir|CommonProgramsDir)(%)'
-    - name: constant.language.builtin.win-default-user.opsi-script
+    - name: constant.language.win-default-user.opsi-script
       match: '(?i)(%)(DefaultUserProfileDir)(%)'
-    - name: constant.language.builtin.win-current-user.opsi-script
+    - name: constant.language.win-current-user.opsi-script
       match: '(?i)(%)(AppdataDir|CurrentAppdataDir|CurrentStartmenuDir|CurrentDesktopDir|CurrentStartupDir|CurrentProgramsDir|CurrentSendToDir|CurrentProfileDir)(%)'
-    - name: constant.language.builtin.win-all-nt-user-profiles.opsi-script
+    - name: constant.language.win-all-nt-user-profiles.opsi-script
       match: '(?i)(%)(UserProfileDir|CurrentProfileDir)(%)'
-    - name: constant.language.builtin.win-all-nt-user-profiles.opsi-script
+    - name: constant.language.win-all-nt-user-profiles.opsi-script
       match: '(?i)(%)(UserProfileDir|CurrentProfileDir)(%)'
-    - name: constant.language.builtin.opsi-script-path.opsi-script
+    - name: constant.language.opsi-script-path.opsi-script
       match: '(?i)(%)(ScriptPath|ScriptDir|ScriptDrive|OpsiscriptDir|WinstDir|OpsiscriptVersion|WinstVersion|Logfile|opsiScriptHelperPath|opsiTmpDir|opsiLogDir|opsidata|opsiapplog)(%)'
-    - name: constant.language.builtin.network-info.opsi-script
+    - name: constant.language.network-info.opsi-script
       match: '(?i)(%)(Host|PCName|Username|IPName|IPAddress)(%)'
-    - name: constant.language.builtin.service-data.opsi-script
+    - name: constant.language.service-data.opsi-script
       match: '(?i)(%)(HostID|opsiserviceURL|opsiServer|opsiDepotId|opsiserviceUser|opsiservicePassword|installingProdName|installingProdVersion|installingProduct)(%)'
 
   literal-variable:
@@ -139,66 +139,66 @@ repository:
      - include: '#primary-section-function-registry'
      - name: invalid.deprecated.opsi-script
        match: (?i)\b(LogLevel)\b
-     - name: support.function.builtin.sub-call.opsi-script
+     - name: support.function.sub-call.opsi-script
        match: (?i)\b(Sub)\b
-     - name: support.function.builtin.constants.opsi-script
+     - name: support.function.constants.opsi-script
        match: (?i)\b(replaceOpsiConstants)\b
     # 2.4. By Topic
-     - name: support.function.builtin.compare.opsi-script
+     - name: support.function.compare.opsi-script
        match: (?i)\b(CompareDotSeparatedStrings|CompareDotSeparatedStrings|CompareDotSeparatedNumbers|CompareDotSeparatedNumbers|boolToString|stringToBool)\b
-     - name: support.function.builtin.crypt.opsi-script
+     - name: support.function.crypt.opsi-script
        match: (?i)\b(DecStrToHexStr|HexStrToDecStr|base64EncodeStr|base64DecodeStr|RandomStr|RandomIntStr|encryptStringBlow|decryptStringBlow|md5sumFromFile)\b
-     - name: support.function.builtin.defined-functions.opsi-script
+     - name: support.function.defined-functions.opsi-script
        match: (?i)\b(DefFunc|endfunc|importLib)\b
-     - name: support.variable.builtin.encoding.opsi-script
+     - name: support.variable.encoding.opsi-script
        match: (?i)\b(encoding)\b
-     - name: support.function.builtin.encoding.opsi-script
+     - name: support.function.encoding.opsi-script
        match: (?i)\b(GetLocaleInfoMap|reencodestr|reencodestrlist|fileHasBom|loadUnicodeTextFile|loadTextFileWithEncoding|strLoadTextFileWithEncoding|saveTextFileWithEncoding|includelog)\b
-     - name: support.variable.builtin.error.opsi-script
+     - name: support.variable.error.opsi-script
        match: (?i)\b(ExitOnError|ScriptErrorMessages|FatalOnSyntaxError|FatalOnRuntimeError)\b
-     - name: support.function.builtin.error.opsi-script
+     - name: support.function.error.opsi-script
        match: (?i)\b(isFatalError|markErrorNumber|errorsOccurredSinceMark|getLastServiceErrorClass|getLastServiceErrorMessage)\b
-     - name: support.function.builtin.file-handling.opsi-script
+     - name: support.function.file-handling.opsi-script
        match: (?i)\b(strLoadTextFile|strLoadTextFileWithEncoding|loadTextFile|loadUnicodeTextFile|loadTextFileWithEncoding|fileHasBom|FileExists|FileExists32|FileExists64|FileExistsSysNative|FileOrFolderExists|listFiles|DirectoryExists|LineExistsIn|LineBeginning_ExistsIn|LineContaining_ExistsIn|saveTextFile|saveTextFileWithEncoding|getFileInfoMap|getFileInfoMap32|getFileInfoMap64|getFileInfoMapSysnative|ExtractFilePath|ExtractFileExtension|ExtractFileName)\b
-     - name: support.function.builtin.ini-file.opsi-script
+     - name: support.function.ini-file.opsi-script
        match: (?i)\b(GetValueFromInifile|GetValueFromInifile|getSectionNames|GetSectionFromInifile|getValue|getValueBySeparator|getValueFromFile|getValueFromFileBySeparator)\b
-     - name: support.function.builtin.interaction.opsi-script
+     - name: support.function.interaction.opsi-script
        match: (?i)\b(Pause|Stop|setActionProgress|Message|ShowMessageFile|ShowBitMap|stringinput|editmap)\b
-     - name: support.function.builtin.license-management.opsi-script
+     - name: support.function.license-management.opsi-script
        match: (?i)\b(DemandLicenseKey|FreeLicense|opsiLicenseManagementEnabled)\b
-     - name: support.function.builtin.system-linux.opsi-script
+     - name: support.function.system-linux.opsi-script
        match: (?i)\b(getLinuxDistroType|getLinuxVersionMap|cleanupPackageSystem|installupdates|debinstall|redinstall|suseinstall|ucsinstall|genericLinInstall|linuxInstallOneOf|isOneInstalled|linuxInstallOneFile|linuxRemoveOnePackage|linuxRemoveOneOf)\b
-     - name: support.variable.builtin.logging.opsi-script
+     - name: support.variable.logging.opsi-script
        match: (?i)\b(SetLogLevel|forceLogInAppendMode)\b
-     - name: support.function.builtin.logging.opsi-script
+     - name: support.function.logging.opsi-script
        match: (?i)\b(Message|comment|LogError|LogWarning|includelog|SetConfidential|asConfidential)\b
-     - name: support.function.builtin.system-macos.opsi-script
+     - name: support.function.system-macos.opsi-script
        match: (?i)\b(getMacosVersionInfo|getMacosVersionMap|install_macos_app|install_macos_pkg|install_macos_dmg|install_macos_zip|install_macos_generic)\b
-     - name: support.function.builtin.network.opsi-script
+     - name: support.function.network.opsi-script
        match: (?i)\b(GetHostsName|GetHostsAddr|GetMyIpByTarget|GetIpByName|isValidIP4|isValidIP4Network|isValidIP4Host|getIP4NetworkByAdrAndMask|getDefaultNetmaskByIP4adr|parseUrl|createUrl|isPingReachable|isValidFQDN)\b
-     - name: support.function.builtin.numeric.opsi-script
+     - name: support.function.numeric.opsi-script
        match: (?i)\b(isNumber|CompareDotSeparatedNumbers|CompareDotSeparatedNumbers|calculate|DecStrToHexStr|HexStrToDecStr|RandomIntStr)\b
-     - name: support.function.builtin.system.opsi-script
+     - name: support.function.system.opsi-script
        match: (?i)\b(GetOS|GetMsVersionInfo|GetMSVersionMap|getLinuxDistroType|getLinuxVersionMap|getMacosVersionInfo|getMacosVersionMap|GetSystemType|getOSArchitecture|getListFromWMI|EnvVar|getProfilesDirList|listFiles|runningAsAdmin|runningOnUefi|runningInPE|isDriveReady|runningWithGui)\b
-     - name: support.function.builtin.json.opsi-script
+     - name: support.function.json.opsi-script
        match: (?i)\b(jsonIsValid|jsonIsArray|jsonIsObject|jsonAsObjectHasKey|jsonAsArrayCountElements|jsonAsObjectCountElements|jsonAsArrayGetElementByIndex|jsonAsObjectGetValueByKey|jsonAsObjectSetValueByKey|jsonAsObjectSetStringtypeValueByKey|jsonAsObjectDeleteByKey|jsonAsArrayPutObjectByIndex|jsonAsArrayDeleteObjectByIndex|jsonAsArrayToStringList|jsonAsObjectGetKeyList|jsonStringListToJsonArray|convert2Jsonstr)\b
-     - name: support.function.builtin.opsi.opsi-script
+     - name: support.function.opsi.opsi-script
        match: (?i)\b(getProductMap|getProductPropertyList|GetProductProperty|GetConfidentialProductProperty|setActionProgress|retrieveSection|replaceOpsiConstants|replaceOpsiConstants|runningInWanMode)\b
-     - name: support.function.builtin.subprocess.opsi-script
+     - name: support.function.subprocess.opsi-script
        match: (?i)\b(Killtask|ChangeDirectory|GetProcessList|processIsRunning|getOutStreamFromSection|processCall|getLastExitCode|waitForPackageLock|which|executeSection)\b
-     - name: support.function.builtin.regex.opsi-script
+     - name: support.function.regex.opsi-script
        match: (?i)\b(isRegexMatch|getSubListByContainingRegex|getRegexMatchList|removeFromListByContainingRegex|stringReplaceRegex|stringReplaceRegexInList)\b
-     - name: support.function.builtin.win-registry.opsi-script
+     - name: support.function.win-registry.opsi-script
        match: (?i)\b(getRegistryValue|GetRegistryStringValue|GetRegistryStringValue32|GetRegistryStringValue64|GetRegistryStringValueSysNative|getRegistryKeyList32|getRegistryKeyList64|getRegistryKeyListSysnative|getRegistryVarList32|getRegistryVarList64|getRegistryVarListSysnative|getRegistryVarMap32|getRegistryVarMap64|getRegistryVarMapSysnative|RegKeyExists|RegVarExists)\b
-     - name: support.function.builtin.string-handling.opsi-script
+     - name: support.function.string-handling.opsi-script
        match: (?i)\b(splitString|splitStringOnWhiteSpace|getIndexFromListByContaining|contains|isNumber|trim|lower|upper|unquote|unquote2|stringReplace|strLength|strPos|strPart|getValue|getValueBySeparator|getValueFromFile|getValueFromFileBySeparator|EscapeString)\b
-     - name: support.function.builtin.stringlist-handling.opsi-script
+     - name: support.function.stringlist-handling.opsi-script
        match: (?i)\b(getListContaining|getListContainingList|getIndexFromListByContaining|count|emptylist|composeString|createStringList|reverse|getSubList|getSubListByMatch|getSubListByContaining|getSubListByKey|getKeyList|addtolist|addListToList|reencodestrlist|removeFromListByContaining|removeFromListByMatch|takeString|takeFirstStringContaining|setStringInListAtIndex|getValue|areListsEqual)\b
-     - name: support.function.builtin.time.opsi-script
+     - name: support.function.time.opsi-script
        match: (?i)\b(sleepSeconds|markTime|getDiffTimeSec|timeStampAsFloatStr)\b
-     - name: support.function.builtin.usercontext.opsi-script
+     - name: support.function.usercontext.opsi-script
        match: (?i)\b(GetUserSID|GetLoggedInUser|GetUsercontext|GetScriptMode|saveVersionToProfile|readVersionFromProfile|scriptWasExecutedBefore)\b
-     - name: support.function.builtin.xml.opsi-script
+     - name: support.function.xml.opsi-script
        match: (?i)\b(getXml2DocumentFromFile|getXml2Document|xml2GetFirstChildNodeByName|getXml2UniqueChildnodeByName|getXml2AttributeValueByKey|getXml2Text)\b
 
   primary-section-function-shellcall:
@@ -206,7 +206,7 @@ repository:
     - name: meta.function.shellcall.opsi-script
       match: (?i)\b(shellCall)\s*\(\s*(["'].*["'])\s*\)
       captures:
-        '1': {name: support.function.builtin.shellcall.opsi-script}
+        '1': {name: support.function.shellcall.opsi-script}
         '2':
           name: meta.embedded.block.shellscript
           patterns:
@@ -220,7 +220,7 @@ repository:
     - name: meta.function.powershellcall.opsi-script
       match: (?i)\b(powershellcall)\s*\(\s*(["'].*["'])\s*\)
       captures:
-        '1': {name: support.function.builtin.powershell.opsi-script}
+        '1': {name: support.function.powershell.opsi-script}
         '2':
           name: meta.embedded.block.powershell
           patterns:
@@ -234,8 +234,8 @@ repository:
     - name: meta.function.registry.opsi-script
       match: (?i)\b(Registry)\b\s+(loadUnicodeTextFile)\(([^\)]+)\)\s+(/regedit|/addreg)\s*(\S*.*)
       captures:
-        '1': {name: support.function.builtin.registry.opsi-script}
-        '2': {name: support.function.builtin.load-unicode-text-file.opsi-script}
+        '1': {name: support.function.registry.opsi-script}
+        '2': {name: support.function.load-unicode-text-file.opsi-script}
         '3':
           name: meta.function.registry.filename.opsi-script
           patterns:
@@ -608,6 +608,15 @@ repository:
       - include: '#secondary-section'
       - include: '#secondary-section-patch-text-file'
 
+    - name: meta.secondary-section.link-folder.opsi-script
+      begin: (?i)^\s*(\[)(LinkFolder[^\]]+)(\])
+      beginCaptures:
+        '2': {name: entity.name.type.secondary-section-link-folder.opsi-script}
+      while: ^(?!\s*\[.*\]$)
+      patterns:
+      - include: '#secondary-section'
+      - include: '#secondary-section-link-folder'
+
   secondary-section:
     patterns:
     - include: '#comments'
@@ -646,13 +655,13 @@ repository:
   secondary-section-files:
     patterns:
 
-    - name: support.variable.builtin.secondary-section.files.opsi-script
+    - name: support.variable.secondary-section.files.opsi-script
       match: (?i)\b(SourcePath|checkTargetPath)\b
 
-    - name: meta.function.builtin.secondary-section.files.copy.opsi-script
+    - name: meta.function.secondary-section.files.copy.opsi-script
       match: \b((?i)copy)\b(\s+-[seVvduxwncrh]+)?\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s*(\S*.*)
       captures:
-        '1': {name: support.function.builtin.secondary-section.files.copy.opsi-script}
+        '1': {name: support.function.secondary-section.files.copy.opsi-script}
         '2': {name: constant.character.secondary-section.files.copy.arguments.opsi-script}
         '3':
           name: meta.secondary-section.files.copy.source.opsi-script
@@ -664,10 +673,10 @@ repository:
           - include: '#secondary-section-string'
         '5': {name: invalid.illegal.arguments.opsi-script}
 
-    - name: meta.function.builtin.secondary-section.files.delete.opsi-script
+    - name: meta.function.secondary-section.files.delete.opsi-script
       match: \b((?i)Del(?:ete)?)\b(\s+-(?:s|f|c|d\d*)+)?\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s*(\S*.*)
       captures:
-        '1': {name: support.function.builtin.secondary-section.files.delete.opsi-script}
+        '1': {name: support.function.secondary-section.files.delete.opsi-script}
         '2': {name: constant.character.secondary-section.files.delete.arguments.opsi-script}
         '3':
           name: meta.secondary-section.files.delete.path.opsi-script
@@ -675,10 +684,10 @@ repository:
           - include: '#secondary-section-string'
         '4': {name: invalid.illegal.arguments.opsi-script}
 
-    - name: meta.function.builtin.secondary-section.files.chmod.opsi-script
+    - name: meta.function.secondary-section.files.chmod.opsi-script
       match: \b((?i)chmod)\b\s+([0-8]{3,4})\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s*(\S*.*)
       captures:
-        '1': {name: support.function.builtin.secondary-section.files.chmod.opsi-script}
+        '1': {name: support.function.secondary-section.files.chmod.opsi-script}
         '2': {name: constant.character.secondary-section.files.chmod.mask.opsi-script}
         '3':
           name: meta.secondary-section.files.chmod.path.opsi-script
@@ -686,10 +695,10 @@ repository:
           - include: '#secondary-section-string'
         '4': {name: invalid.illegal.arguments.opsi-script}
 
-    - name: meta.function.builtin.secondary-section.files.link-move-zip.opsi-script
+    - name: meta.function.secondary-section.files.link-move-zip.opsi-script
       match: (?i)\b(hardlink|symlink|rename|move|zipfile|unzipfile)\b\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s*(\S*.*)
       captures:
-        '1': {name: support.function.builtin.secondary-section.files.link-move-zip.opsi-script}
+        '1': {name: support.function.secondary-section.files.link-move-zip.opsi-script}
         '2':
           name: meta.secondary-section.files.link-move-zip.source.opsi-script
           patterns:
@@ -702,32 +711,32 @@ repository:
 
   secondary-section-registry-constants:
     patterns:
-    - name: constant.language.builtin.registry-type.opsi-script
+    - name: constant.language.registry-type.opsi-script
       match: '(?i)\b(REG_SZ|REG_EXPAND_SZ|REG_DWORD|REG_BINARY|REG_MULTI_SZ)'
 
   secondary-section-registry:
     patterns:
     - include: '#secondary-section-registry-constants'
 
-    - name: meta.function.builtin.secondary-section.registry.flush-key.opsi-script
+    - name: meta.function.secondary-section.registry.flush-key.opsi-script
       match: (?i)\b(FlushKey)\b
       captures:
-        '1': {name: support.function.builtin.secondary-section.registry.flush-key.opsi-script}
+        '1': {name: support.function.secondary-section.registry.flush-key.opsi-script}
 
-    - name: meta.function.builtin.secondary-section.registry.open-delete-key.opsi-script
+    - name: meta.function.secondary-section.registry.open-delete-key.opsi-script
       match: (?i)\b(OpenKey|DeleteKey)\b\s+\[([^\]]+)\]\s*(\S*.*)
       captures:
-        '1': {name: support.function.builtin.secondary-section.registry.open-delete-key.opsi-script}
+        '1': {name: support.function.secondary-section.registry.open-delete-key.opsi-script}
         '2':
           name: meta.secondary-section.registry.open-delete-key.key.opsi-script
           patterns:
           - include: '#secondary-section-string'
         '3': {name: invalid.illegal.arguments.opsi-script}
 
-    - name: meta.function.builtin.secondary-section.registry.set-add.opsi-script
+    - name: meta.function.secondary-section.registry.set-add.opsi-script
       match: '(?i)\b(Set|Add)\b\s+(\"[^"]+\")\s+=\s+(?:(REG_SZ|REG_EXPAND_SZ|REG_DWORD|REG_BINARY|REG_MULTI_SZ)\s*:)?\s*(.*)'
       captures:
-        '1': {name: support.function.builtin.secondary-section.registry.set-add.opsi-script}
+        '1': {name: support.function.secondary-section.registry.set-add.opsi-script}
         '2':
           name: meta.secondary-section.registry.set-add.key.opsi-script
           patterns:
@@ -738,20 +747,20 @@ repository:
           patterns:
           - include: '#secondary-section-string'
 
-    - name: meta.function.builtin.secondary-section.registry.delete-var.opsi-script
+    - name: meta.function.secondary-section.registry.delete-var.opsi-script
       match: (?i)\b(DeleteVar)\b\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s*(\S*.*)
       captures:
-        '1': {name: support.function.builtin.secondary-section.registry.delete-var.opsi-script}
+        '1': {name: support.function.secondary-section.registry.delete-var.opsi-script}
         '2':
           name: meta.secondary-section.registry.delete-var.name.opsi-script
           patterns:
           - include: '#secondary-section-string'
         '3': {name: invalid.illegal.arguments.opsi-script}
 
-    - name: meta.function.builtin.secondary-section.registry.supp.opsi-script
+    - name: meta.function.secondary-section.registry.supp.opsi-script
       match: (?i)\b(Supp)\b\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s+(\S)\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s*(\S*.*)
       captures:
-        '1': {name: support.function.builtin.secondary-section.registry.supp.opsi-script}
+        '1': {name: support.function.secondary-section.registry.supp.opsi-script}
         '2':
           name: meta.secondary-section.registry.supp.varname.opsi-script
           patterns:
@@ -763,10 +772,10 @@ repository:
           - include: '#secondary-section-string'
         '5': {name: invalid.illegal.arguments.opsi-script}
 
-    - name: meta.function.builtin.secondary-section.registry.file.opsi-script
+    - name: meta.function.secondary-section.registry.file.opsi-script
       match: (?i)\b(GetMultiSZFromFile|SaveValueToFile)\b\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s*(\S*.*)
       captures:
-        '1': {name: support.function.builtin.secondary-section.registry.file.opsi-script}
+        '1': {name: support.function.secondary-section.registry.file.opsi-script}
         '2':
           name: meta.secondary-section.registry.file.varname.opsi-script
           patterns:
@@ -777,9 +786,31 @@ repository:
           - include: '#secondary-section-string'
         '4': {name: invalid.illegal.arguments.opsi-script}
 
+  secondary-section-link-folder-constants:
+    patterns:
+    - name: constant.language.secondary-section.link-folder.predefined-virtual-system-folders-windows.opsi-script
+      match: '(?i)\b(desktop|sendto|startmenu|startup|programs|desktopdirectory|common_startmenu|common_programs|common_startup|common_desktopdirectory)'
+    - name: constant.language.secondary-section.link-folder.predefined-virtual-system-folders-linux.opsi-script
+      match: '(?i)\b(common_programs|common_startup|desktop|startup)'
+    - name: constant.language.secondary-section.link-folder.predefined-link-categories-linux.opsi-script
+      match: '(?i)\b(AudioVideo|Audio|Video|Development|Education|Game|Graphics|Network|Office|Settings|System|Utility)'
+
+  secondary-section-link-folder-attributes:
+    patterns:
+    - name: keyword.other.secondary-section.link-folder.link-attributes.opsi-script
+      match: (?i)\b(name|target|parameters|working_dir|icon_file|icon_index|shortcut|link_categories)\b
+
+  secondary-section-link-folder:
+    patterns:
+    - include: '#secondary-section-link-folder-constants'
+    - include: '#secondary-section-link-folder-attributes'
+
+    - name: support.function.secondary-section.link-folder.opsi-script
+      match: (?i)\b(set_basefolder|set_subfolder|set_link|end_link|delete_element|delete_subfolder)\b
+
   secondary-section-patch-text-file:
     patterns:
-    - name: support.function.builtin.secondary-section.patchtextfile.opsi-script
+    - name: support.function.secondary-section.patchtextfile.opsi-script
       match: (?i)\b(FindLine_Containing|DeleteTheLine|InsertLine)\b
 
 patterns:
