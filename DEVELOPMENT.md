@@ -7,7 +7,7 @@
 
 # Development
 - Open folder in Visual Studio Code
-- Install dependencies: `npm install -g js-yaml vsce && npm install`
+- Install dependencies: `npm install -g js-yaml vsce typescript && npm install`
 - Convert TextMate yaml to json: `js-yaml syntaxes/opsi-script.tmLanguage.yaml > syntaxes/opsi-script.tmLanguage.json`
 - Compile extension code: `tsc -p ./`
 - Debug: <F5>

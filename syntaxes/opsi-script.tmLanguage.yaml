@@ -37,8 +37,8 @@ repository:
 
   comments:
     patterns:
-    - name: comment.line.semicolon.opsi-script
-      match: ^(;).*$\n?
+    - name: comment.line.semicolon-or-hash.opsi-script
+      match: ^\s*(;|#).*$\n?
       captures:
         '1': {name: punctuation.definition.comment.opsi-script}
 
@@ -59,13 +59,15 @@ repository:
       - include: '#expressions'
       - include: '#primary-section-functions'
 
-  literal-constant:
+  literal-constant-slash:
+    patterns:
+    - name: constant.language.exit-params.opsi-script
+      match: '(?i)(/)(Reboot|RebootWanted|ImmediateReboot|ImmediateLogout|ShutdownWanted)\b'
+
+  literal-constant-percent:
     patterns:
     - name: constant.language.win-system-directories.opsi-script
       match: '(?i)(%)(ProgramFilesDir|ProgramFiles32Dir|ProgramFiles64Dir|ProgramFilesSysnativeDir|Systemroot|System|Systemdrive|ProfileDir)(%)'
-      #captures:
-      #  '1': {name: punctuation.percent.opsi-script}
-      #  '2': {name: punctuation.percent.opsi-script}
     - name: constant.language.win-common-user.opsi-script
       match: '(?i)(%)(AllUsersProfileDir|CommonProfileDir|CommonStartMenuPath|CommonStartmenuDir|CommonAppdataDir|CommonDesktopDir|CommonStartupDir|CommonProgramsDir)(%)'
     - name: constant.language.win-default-user.opsi-script
@@ -83,6 +85,13 @@ repository:
     - name: constant.language.service-data.opsi-script
       match: '(?i)(%)(HostID|opsiserviceURL|opsiServer|opsiDepotId|opsiserviceUser|opsiservicePassword|installingProdName|installingProdVersion|installingProduct)(%)'
 
+  literal-constant:
+    patterns:
+    - name: constant.language.opsi-script
+      match: '(?i)\b(PARAMSTR)\b'
+    - include: '#literal-constant-percent'
+    - include: '#literal-constant-slash'
+
   literal-variable:
     patterns:
     - name: variable.other.dollar.opsi-script
@@ -91,12 +100,35 @@ repository:
         '1': {name: punctuation.dollar.opsi-script}
         '2': {name: punctuation.dollar.opsi-script}
 
+  function-definition:
+    patterns:
+    - name: meta.function.def-func.opsi-script
+      begin: (?i)^\s*(DefFunc)\s+(\S+)
+      beginCaptures:
+        '1': {name: storage.type.function.opsi-script}
+        '2': {name: entity.name.function.opsi-script}
+      end: (?i)^\s*(EndFunc)
+      endCaptures:
+        '1': {name: storage.type.function.opsi-script}
+      patterns:
+      - include: '#function'
+
+  function:
+    patterns:
+    - include: '#primary-sections'
+    - include: '#secondary-sections'
+    - include: '#primary-section'
+    - include: '#function-definition'
+
   primary-section:
     patterns:
     - include: '#comments'
     - include: '#expressions'
+    #- include: '#function-definition'
+    - include: '#sub-section-calls'
     - include: '#secondary-section-calls'
     - include: '#primary-section-functions'
+    - include: '#function-calls'
 
   primary-sections:
     patterns:
@@ -108,15 +140,14 @@ repository:
       patterns:
       - include: '#primary-section'
     - name: meta.primary-section.actions.opsi-script
-      begin: (?i)^\s*(\[)(Actions|Aktionen)(\])
+      begin: (?i)^(\s*)(\[)(Actions|Aktionen)(\])
       beginCaptures:
-        #'1': {name: keyword.other.section-bracket-open.opsi-script}
-        #'2': {name: entity.name.function.opsi-script}
-        '2': {name: entity.name.type.primary-section.opsi-script}
-        #'3': {name: keyword.other.section-bracket-close.opsi-script}
-      while: ^(?!\s*\[.*\]$)
+        '3': {name: entity.name.type.primary-section.opsi-script}
+      while: ^(?!\1\[.*\]$)
       patterns:
       - include: '#primary-section'
+      - include: '#primary-sections'
+      - include: '#secondary-sections'
     - name: meta.primary-section.sub.opsi-script
       begin: (?i)^\s*(\[)(Sub\S+)(\])
       beginCaptures:
@@ -125,12 +156,14 @@ repository:
       patterns:
       - include: '#primary-section'
     - name: meta.primary-section.profile-actions.opsi-script
-      begin: (?i)^\s*(\[)(ProfileActions)(\])
+      begin: (?i)^(\s*)(\[)(ProfileActions)(\])
       beginCaptures:
         '2': {name: entity.name.type.primary-section.opsi-script}
-      while: ^(?!\s*\[.*\]$)
+      while: ^(?!\1\[.*\]$)
       patterns:
       - include: '#primary-section'
+      - include: '#primary-sections'
+      - include: '#secondary-sections'
 
   primary-section-functions:
     patterns:
@@ -143,21 +176,27 @@ repository:
        match: (?i)\b(Sub)\b
      - name: support.function.constants.opsi-script
        match: (?i)\b(replaceOpsiConstants)\b
+     - name: support.variable.other.opsi-script
+       match: (?i)\b(requiredWinstVersion)\b
+     - name: support.function.exit.opsi-script
+       match: (?i)\b(ExitWindows)\b
     # 2.4. By Topic
      - name: support.function.compare.opsi-script
        match: (?i)\b(CompareDotSeparatedStrings|CompareDotSeparatedStrings|CompareDotSeparatedNumbers|CompareDotSeparatedNumbers|boolToString|stringToBool)\b
      - name: support.function.crypt.opsi-script
        match: (?i)\b(DecStrToHexStr|HexStrToDecStr|base64EncodeStr|base64DecodeStr|RandomStr|RandomIntStr|encryptStringBlow|decryptStringBlow|md5sumFromFile)\b
-     - name: support.function.defined-functions.opsi-script
-       match: (?i)\b(DefFunc|endfunc|importLib)\b
+     - name: support.function.import-lib.opsi-script
+       match: (?i)\b(ImportLib)\b
+     - name: support.function.def-func.opsi-script
+       match: (?i)\b(DefFunc|EndFunc)\b
      - name: support.variable.encoding.opsi-script
        match: (?i)\b(encoding)\b
      - name: support.function.encoding.opsi-script
-       match: (?i)\b(GetLocaleInfoMap|reencodestr|reencodestrlist|fileHasBom|loadUnicodeTextFile|loadTextFileWithEncoding|strLoadTextFileWithEncoding|saveTextFileWithEncoding|includelog)\b
+       match: (?i)\b(GetLocaleInfoMap|ReEncodeStr|ReEncodeStrList|fileHasBom|loadUnicodeTextFile|loadTextFileWithEncoding|strLoadTextFileWithEncoding|saveTextFileWithEncoding|includelog)\b
      - name: support.variable.error.opsi-script
        match: (?i)\b(ExitOnError|ScriptErrorMessages|FatalOnSyntaxError|FatalOnRuntimeError)\b
      - name: support.function.error.opsi-script
-       match: (?i)\b(isFatalError|markErrorNumber|errorsOccurredSinceMark|getLastServiceErrorClass|getLastServiceErrorMessage)\b
+       match: (?i)\b(isFatalError|isSuccess|isSuspended|markErrorNumber|errorsOccurredSinceMark|getLastServiceErrorClass|getLastServiceErrorMessage)\b
      - name: support.function.file-handling.opsi-script
        match: (?i)\b(strLoadTextFile|strLoadTextFileWithEncoding|loadTextFile|loadUnicodeTextFile|loadTextFileWithEncoding|fileHasBom|FileExists|FileExists32|FileExists64|FileExistsSysNative|FileOrFolderExists|listFiles|DirectoryExists|LineExistsIn|LineBeginning_ExistsIn|LineContaining_ExistsIn|saveTextFile|saveTextFileWithEncoding|getFileInfoMap|getFileInfoMap32|getFileInfoMap64|getFileInfoMapSysnative|ExtractFilePath|ExtractFileExtension|ExtractFileName)\b
      - name: support.function.ini-file.opsi-script
@@ -255,7 +294,7 @@ repository:
     patterns:
     - include: '#primary-section-keyword-storage'
     - name: keyword.control.opsi-script
-      match: (?i)\b(if|else|endif|for|in|do)\b
+      match: (?i)\b(if|else|endif|for|in|do|Switch|EndSwitch|Case|EndCase)\b
 
   primary-section-operators:
     patterns:
@@ -435,6 +474,20 @@ repository:
     - include: "#secondary-section-param-all-nt-user-profiles"
     - include: "#secondary-section-param-encoding"
 
+  function-calls:
+    patterns:
+    - name: meta.function-call.opsi-script
+      match: (?i)\b(\S+)\([^\)]*\)
+      captures:
+        '1': {name: entity.name.type.function-call.opsi-script}
+
+  sub-section-calls:
+    patterns:
+    - name: meta.sub-section-call.opsi-script
+      match: (?i)\b(Sub\S+)\b
+      captures:
+        '1': {name: entity.name.type.sub-section-call.opsi-script}
+
   secondary-section-calls:
     patterns:
     - name: meta.secondary-section-call.win-batch.opsi-script
@@ -456,7 +509,7 @@ repository:
           - include: '#secondary-section-params-shell-batch'
 
     - name: meta.secondary-section-call.exec-with.opsi-script
-      match: (?i)\b(ExecWith\S+)\b\s*(["'].*["'])\s*(.*)
+      match: (?i)\b(ExecWith\S+)\b\s*(["']?.*["']?)\s*(.*)
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
         '2':
@@ -546,7 +599,7 @@ repository:
       begin: (?i)^\s*(\[)(ShellBatch[^\]]+|ShellInAnIcon[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-shell-batch.opsi-script}
-      while: ^(?!\s*\[.*\]$)
+      while: ^(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
       contentName: meta.embedded.block.shellscript
       patterns:
       - include: '#secondary-section'
@@ -556,7 +609,7 @@ repository:
       begin: (?i)^\s*(\[)(DosBatch[^\]]+|DosInAnIcon[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-dos-batch.opsi-script}
-      while: ^(?!\s*\[.*\]$)
+      while: ^(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
       contentName: meta.embedded.block.dosbatch
       patterns:
       - include: '#secondary-section'
@@ -566,7 +619,7 @@ repository:
       begin: (?i)^\s*(\[)(ExecWith[^\]]*powershell[^\]]*)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-exec-with-powershell.opsi-script}
-      while: ^(?!\s*\[.*\]$)
+      while: ^(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
       contentName: meta.embedded.block.powershell
       patterns:
       - include: '#secondary-section'
@@ -576,7 +629,7 @@ repository:
       begin: (?i)^\s*(\[)(ExecWith[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-exec-with-general.opsi-script}
-      while: ^(?!\s*\[.*\]$)
+      while: ^(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
       contentName: meta.embedded.block.general.opsi-script
       patterns:
       - include: '#secondary-section'
@@ -585,7 +638,7 @@ repository:
       begin: (?i)^\s*(\[)(Files[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-files.opsi-script}
-      while: ^(?!\s*\[.*\]$)
+      while: ^(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
       patterns:
       - include: '#secondary-section'
       - include: '#secondary-section-files'
@@ -594,7 +647,7 @@ repository:
       begin: (?i)^\s*(\[)(Registry[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-registry.opsi-script}
-      while: ^(?!\s*\[.*\]$)
+      while: ^(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
       patterns:
       - include: '#secondary-section'
       - include: '#secondary-section-registry'
@@ -603,7 +656,7 @@ repository:
       begin: (?i)^\s*(\[)(Patches[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-patches.opsi-script}
-      while: ^(?!\s*\[.*\]$)
+      while: ^(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
       patterns:
       - include: '#secondary-section'
       - include: '#secondary-section-patches'
@@ -612,7 +665,7 @@ repository:
       begin: (?i)^\s*(\[)(PatchTextFile[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-patch-text-file.opsi-script}
-      while: ^(?!\s*\[.*\]$)
+      while: ^(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
       patterns:
       - include: '#secondary-section'
       - include: '#secondary-section-patch-text-file'
@@ -621,7 +674,7 @@ repository:
       begin: (?i)^\s*(\[)(LinkFolder[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-link-folder.opsi-script}
-      while: ^(?!\s*\[.*\]$)
+      while: ^(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
       patterns:
       - include: '#secondary-section'
       - include: '#secondary-section-link-folder'
@@ -630,7 +683,7 @@ repository:
       begin: (?i)^\s*(\[)(OpsiServiceCall[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-opsi-service-call.opsi-script}
-      while: ^(?!\s*\[.*\]$)
+      while: ^(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
       patterns:
       - include: '#secondary-section'
       - include: '#secondary-section-opsi-service-call'
@@ -639,7 +692,7 @@ repository:
       begin: (?i)^\s*(\[)(PatchHost[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-patch-host.opsi-script}
-      while: ^(?!\s*\[.*\]$)
+      while: ^(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
       patterns:
       - include: '#secondary-section'
       - include: '#secondary-section-patch-host'
@@ -648,7 +701,7 @@ repository:
       begin: (?i)^\s*(\[)(XML2[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-xml2.opsi-script}
-      while: ^(?!\s*\[.*\]$)
+      while: ^(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
       patterns:
       - include: '#secondary-section'
       - include: '#secondary-section-xml2'
@@ -657,7 +710,7 @@ repository:
       begin: (?i)^\s*(\[)(ExecPython[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-exec-python.opsi-script}
-      while: ^(?!\s*\[.*\]$)
+      while: ^(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
       contentName: meta.embedded.block.python
       patterns:
       - include: '#secondary-section'
@@ -667,7 +720,7 @@ repository:
       begin: (?i)^\s*(\[)(LDAPSearch[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-ldap-search.opsi-script}
-      while: ^(?!\s*\[.*\]$)
+      while: ^(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
       patterns:
       - include: '#secondary-section'
       - include: '#secondary-section-ldap-search'
@@ -789,7 +842,7 @@ repository:
         '3': {name: invalid.illegal.arguments.opsi-script}
 
     - name: meta.function.secondary-section.registry.set-add.opsi-script
-      match: '(?i)\b(Set|Add)\b\s+(\"[^"]+\")\s+=\s+(?:(REG_SZ|REG_EXPAND_SZ|REG_DWORD|REG_BINARY|REG_MULTI_SZ)\s*:)?\s*(.*)'
+      match: '(?i)\b(Set|Add)\b\s+(\"[^"]*\")\s+=\s+(?:(REG_SZ|REG_EXPAND_SZ|REG_DWORD|REG_BINARY|REG_MULTI_SZ)\s*:)?\s*(.*)'
       captures:
         '1': {name: support.function.secondary-section.registry.set-add.opsi-script}
         '2':

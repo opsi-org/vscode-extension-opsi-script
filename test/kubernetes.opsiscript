@@ -1,0 +1,745 @@
+; https://itsecblog.de/kubernets-auf-ubuntu-20-04-installieren/
+; https://computingforgeeks.com/deploy-kubernetes-cluster-on-ubuntu-with-kubeadm/
+; https://www.replex.io/blog/how-to-install-access-and-add-heapster-metrics-to-the-kubernetes-dashboard
+; https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+; https://dbafromthecold.com/2020/04/08/adjusting-pod-eviction-time-in-kubernetes/
+; https://rook.io/docs/rook/v1.6/ceph-quickstart.html
+; https://www.digitalocean.com/community/tutorials/how-to-set-up-a-ceph-cluster-within-kubernetes-using-rook
+; https://kube-vip.io/hybrid/static/
+; https://blog.alexellis.io/bare-metal-kubernetes-with-k3s/
+; https://doc.traefik.io/traefik/user-guides/crd-acme/
+; https://gist.github.com/tasdikrahman/1f9f496dec39c2a5697bf9a50276c7c4
+;
+; Reset kubernetes cluster: kubeadm reset
+;
+; Example pods:
+;  kubectl apply -f https://k8s.io/examples/controllers/nginx-deployment.yaml
+;  kubectl get pods
+;  kubectl logs command-demo
+
+[Actions]
+encoding = utf8
+
+SetLogLevel = 7
+LogLevel 7
+
+DefStringList $tempList$
+DefVar $tempString$
+DefVar $distRelease$
+DefVar $distroName$
+DefVar $home$
+DefVar $rook_version$
+DefVar $kubevip_version$
+DefVar $cluster_exists$
+DefVar $master_node$
+DefVar $pod_network_cidr$
+DefVar $control_plane_vip$
+DefVar $ingress_vip$
+DefVar $root_ssh_private_key$
+DefVar $root_ssh_public_key$
+DefVar $api_default_not_ready_toleration_seconds$
+DefVar $api_default_unreachable_toleration_seconds$
+DefVar $api_event_ttl$
+DefVar $rook_device_filter$
+DefVar $default_network_interface$
+
+%test%
+%ScriptPath%
+%HostID%
+
+Set $tempList$ = getLinuxVersionMap
+Set $distRelease$ = getValue("Release", $tempList$)
+Set $distroName$ = getValue("Distributor ID", $tempList$)
+Set $home$ = "/root/%HostID%/$tempString$"
+Set $rook_version$ = "v1.6.6"
+Set $kubevip_version$ = "0.3.1"
+Set $cluster_exists$ = "false"
+; https://github.com/kubernetes-sigs/kubespray/blob/master/docs/kubernetes-reliability.md
+; api_default_not_ready_toleration_seconds default: 300
+Set $api_default_not_ready_toleration_seconds$ = "60"
+; api_default_unreachable_toleration_seconds default: 300
+Set $api_default_unreachable_toleration_seconds$ = "60"
+; api_event_ttl default: 1h0m0s
+Set $api_event_ttl$ = "12h0m0s"
+Set $pod_network_cidr$ = GetProductProperty("pod_network_cidr", "")
+Set $control_plane_vip$ = GetProductProperty("control_plane_vip", "")
+Set $ingress_vip$ = GetProductProperty("ingress_vip", "")
+Set $root_ssh_private_key$ = asConfidential(GetProductProperty("root_ssh_private_key", ""))
+Set $root_ssh_public_key$ = GetProductProperty("root_ssh_public_key", "")
+Set $rook_device_filter$ = GetProductProperty("rook_device_filter", ".*")
+
+if not (($distroName$ = "Ubuntu") and ($distRelease$ = "20.04"))
+	LogError "Only Ubuntu 20.04 is supported"
+	isFatalError "Only Ubuntu 20.04 is supported"
+endif
+
+Set $default_network_interface$ = takeString(0, ShellCall("ip route | grep '^default' | sed 's/.*dev *//' | cut -d' ' -f1"))
+
+Set $tempString$ = strPart("%PCName%", "0", calculate(strLength("%PCName%") + "-1"))
+Set $master_node$ = $tempString$ + "1"
+if ($master_node$ = "%PCName%")
+	Set $master_node$ = $tempString$ + "2"
+endif
+
+shellCall("for in ")
+
+comment "Sysconfig"
+ShellInAnIcon_sysconfig /sysnative
+
+comment "Network config"
+ShellInAnIcon_network_config
+
+comment "Disable swap"
+ShellInAnIcon_disable_swap
+
+comment "Boot config"
+ShellInAnIcon_boot_config
+
+comment "Configure users"
+ShellInAnIcon_configure_users
+
+comment "Configure ssh"
+PatchTextFile_sshd_config /etc/ssh/sshd_config
+ShellInAnIcon_configure_ssh
+
+comment "Install packages"
+ShellInAnIcon_install_packages
+
+Comment "Configure docker"
+ShellInAnIcon_configure_docker
+
+ShellCall("getent hosts " + $control_plane_vip$ + " | cut -d' ' -f1")
+ShellCall("test")
+
+ShellCall("zezszzs")
+PowerShellCall("dkkdkd")
+
+if not (isRegexMatch($control_plane_vip$, "\d+\.\d+\.\d+\.\d+"))
+	Set $control_plane_vip$ = takeString(0, ShellCall("getent hosts " + $control_plane_vip$ + " | cut -d' ' -f1"))
+endif
+if not (isRegexMatch($control_plane_vip$, "\d+\.\d+\.\d+\.\d+"))
+	isFatalError "Invalid virtual ip: " + $control_plane_vip$
+endif
+
+Comment "Check if cluster exists"
+ShellInAnIcon_check_cluster
+if ("0" = GetLastExitcode)
+	Set $cluster_exists$ = "true"
+endif
+
+if ($cluster_exists$ = "true")
+	comment "Cluster exists"
+	Set $tempList$ = GetOutStreamFromSection('ShellInAnIcon_get_nodes' + $kdk$)
+	Set $tempString$ = TakeFirstStringContaining($tempList$, "%PCName% ")
+	if ($tempString$ = "")
+		comment "Join k8s cluster"
+		ShellInAnIcon_join_cluster
+		if not ("0" = GetLastExitcode)
+			LogError "Failed to join cluster"
+			isFatalError "Failed to join cluster"
+		endif
+
+		comment "Setup kube-vip"
+		ShellInAnIcon_setup_kubevip
+	else
+		comment "Already a k8s cluster member"
+	endif
+
+	comment "Configure k8s node"
+	ShellInAnIcon_node_config
+else
+	comment "Cluster does not exist"
+	comment "Setup kube-vip"
+	ShellInAnIcon_setup_kubevip
+
+	comment "Setup k8s cluster"
+	ShellInAnIcon_setup_cluster
+	if not ("0" = GetLastExitcode)
+		LogError "Failed to setup cluster"
+		isFatalError "Failed to setup cluster"
+	endif
+
+	comment "Configure k8s node"
+	ShellInAnIcon_node_config
+
+	comment "Install Calico"
+	ShellInAnIcon_install_calico
+
+	comment "Install Kubernetes Dashboard"
+	ShellInAnIcon_install_kubernetes_dashboard
+
+	comment "Setup rook"
+	ShellInAnIcon_setup_rook
+
+	comment "Install traefik"
+	ShellInAnIcon_install_traefik
+endif
+
+comment "Update hosts"
+ShellInAnIcon_update_hosts
+
+comment "Cluster config"
+ShellInAnIcon_cluster_config
+
+comment "Install Helm"
+ShellInAnIcon_install_helm
+
+comment "Configure rook"
+ShellInAnIcon_configure_rook
+
+ShellCall('if [ 1 == 1 ]; then echo "ok"; else echo no; fi')
+PowerShellCall('Write-Host "dkdkdk"')
+
+WinBatch_xyz winst /LetThemGo /WaitForProcessEnding "%HostID%.exe" /sysnative
+DosBatch_xyz /WaitForProcessEnding "%HostID%.exe" /sysnative
+ExecWith_xyz "%ScriptPath%\autoit.exe" /LetThemGo /sysnative
+Files_abc winst /AllNTUserProfiles
+Registry_abc /AllNTUserDats
+Patches_abc /AllNTUserProfiles
+PatchTextFile_abc /encoding "utf-8"
+LinkFolder_123
+OpsiServiceCall_123
+PatchHosts_123
+XML2_123
+XMLPatch_tst
+ExecPython_tst
+LDAPSearch_tst
+
+Registry loadUnicodeTextFile("test%HOST%" + $test$) /addreg
+
+[ldapSearch_xxx]
+dn: sdadsasd
+attributes: fdsdsf
+filter:
+user: dfldl
+
+[ExecPython_test]
+import requests
+def test:
+	print("sljklasd")
+
+if __name__ == "__main__":
+	test()
+
+[XML2_sdsadasd]
+AddAttribute
+GotoParentNode
+
+
+[PatchHost_xxx]
+DelAlias ""
+SetAlias ""
+SetAlias ""
+SetComment "%AllUsersProfileDir%"
+SetAddr
+SetComment
+
+[OpsiServiceCall_xy]
+"method": "test"
+"params": {
+	"1": "mcxmxm"
+}
+
+[PatchTextFile_abc]
+AddStringListElement_To_Mozilla_Pref "" user_pref
+
+[Patches_sdds]
+Add "asds"
+
+[LinkFolder_2323]
+set_link
+	name:
+	target:
+	parameters:
+	common_desktopdirectory
+	common_programs
+	common_startup
+end_link
+delete_element ""
+delete_subfolder ""
+
+[Registry_ddkdk]
+OpenKey ["HKLM\Software"]
+Set "var" = REG_DWORD:1
+
+	[Sub_test]
+	comment "Test"
+
+
+	[Registry_test]
+	DeleteKey ["$test$\dskks"]
+	OpenKey ["$test$\dskks"]
+	Set "var1" = "my string"
+	set "var2" = REG_SZ:"my string"
+	set "var3" = REG_EXPAND_SZ:"%ProgramFiles%"
+	set "var4" = REG_DWORD:123	(Decimal)
+	set "var5" = REG_DWORD:0x7b	(Hexadecimal)
+	set "var6" = REG_BINARY:00 01 02 0F 10
+	Add "var7" = REG_MULTI_SZ:"A|BC|de"
+	DeleteVar "$test$"
+	supp "Path" ; "C:\utils; %JAVABIN%"
+	GetMultiSZFromFile "test" "c:\tmp\x.reg"
+	SaveValueToFile "test" "c:\tmp\x.reg"
+
+
+	[Files_test]
+	delete -sfd3 "%ProgramFiles32Dir%\test"
+	copy -v "%ScriptPath%\$test$" "%ProgramFiles32Dir%\"
+	chmod 0777 "%ScriptPath%\$test$"
+	hardlink "%ScriptPath%\$test$" "%ProgramFiles32Dir%\"
+	Symlink "%ScriptPath%\$test$" "%ProgramFiles32Dir%\"
+	Move "%ScriptPath%\$test$" "%ProgramFiles32Dir%\"
+	rename "%ScriptPath%\$test$" "%ProgramFiles32Dir%\"
+	zipfile "" "%ScriptPath%\$test$"
+
+
+[DosBatch_test]
+@echo off
+echo "dksd ksd kasdl"
+rmdir
+set
+
+[ExecWith_other]
+Write-Host "Hello $test$!"
+
+[ExecWith_powershell_asd]
+Write-Host "Hello $test$!"
+
+[ShellInAnIcon_boot_config]
+echo "/root/%HostID%/$tempString$"
+sed -i s'/GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT=""/' /etc/default/grub
+sed -i s'/GRUB_TIMEOUT_STYLE=.*/GRUB_TIMEOUT_STYLE=menu/' /etc/default/grub
+sed -i s'/GRUB_TIMEOUT=.*/GRUB_TIMEOUT=3/' /etc/default/grub
+update-grub
+
+> /etc/initramfs-tools/conf.d/resume
+update-initramfs -u
+
+
+[ShellInAnIcon_update_hosts]
+export KUBECONFIG=/etc/kubernetes/admin.conf
+
+echo -e "127.0.0.1   localhost\n" > /etc/hosts
+
+for node in $(kubectl get nodes | cut -d' ' -f1 | grep -v NAME); do
+	res=$(host $node)
+	ip=${res##* }
+	fqdn=${res%% *}
+	echo "$ip    $fqdn    $node" >> /etc/hosts
+done
+
+echo "" >> /etc/hosts
+echo "::1   localhost ip6-localhost ip6-loopback" >> /etc/hosts
+echo "ff02::1   ip6-allnodes" >> /etc/hosts
+echo "ff02::2   ip6-allrouters" >> /etc/hosts
+
+for node in $(kubectl get nodes | cut -d' ' -f1 | grep -v NAME); do
+	[ "$node" = "%PCName%" ] && continue
+	scp -o StrictHostKeyChecking=accept-new -o PasswordAuthentication=no /etc/hosts $node:/etc/hosts
+done
+
+
+[ShellInAnIcon_network_config]
+rm /etc/resolv.conf
+ln -s /var/run/systemd/resolve/resolv.conf /etc/resolv.conf
+
+mask2cdr () {
+   # Assumes there's no "255." after a non-255 byte in the mask
+   local x=${1##*255.}
+   set -- 0^^^128^192^224^240^248^252^254^ $(( (${#1} - ${#x})*2 )) ${x%%.*}
+   x=${1%%$3*}
+   echo $(( $2 + (${#x}/4) ))
+}
+
+if grep "dhcp4: *yes" /etc/netplan/01-netcfg.yaml >/dev/null; then
+	echo "Setting static network config for device $default_network_interface$"
+	ipv4_address=$(netplan ip leases $default_network_interface$ | grep "^ADDRESS=" | cut -d'=' -f2)
+	ipv4_netmask=$(netplan ip leases $default_network_interface$ | grep "^NETMASK=" | cut -d'=' -f2)
+	ipv4_netmask=$(mask2cdr $ipv4_netmask)
+	ipv4_default_gateway=$(netplan ip leases $default_network_interface$ | grep "^ROUTER=" | cut -d'=' -f2)
+	dns_addresses=$(netplan ip leases $default_network_interface$ | grep "^DNS=" | cut -d'=' -f2 | sed s'/ /,/g')
+	dns_search=$(netplan ip leases $default_network_interface$ | grep "^DOMAIN_SEARCH_LIST=" | cut -d'=' -f2 | sed s'/\\032/,/g')
+
+	cat <<EOF > /etc/netplan/01-netcfg.yaml
+# This file describes the network interfaces available on your system
+# For more information, see netplan(5).
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    $default_network_interface$:
+      dhcp4: no
+      addresses: [${ipv4_address}/${ipv4_netmask}]
+      gateway4: ${ipv4_default_gateway}
+      nameservers:
+        addresses: [${dns_addresses}]
+        search: [${dns_search}]
+EOF
+	netplan generate
+	#netplan apply
+fi
+
+[ShellInAnIcon_setup_kubevip]
+echo "Installing kube-vip version $kubevip_version$ with --interface $default_network_interface$ --vip $control_plane_vip$"
+ctr image pull docker.io/plndr/kube-vip:$kubevip_version$
+ctr run --rm --net-host docker.io/plndr/kube-vip:$kubevip_version$ vip \
+	/kube-vip manifest pod \
+	--interface $default_network_interface$ \
+	--vip $control_plane_vip$ \
+	--controlplane \
+	--services \
+	--arp \
+	--leaderElection | tee /etc/kubernetes/manifests/kube-vip.yaml
+
+
+[ShellInAnIcon_setup_rook]
+; Delete old metadata from device:
+;  dd if=/dev/zero of=/dev/the/device bs=1M count=1
+export DEBIAN_FRONTEND=noniteractive KUBECONFIG=/etc/kubernetes/admin.conf
+apt-get -y install lvm2 git
+[ -e /tmp/rook-install ] && rm -r /tmp/rook-install
+mkdir /tmp/rook-install
+cd /tmp/rook-install
+git clone --single-branch --branch $rook_version$ https://github.com/rook/rook.git
+cd rook/cluster/examples/kubernetes/ceph
+
+echo "Create crds, common, operator"
+kubectl create -f crds.yaml -f common.yaml -f operator.yaml
+# verify the rook-ceph-operator is in the `Running` state before proceeding
+while true; do
+	kubectl -n rook-ceph get pod -o=custom-columns=​STATUS:status.phase | grep Running >/dev/null && break
+	sleep 1;
+done
+
+echo "Create cluster"
+sed -i 's/#*useAllNodes:.*/useAllNodes: true/' cluster.yaml
+sed -i 's/#*useAllDevices:.*/useAllDevices: false/' cluster.yaml
+sed -i 's/#*deviceFilter:/deviceFilter: "$rook_device_filter$"/' cluster.yaml
+cat cluster.yaml
+kubectl create -f cluster.yaml
+
+echo "Create toolbox"
+kubectl create -f toolbox.yaml
+
+rm -r /tmp/rook-install
+
+
+[ShellInAnIcon_install_traefik]
+export KUBECONFIG=/etc/kubernetes/admin.conf
+
+kubectl apply -f "%ScriptPath%/traefik/01-traefik-crd.yml"
+kubectl apply -f "%ScriptPath%/traefik/kubernetes-crd-rbac.yml"
+kubectl apply -f "%ScriptPath%/traefik/service.yml"
+kubectl apply -f "%ScriptPath%/traefik/daemon-set.yml"
+kubectl patch svc traefik --type merge -p '{"spec":{"loadBalancerIP":"$ingress_vip$"}}'
+
+
+[ShellInAnIcon_configure_users]
+deluser --remove-home user
+
+
+[ShellInAnIcon_configure_rook]
+kubectl -n rook-ceph patch cephcluster rook-ceph --type merge -p '{"spec":{"storage":{"deviceFilter":"$rook_device_filter$"}}}'
+
+
+[ShellInAnIcon_uninstall_rook_and_destroy_all_data]
+export KUBECONFIG=/etc/kubernetes/admin.conf
+
+[ -e /tmp/rook-install ] && rm -r /tmp/rook-install
+mkdir /tmp/rook-install
+cd /tmp/rook-install
+git clone --single-branch --branch $rook_version$ https://github.com/rook/rook.git
+cd rook/cluster/examples/kubernetes/ceph
+
+kubectl -n rook-ceph patch cephcluster rook-ceph --type merge -p '{"spec":{"cleanupPolicy":{"confirmation":"yes-really-destroy-data"}}}'
+kubectl -n rook-ceph delete cephcluster rook-ceph
+for node in $(kubectl get nodes | cut -d ' ' -f 1 | grep -v NAME); do
+	ssh -o StrictHostKeyChecking=accept-new -o PasswordAuthentication=no $node 'rm -r /var/lib/rook'
+done
+kubectl delete -f operator.yaml
+kubectl delete -f common.yaml
+kubectl delete -f crds.yaml
+
+rm -r /tmp/rook-install
+
+
+[ShellInAnIcon_configure_docker]
+if ! grep "native.cgroupdriver" /usr/lib/systemd/system/docker.service >/dev/null; then
+	sed -i s'#ExecStart=.*#ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock --exec-opt native.cgroupdriver=systemd#' /usr/lib/systemd/system/docker.service
+	systemctl daemon-reload
+	systemctl restart docker
+fi
+
+
+[ShellInAnIcon_install_packages]
+export DEBIAN_FRONTEND=noniteractive
+apt-get -y install apt-transport-https curl nftables net-tools zip jq gnupg openssl sed bind9-host
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list
+apt-get update
+apt-get -y install docker.io
+systemctl enable docker.service
+apt-get -y install kubelet kubeadm kubectl
+
+
+[ShellInAnIcon_configure_ssh]
+mkdir -p /etc/ssh/authorized_keys
+chown root:root /etc/ssh/authorized_keys
+chmod 755 /etc/ssh/authorized_keys
+touch /etc/ssh/authorized_keys/root
+cp -a /etc/ssh/authorized_keys/root /etc/ssh/authorized_keys/root.tmp
+grep -v "$root_ssh_public_key$" /etc/ssh/authorized_keys/root.tmp > /etc/ssh/authorized_keys/root
+rm /etc/ssh/authorized_keys/root.tmp
+echo "$root_ssh_public_key$" >> /etc/ssh/authorized_keys/root
+chmod 644 /etc/ssh/authorized_keys/root
+
+mkdir -p /root/.ssh
+chmod 700 /root/.ssh
+echo $root_ssh_private_key$ \
+  | sed s'/\s//g;s/-*BEGINOPENSSHPRIVATEKEY-*/-----BEGIN OPENSSH PRIVATE KEY-----\n/;s/-*ENDOPENSSHPRIVATEKEY-*/\n-----END OPENSSH PRIVATE KEY-----/' \
+  > /root/.ssh/id_ed25519
+chmod 600 /root/.ssh/id_ed25519
+echo "$root_ssh_public_key$" > /root/.ssh/id_ed25519.pub
+chmod 644 /root/.ssh/id_ed25519.pub
+
+systemctl restart ssh
+
+
+[PatchTextFile_sshd_config]
+FindLine_Containing "AuthorizedKeysFile"
+DeleteTheLine
+InsertLine "AuthorizedKeysFile /etc/ssh/authorized_keys/%u"
+FindLine_Containing "PermitRootLogin"
+DeleteTheLine
+InsertLine "PermitRootLogin yes"
+
+
+[ShellInAnIcon_sysconfig]
+sed -i s'/.*net.ipv4.ip_forward.*/net.ipv4.ip_forward=1/' /etc/sysctl.conf
+grep net.ipv4.ip_forward >/dev/null /etc/sysctl.conf || echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
+sysctl -p /etc/sysctl.conf
+
+
+[ShellInAnIcon_setup_cluster]
+export HOME=$home$
+kubeadm config images pull
+kubeadm init --pod-network-cidr=$pod_network_cidr$ --control-plane-endpoint=$control_plane_vip$ --upload-certs
+exit $?
+
+
+[ShellInAnIcon_join_cluster]
+; When joing as control plane (--control-plane)
+; --certificate-key is required in join command
+export HOME=$home$
+join_command=$(ssh -o StrictHostKeyChecking=accept-new -o PasswordAuthentication=no $master_node$ 'kubeadm token create --print-join-command')
+certificate_key=$(ssh -o StrictHostKeyChecking=accept-new -o PasswordAuthentication=no $master_node$ 'kubeadm init phase upload-certs --upload-certs' | tail -n1)
+$join_command --certificate-key $certificate_key --control-plane
+exit $?
+
+
+[ShellInAnIcon_node_config]
+export HOME=$home$ KUBECONFIG=/etc/kubernetes/admin.conf
+
+cp -a "${HOME}/.profile" "${HOME}/.profile.tmp"
+grep -v "KUBECONFIG" "${HOME}/.profile.tmp" > "${HOME}/.profile"
+rm "${HOME}/.profile.tmp"
+echo "export KUBECONFIG=/etc/kubernetes/admin.conf" >> "${HOME}/.profile"
+
+# By default, the cluster will not schedule Pods on control-plane node for security reasons.
+# Allow to schedule Pods on control-plane node.
+kubectl taint nodes --all node-role.kubernetes.io/master-
+
+# Log cluster info
+kubectl cluster-info
+exit 0
+
+
+[ShellInAnIcon_cluster_config]
+export KUBECONFIG=/etc/kubernetes/admin.conf
+
+cat <<EOF > /tmp/kubeadm-apiserver-update.yaml
+apiVersion: kubeadm.k8s.io/v1beta2
+kind: ClusterConfiguration
+apiServer:
+  extraArgs:
+    enable-admission-plugins: DefaultTolerationSeconds
+    default-not-ready-toleration-seconds: "$api_default_not_ready_toleration_seconds$"
+    default-unreachable-toleration-seconds: "$api_default_unreachable_toleration_seconds$"
+    event-ttl: "$api_event_ttl$"
+EOF
+kubeadm init phase control-plane apiserver --config=/tmp/kubeadm-apiserver-update.yaml
+rm /tmp/kubeadm-apiserver-update.yaml
+
+
+[ShellInAnIcon_get_nodes]
+ssh -o StrictHostKeyChecking=accept-new -o PasswordAuthentication=no $master_node$ 'KUBECONFIG=/etc/kubernetes/admin.conf kubectl get nodes'
+
+
+[ShellInAnIcon_check_cluster]
+ssh -o StrictHostKeyChecking=accept-new -o PasswordAuthentication=no $master_node$ 'KUBECONFIG=/etc/kubernetes/admin.conf kubectl cluster-info' \
+  | grep "is running at"
+exit $?
+
+
+[ShellInAnIcon_install_calico]
+# Calico is an open source networking and network security solution for containers, virtual machines, and native host-based workloads.
+export KUBECONFIG=/etc/kubernetes/admin.conf
+kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+
+
+[ShellInAnIcon_install_helm]
+curl -fsSL -o /tmp/get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+chmod 700 /tmp/get_helm.sh
+/tmp/get_helm.sh
+rm /tmp/get_helm.sh
+
+
+[ShellInAnIcon_install_kubernetes_dashboard]
+# https://k8s1.mz.uib.gmbh:6443/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/service?namespace=kubernetes-dashboard
+# With kubectl proxy:
+# http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/namespace?namespace=default
+# Using namespace kubernetes-dashboard
+export KUBECONFIG=/etc/kubernetes/admin.conf
+
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.3.1/aio/deploy/recommended.yaml
+
+kubectl create serviceaccount dashboard-admin-sa
+kubectl create clusterrolebinding dashboard-admin-sa --clusterrole=cluster-admin --serviceaccount=default:dashboard-admin-sa
+#kubectl get secrets
+#kubectl describe secret dashboard-admin-sa-token-kw7vn
+
+cat <<EOF > /tmp/kubernetes-dashboard-anonymous.yaml
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: kubernetes-dashboard-anonymous
+rules:
+- apiGroups: [""]
+  resources: ["services/proxy"]
+  resourceNames: ["https:kubernetes-dashboard:"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- nonResourceURLs: ["/ui", "/ui/*", "/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/*"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubernetes-dashboard-anonymous
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kubernetes-dashboard-anonymous
+subjects:
+- kind: User
+  name: system:anonymous
+EOF
+kubectl apply -f /tmp/kubernetes-dashboard-anonymous.yaml
+rm /tmp/kubernetes-dashboard-anonymous.yaml
+
+
+[ShellInAnIcon_disable_swap]
+swapoff -a
+cp -a /etc/fstab /etc/fstab.tmp
+cat /etc/fstab.tmp | grep -v swap > /etc/fstab
+rm /etc/fstab.tmp
+lv_swap=$(lvdisplay | grep "LV Path" | grep swap | sed s'/\s*LV Path\s*//')
+[ "$lv_swap" = "" ] || lvremove -y ${lv_swap}
+
+
+
+
+
+
+
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+[ShellInAnIcon_install_kubernetes_dashboard_XXXX]
+# https://k8s1.mz.uib.gmbh:6443/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/service?namespace=kubernetes-dashboard
+export KUBECONFIG=/etc/kubernetes/admin.conf
+
+TMP_INST="/tmp/k8sdbinst"
+[ -e $TMP_INST ] && rm -r $TMP_INST
+mkdir $TMP_INST
+
+kubectl create namespace kubernetes-dashboard
+
+mkdir $TMP_INST/certs
+openssl genrsa -out $TMP_INST/certs/tls.key 4096
+openssl rsa -in $TMP_INST/certs/tls.key -out $TMP_INST/certs/tls.key
+openssl req -sha256 -new -key $TMP_INST/certs/tls.key -out $TMP_INST/certs/tls.csr -subj '/CN=localhost'
+openssl x509 -req -sha256 -days 365 -in $TMP_INST/certs/tls.csr -signkey $TMP_INST/certs/tls.key -out $TMP_INST/certs/tls.crt
+
+kubectl -n kubernetes-dashboard delete secret kubernetes-dashboard-certs
+##kubectl -n kube-system create secret generic kubernetes-dashboard-certs --from-file=$TMP_INST/certs -n kubernetes-dashboard
+kubectl -n kubernetes-dashboard create secret generic kubernetes-dashboard-certs --from-file=$TMP_INST/certs
+rm -r $TMP_INST/certs/
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.3.1/aio/deploy/recommended.yaml
+
+cat <<EOF > $TMP_INST/dashboard-adminuser.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin-user
+  namespace: kubernetes-dashboard
+EOF
+kubectl apply -f $TMP_INST/dashboard-adminuser.yaml
+
+cat <<EOF > $TMP_INST/dashboard-role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-user
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: admin-user
+  namespace: kubernetes-dashboard
+EOF
+kubectl apply -f $TMP_INST/dashboard-role.yaml
+
+kubectl create clusterrolebinding kube-dashboard-binding --clusterrole=admin --user=admin-user
+
+cat <<EOF > $TMP_INST/dashboard-csr.cnf
+[ req ]
+default_bits = 2048
+prompt = no
+default_md = sha256
+distinguished_name = dn
+[ dn ]
+CN = admin-user
+[ v3_ext ]
+authorityKeyIdentifier=keyid,issuer:always
+basicConstraints=CA:FALSE
+keyUsage=keyEncipherment,dataEncipherment
+extendedKeyUsage=serverAuth,clientAuth
+EOF
+
+openssl genrsa -out $TMP_INST/kbdb.key 4096
+openssl req -config $TMP_INST/dashboard-csr.cnf -new -key $TMP_INST/kbdb.key -nodes -out $TMP_INST/kbdb.csr
+base64_csr=$(cat $TMP_INST/kbdb.csr | base64 | tr -d '\n')
+cat <<EOF > $TMP_INST/dashboard-csr.yaml
+apiVersion: certificates.k8s.io/v1beta1
+kind: CertificateSigningRequest
+metadata:
+  name: mycsr
+spec:
+  groups:
+  - system:authenticated
+  request: $base64_csr
+  usages:
+  - digital signature
+  - key encipherment
+  - server auth
+  - client auth
+EOF
+
+cat $TMP_INST/dashboard-csr.yaml | envsubst | kubectl apply -f -
+kubectl certificate approve mycsr
+rm -r $TMP_INST

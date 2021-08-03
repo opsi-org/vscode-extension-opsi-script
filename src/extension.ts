@@ -58,7 +58,7 @@ export function activate(context: vscode.ExtensionContext) {
 				}
 			}
 
-			for (let pattern of tmLang["repository"]["literal-constant"]["patterns"]) {
+			for (let pattern of tmLang["repository"]["literal-constant-percent"]["patterns"]) {
 				if (!pattern["match"]) continue;
 				for (let name of pattern["match"].replace(/.+\(%\)\(/, '').replace(/\)\(%\).*/, '').split('|')) {
 					if (labels.includes(name)) continue;
@@ -74,6 +74,27 @@ export function activate(context: vscode.ExtensionContext) {
 					}
 					else {
 						completion.insertText = `%${name}%`;
+					}
+					completions.push(completion);
+				}
+			}
+
+			for (let pattern of tmLang["repository"]["literal-constant-slash"]["patterns"]) {
+				if (!pattern["match"]) continue;
+				for (let name of pattern["match"].replace(/.+\(\/\)\(/, '').split('|')) {
+					if (labels.includes(name)) continue;
+					labels.push(name);
+					let startChar = null;
+					if (position.character > 1) {
+						startChar = document.lineAt(position).text.substr(position.character-2, 1);
+					}
+					let completion = new vscode.CompletionItem(`/${name}`, vscode.CompletionItemKind.Constant);
+					completion.sortText = `4_${name}`
+					if (startChar == "/") {
+						completion.insertText = `${name}`;
+					}
+					else {
+						completion.insertText = `/${name}`;
 					}
 					completions.push(completion);
 				}
