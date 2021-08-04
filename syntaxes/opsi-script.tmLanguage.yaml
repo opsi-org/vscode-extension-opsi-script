@@ -99,26 +99,31 @@ repository:
       captures:
         '1': {name: punctuation.dollar.opsi-script}
         '2': {name: punctuation.dollar.opsi-script}
+    - name: variable.other.percent.opsi-script
+      match: '(%)[%\w-]+(%)'
+      captures:
+        '1': {name: punctuation.percent.opsi-script}
+        '2': {name: punctuation.percent.opsi-script}
 
-  function-definition:
-    patterns:
-    - name: meta.function.def-func.opsi-script
-      begin: (?i)^\s*(DefFunc)\s+(\S+)
-      beginCaptures:
-        '1': {name: storage.type.function.opsi-script}
-        '2': {name: entity.name.function.opsi-script}
-      end: (?i)^\s*(EndFunc)
-      endCaptures:
-        '1': {name: storage.type.function.opsi-script}
-      patterns:
-      - include: '#function'
+  # function-definition:
+  #   patterns:
+  #   - name: meta.function.def-func.opsi-script
+  #     begin: (?i)^\s*(DefFunc)\s+(\S+)
+  #     beginCaptures:
+  #       '1': {name: storage.type.function.opsi-script}
+  #       '2': {name: entity.name.function.opsi-script}
+  #     end: (?i)^\s*(EndFunc)
+  #     endCaptures:
+  #       '1': {name: storage.type.function.opsi-script}
+  #     patterns:
+  #     - include: '#function'
 
-  function:
-    patterns:
-    - include: '#primary-sections'
-    - include: '#secondary-sections'
-    - include: '#primary-section'
-    - include: '#function-definition'
+  # function:
+  #   patterns:
+  #   - include: '#primary-sections'
+  #   - include: '#secondary-sections'
+  #   - include: '#primary-section'
+  #   - include: '#function-definition'
 
   primary-section:
     patterns:
@@ -187,7 +192,7 @@ repository:
        match: (?i)\b(DecStrToHexStr|HexStrToDecStr|base64EncodeStr|base64DecodeStr|RandomStr|RandomIntStr|encryptStringBlow|decryptStringBlow|md5sumFromFile)\b
      - name: support.function.import-lib.opsi-script
        match: (?i)\b(ImportLib)\b
-     - name: support.function.def-func.opsi-script
+     - name: storage.type.function.def-func.opsi-script
        match: (?i)\b(DefFunc|EndFunc)\b
      - name: support.variable.encoding.opsi-script
        match: (?i)\b(encoding)\b
@@ -232,7 +237,7 @@ repository:
      - name: support.function.string-handling.opsi-script
        match: (?i)\b(splitString|splitStringOnWhiteSpace|getIndexFromListByContaining|contains|isNumber|trim|lower|upper|unquote|unquote2|stringReplace|strLength|strPos|strPart|getValue|getValueBySeparator|getValueFromFile|getValueFromFileBySeparator|EscapeString)\b
      - name: support.function.stringlist-handling.opsi-script
-       match: (?i)\b(getListContaining|getListContainingList|getIndexFromListByContaining|count|emptylist|composeString|createStringList|reverse|getSubList|getSubListByMatch|getSubListByContaining|getSubListByKey|getKeyList|addtolist|addListToList|reencodestrlist|removeFromListByContaining|removeFromListByMatch|takeString|takeFirstStringContaining|setStringInListAtIndex|getValue|areListsEqual)\b
+       match: (?i)\b(GetReturnListFromSection|getListContaining|getListContainingList|getIndexFromListByContaining|count|emptylist|composeString|createStringList|reverse|getSubList|getSubListByMatch|getSubListByContaining|getSubListByKey|getKeyList|addtolist|addListToList|reencodestrlist|removeFromListByContaining|removeFromListByMatch|takeString|takeFirstStringContaining|setStringInListAtIndex|getValue|areListsEqual)\b
      - name: support.function.time.opsi-script
        match: (?i)\b(sleepSeconds|markTime|getDiffTimeSec|timeStampAsFloatStr)\b
      - name: support.function.usercontext.opsi-script
