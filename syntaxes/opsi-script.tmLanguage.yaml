@@ -95,12 +95,12 @@ repository:
   literal-variable:
     patterns:
     - name: variable.other.dollar.opsi-script
-      match: '(\$)[$\w-]+(\$)'
+      match: '(\$)\S+(\$)'
       captures:
         '1': {name: punctuation.dollar.opsi-script}
         '2': {name: punctuation.dollar.opsi-script}
     - name: variable.other.percent.opsi-script
-      match: '(%)[%\w-]+(%)'
+      match: '(%)\S+(%)'
       captures:
         '1': {name: punctuation.percent.opsi-script}
         '2': {name: punctuation.percent.opsi-script}
@@ -176,15 +176,15 @@ repository:
      - include: '#primary-section-function-powershellcall'
      - include: '#primary-section-function-registry'
      - name: invalid.deprecated.opsi-script
-       match: (?i)\b(LogLevel)\b
+       match: (?i)\b(LogLevel|errorsOccuredSinceMark)\b
      - name: support.function.sub-call.opsi-script
        match: (?i)\b(Sub)\b
      - name: support.function.constants.opsi-script
        match: (?i)\b(replaceOpsiConstants)\b
      - name: support.variable.other.opsi-script
        match: (?i)\b(requiredWinstVersion)\b
-     - name: support.function.exit.opsi-script
-       match: (?i)\b(ExitWindows)\b
+     - name: support.function.other.opsi-script
+       match: (?i)\b(ExitWindows|AutoActivityDisplay|noUpdateScript)\b
     # 2.4. By Topic
      - name: support.function.compare.opsi-script
        match: (?i)\b(CompareDotSeparatedStrings|CompareDotSeparatedStrings|CompareDotSeparatedNumbers|CompareDotSeparatedNumbers|boolToString|stringToBool)\b
@@ -227,7 +227,7 @@ repository:
      - name: support.function.json.opsi-script
        match: (?i)\b(jsonIsValid|jsonIsArray|jsonIsObject|jsonAsObjectHasKey|jsonAsArrayCountElements|jsonAsObjectCountElements|jsonAsArrayGetElementByIndex|jsonAsObjectGetValueByKey|jsonAsObjectSetValueByKey|jsonAsObjectSetStringtypeValueByKey|jsonAsObjectDeleteByKey|jsonAsArrayPutObjectByIndex|jsonAsArrayDeleteObjectByIndex|jsonAsArrayToStringList|jsonAsObjectGetKeyList|jsonStringListToJsonArray|convert2Jsonstr)\b
      - name: support.function.opsi.opsi-script
-       match: (?i)\b(getProductMap|getProductPropertyList|GetProductProperty|GetConfidentialProductProperty|setActionProgress|retrieveSection|replaceOpsiConstants|replaceOpsiConstants|runningInWanMode)\b
+       match: (?i)\b(getProductMap|LoadProductProperties|getProductPropertyList|GetProductProperty|GetConfidentialProductProperty|setActionProgress|retrieveSection|replaceOpsiConstants|replaceOpsiConstants|runningInWanMode)\b
      - name: support.function.subprocess.opsi-script
        match: (?i)\b(Killtask|ChangeDirectory|GetProcessList|processIsRunning|getOutStreamFromSection|processCall|getLastExitCode|waitForPackageLock|which|executeSection)\b
      - name: support.function.regex.opsi-script
@@ -604,7 +604,7 @@ repository:
       begin: (?i)^\s*(\[)(ShellBatch[^\]]+|ShellInAnIcon[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-shell-batch.opsi-script}
-      while: ^(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
+      while: ^(?i)(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
       contentName: meta.embedded.block.shellscript
       patterns:
       - include: '#secondary-section'
@@ -614,17 +614,25 @@ repository:
       begin: (?i)^\s*(\[)(DosBatch[^\]]+|DosInAnIcon[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-dos-batch.opsi-script}
-      while: ^(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
+      while: ^(?i)(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
       contentName: meta.embedded.block.dosbatch
       patterns:
       - include: '#secondary-section'
       - include: source.batchfile
 
+    - name: meta.secondary-section.win-batch.opsi-script
+      begin: (?i)^\s*(\[)(WinBatch[^\]]+)(\])
+      beginCaptures:
+        '2': {name: entity.name.type.secondary-section-dos-batch.opsi-script}
+      while: ^(?i)(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
+      patterns:
+      - include: '#secondary-section'
+
     - name: meta.secondary-section.exec-with-powershell.opsi-script
       begin: (?i)^\s*(\[)(ExecWith[^\]]*powershell[^\]]*)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-exec-with-powershell.opsi-script}
-      while: ^(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
+      while: ^(?i)(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
       contentName: meta.embedded.block.powershell
       patterns:
       - include: '#secondary-section'
@@ -634,7 +642,7 @@ repository:
       begin: (?i)^\s*(\[)(ExecWith[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-exec-with-general.opsi-script}
-      while: ^(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
+      while: ^(?i)(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
       contentName: meta.embedded.block.general.opsi-script
       patterns:
       - include: '#secondary-section'
@@ -643,7 +651,7 @@ repository:
       begin: (?i)^\s*(\[)(Files[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-files.opsi-script}
-      while: ^(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
+      while: ^(?i)(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
       patterns:
       - include: '#secondary-section'
       - include: '#secondary-section-files'
@@ -652,7 +660,7 @@ repository:
       begin: (?i)^\s*(\[)(Registry[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-registry.opsi-script}
-      while: ^(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
+      while: ^(?i)(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
       patterns:
       - include: '#secondary-section'
       - include: '#secondary-section-registry'
@@ -661,7 +669,7 @@ repository:
       begin: (?i)^\s*(\[)(Patches[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-patches.opsi-script}
-      while: ^(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
+      while: ^(?i)(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
       patterns:
       - include: '#secondary-section'
       - include: '#secondary-section-patches'
@@ -670,7 +678,7 @@ repository:
       begin: (?i)^\s*(\[)(PatchTextFile[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-patch-text-file.opsi-script}
-      while: ^(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
+      while: ^(?i)(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
       patterns:
       - include: '#secondary-section'
       - include: '#secondary-section-patch-text-file'
@@ -679,7 +687,7 @@ repository:
       begin: (?i)^\s*(\[)(LinkFolder[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-link-folder.opsi-script}
-      while: ^(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
+      while: ^(?i)(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
       patterns:
       - include: '#secondary-section'
       - include: '#secondary-section-link-folder'
@@ -688,7 +696,7 @@ repository:
       begin: (?i)^\s*(\[)(OpsiServiceCall[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-opsi-service-call.opsi-script}
-      while: ^(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
+      while: ^(?i)(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
       patterns:
       - include: '#secondary-section'
       - include: '#secondary-section-opsi-service-call'
@@ -697,7 +705,7 @@ repository:
       begin: (?i)^\s*(\[)(PatchHost[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-patch-host.opsi-script}
-      while: ^(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
+      while: ^(?i)(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
       patterns:
       - include: '#secondary-section'
       - include: '#secondary-section-patch-host'
@@ -706,7 +714,7 @@ repository:
       begin: (?i)^\s*(\[)(XML2[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-xml2.opsi-script}
-      while: ^(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
+      while: ^(?i)(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
       patterns:
       - include: '#secondary-section'
       - include: '#secondary-section-xml2'
@@ -715,7 +723,7 @@ repository:
       begin: (?i)^\s*(\[)(ExecPython[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-exec-python.opsi-script}
-      while: ^(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
+      while: ^(?i)(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
       contentName: meta.embedded.block.python
       patterns:
       - include: '#secondary-section'
@@ -725,7 +733,7 @@ repository:
       begin: (?i)^\s*(\[)(LDAPSearch[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-ldap-search.opsi-script}
-      while: ^(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
+      while: ^(?i)(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
       patterns:
       - include: '#secondary-section'
       - include: '#secondary-section-ldap-search'
