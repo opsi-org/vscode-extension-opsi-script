@@ -182,9 +182,9 @@ repository:
      - name: support.function.constants.opsi-script
        match: (?i)\b(replaceOpsiConstants)\b
      - name: support.variable.other.opsi-script
-       match: (?i)\b(requiredWinstVersion)\b
+       match: (?i)\b(requiredWinstVersion|AutoActivityDisplay)\b
      - name: support.function.other.opsi-script
-       match: (?i)\b(ExitWindows|AutoActivityDisplay|noUpdateScript)\b
+       match: (?i)\b(ExitWindows|noUpdateScript)\b
     # 2.4. By Topic
      - name: support.function.compare.opsi-script
        match: (?i)\b(CompareDotSeparatedStrings|CompareDotSeparatedStrings|CompareDotSeparatedNumbers|CompareDotSeparatedNumbers|boolToString|stringToBool)\b
