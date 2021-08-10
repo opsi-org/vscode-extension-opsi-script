@@ -106,8 +106,6 @@ DefStringList $INST_ParamstrList$
 DefStringList $INST_productList4setup$
 DefStringList $INST_ErrorList$
 
-
-
 ;******** Sektion general **********
 
 DefVar $GEN_bootmode$

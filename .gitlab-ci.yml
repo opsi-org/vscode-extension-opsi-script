@@ -3,13 +3,24 @@ image: node:14-slim
 stages:
   - build
 
+.install_tools: &install_tools |
+  export DEBIAN_FRONTEND=noninteractive
+  apt update
+  apt -y install tar wget grep coreutils
+  wget "$OPSIDEVTOOLS_URL_LINUX_X64" -O opsi-dev-tools.tar.gz
+  tar -xvf opsi-dev-tools.tar.gz
+
 build:extension:
   stage: build
   script:
+    - *install_tools
+    - version=$(grep '"version"' package.json | cut -d'"' -f4)
     - npm install
     - npm install -g js-yaml vsce
     - js-yaml syntaxes/opsi-script.tmLanguage.yaml > syntaxes/opsi-script.tmLanguage.json
     - vsce package
+    - '[ "${CI_COMMIT_TAG}" = "" ] && ./opsi-dev-tool -l info --uib-binaryindex-url=http://binaryindex.uib.gmbh --binary-push opsi-script-${version}.vsix vscode-extension-opsi-script all all "${version}" "${CI_JOB_ID}"'
+    - '[ "${CI_COMMIT_TAG}" = "" ] || ./opsi-dev-tool -l info --uib-binaryindex-url=http://binaryindex.uib.gmbh --binary-push opsi-script-${version}.vsix vscode-extension-opsi-script all all "${version}"'
   artifacts:
     name: 'vscode-extension-opsi-script'
     paths:
