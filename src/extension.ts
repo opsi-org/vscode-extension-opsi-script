@@ -119,7 +119,10 @@ export function activate(context: vscode.ExtensionContext) {
 				completions.push(completion);
 
 				entries.Function.push("primary-section-functions");
+				entries.Function.push("secondary-section-calls");
 				entries.Keyword.push("primary-section-keyword-storage");
+				entries.Keyword.push("primary-section-keywords");
+				entries.Keyword.push("primary-section-operators");
 			}
 			else if (secondarySectionType == "registry") {
 				entries.Function.push("secondary-section-registry");
@@ -172,9 +175,19 @@ export function activate(context: vscode.ExtensionContext) {
 				for (let entry of entries[kindName]) {
 					//console.log(entry);
 					for (let pattern of tmLang["repository"][entry]["patterns"]) {
+						if (pattern["include"]) {
+							entries[kindName].push(pattern["include"].replace(/^#/, ''));
+						}
+					}
+				}
+
+				for (let entry of entries[kindName]) {
+					//console.log(entry);
+					for (let pattern of tmLang["repository"][entry]["patterns"]) {
 						//console.log(pattern);
 						if (!pattern["match"]) continue;
 						for (let name of pattern["match"].replace(/^.+\\b\(/, '').replace(/\).*/, '').split('|')) {
+							name = name.replace(/\\S\+/, '_');
 							if (labels.includes(name)) continue;
 							labels.push(name);
 							let completion = new vscode.CompletionItem(name, kind);

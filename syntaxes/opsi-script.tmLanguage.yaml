@@ -248,7 +248,7 @@ repository:
   primary-section-function-shellcall:
     patterns:
     - name: meta.function.shellcall.opsi-script
-      match: (?i)\b(shellCall)\s*\(\s*(["'].*["'])\s*\)
+      match: (?i)\b(ShellCall)\s*\(\s*(["'].*["'])\s*\)
       captures:
         '1': {name: support.function.shellcall.opsi-script}
         '2':
@@ -262,7 +262,7 @@ repository:
   primary-section-function-powershellcall:
     patterns:
     - name: meta.function.powershellcall.opsi-script
-      match: (?i)\b(powershellcall)\s*\(\s*(["'].*["'])\s*\)
+      match: (?i)\b(PowershellCall)\s*\(\s*(["'].*["'])\s*\)
       captures:
         '1': {name: support.function.powershell.opsi-script}
         '2':
