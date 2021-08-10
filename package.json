@@ -15,11 +15,11 @@
             {
                 "id": "opsi-script",
                 "aliases": [
-                    "opsi-script",
                     "opsi-script"
                 ],
                 "extensions": [
                     ".opsiscript",
+                    ".opsiinc",
                     ".ins"
                 ],
                 "configuration": "./language-configuration.json"
