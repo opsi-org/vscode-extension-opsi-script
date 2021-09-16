@@ -794,8 +794,19 @@ repository:
           - include: '#secondary-section-string'
         '5': {name: invalid.illegal.arguments.opsi-script}
 
+    - name: meta.function.secondary-section.files.del.opsi-script
+      match: \b((?i)Del)\b(\s+-(?:s|f|c|d\d*)+)?\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s*(\S*.*)
+      captures:
+        '1': {name: support.function.secondary-section.files.del.opsi-script}
+        '2': {name: constant.character.secondary-section.files.del.arguments.opsi-script}
+        '3':
+          name: meta.secondary-section.files.del.path.opsi-script
+          patterns:
+          - include: '#secondary-section-string'
+        '4': {name: invalid.illegal.arguments.opsi-script}
+
     - name: meta.function.secondary-section.files.delete.opsi-script
-      match: \b((?i)Del(?:ete)?)\b(\s+-(?:s|f|c|d\d*)+)?\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s*(\S*.*)
+      match: \b((?i)Delete)\b(\s+-(?:s|f|c|d\d*)+)?\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s*(\S*.*)
       captures:
         '1': {name: support.function.secondary-section.files.delete.opsi-script}
         '2': {name: constant.character.secondary-section.files.delete.arguments.opsi-script}

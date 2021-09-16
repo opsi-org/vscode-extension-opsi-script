@@ -128,12 +128,14 @@ export function activate(context: vscode.ExtensionContext) {
 				entries.Function.push("secondary-section-registry");
 				entries.Constant.push("secondary-section-registry-constants");
 			}
+			else if (secondarySectionType == "files") {
+				entries.Function.push("secondary-section-files");
+			}
 			else if (secondarySectionType == "patches") {
 				entries.Function.push("secondary-section-patches");
 			}
 			else if (secondarySectionType == "patchtextfile") {
 				entries.Function.push("secondary-section-patch-text-file");
-				entries.Constant.push("secondary-section-patch-text-file-constants");
 			}
 			else if (secondarySectionType == "linkfolder") {
 				entries.Function.push("secondary-section-link-folder");
@@ -186,9 +188,11 @@ export function activate(context: vscode.ExtensionContext) {
 					for (let pattern of tmLang["repository"][entry]["patterns"]) {
 						//console.log(pattern);
 						if (!pattern["match"]) continue;
-						for (let name of pattern["match"].replace(/^.+\\b\(/, '').replace(/\).*/, '').split('|')) {
+						for (let name of pattern["match"].replace(/^\\b\(\(\?i\)/, '\\b(').replace(/^.*?\\b\(/, '').replace(/\).*/, '').split('|')) {
 							name = name.replace(/\\S\+/, '_');
-							if (labels.includes(name)) continue;
+							if (labels.includes(name)) {
+								continue;
+							}
 							labels.push(name);
 							let completion = new vscode.CompletionItem(name, kind);
 							completion.sortText = `${sortPrefix}${name}`
