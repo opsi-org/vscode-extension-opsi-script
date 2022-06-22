@@ -195,7 +195,7 @@ repository:
      - name: support.variable.other.opsi-script
        match: (?i)\b(requiredWinstVersion|requiredOpsiscriptVersion|AutoActivityDisplay)\b
      - name: support.function.other.opsi-script
-       match: (?i)\b(ExitWindows|noUpdateScript)\b
+       match: (?i)\b(ExitWindows|noUpdateScript|HasMinimumSpace)\b
     # 2.4. By Topic
      - name: support.function.compare.opsi-script
        match: (?i)\b(CompareDotSeparatedStrings|CompareDotSeparatedStrings|CompareDotSeparatedNumbers|CompareDotSeparatedNumbers|boolToString|stringToBool)\b
