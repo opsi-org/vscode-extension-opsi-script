@@ -21,6 +21,7 @@ fileTypes: [.opsiscript, .ins]
 repository:
   core:
     patterns:
+    - include: '#file-start'
     - include: '#comments'
     - include: '#primary-sections'
     - include: '#secondary-sections'
@@ -125,6 +126,16 @@ repository:
   #   - include: '#primary-section'
   #   - include: '#function-definition'
 
+  file-start:
+    patterns:
+    - name: meta.primary-section.file-start.opsi-script
+      begin: ^(?!\s*\[)
+      while: ^(?!\s*\[.*\]$)
+      patterns:
+      - include: '#primary-section'
+      - include: '#primary-sections'
+      - include: '#secondary-sections'
+
   primary-section:
     patterns:
     - include: '#comments'
@@ -182,7 +193,7 @@ repository:
      - name: support.function.constants.opsi-script
        match: (?i)\b(replaceOpsiConstants)\b
      - name: support.variable.other.opsi-script
-       match: (?i)\b(requiredWinstVersion|AutoActivityDisplay)\b
+       match: (?i)\b(requiredWinstVersion|requiredOpsiscriptVersion|AutoActivityDisplay)\b
      - name: support.function.other.opsi-script
        match: (?i)\b(ExitWindows|noUpdateScript)\b
     # 2.4. By Topic
