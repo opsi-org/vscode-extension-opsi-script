@@ -14,7 +14,7 @@
 scopeName: source.opsi-script
 name: opsi-script
 uuid: 08cd1012-1f35-44bf-a64a-ebf3f82c8978
-fileTypes: [.opsiscript, .ins]
+fileTypes: [.opsiscript, .opsiinc, .ins]
 #foldingStartMarker: ^\[[^\]]+\]
 #foldingStopMarker: ^\[[^\]]+\]
 
