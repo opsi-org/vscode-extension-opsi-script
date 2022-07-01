@@ -310,7 +310,7 @@ repository:
     patterns:
     - include: '#primary-section-keyword-storage'
     - name: keyword.control.opsi-script
-      match: (?i)\b(if|else|endif|for|in|do|Switch|EndSwitch|Case|EndCase)\b
+      match: (?i)\b(if|else|endif|for|in|do|Switch|EndSwitch|Case|DefaultCase|EndCase)\b
 
   primary-section-operators:
     patterns:
