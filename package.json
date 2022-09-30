@@ -2,8 +2,9 @@
     "name": "opsi-script",
     "displayName": "opsi-script",
     "description": "Provides syntax highlighting and auto completion for opsi script",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "publisher": "uib",
+    "icon": "opsi-logo.png",
     "engines": {
         "vscode": "^1.56.0"
     },

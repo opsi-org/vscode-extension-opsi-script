@@ -4,6 +4,11 @@ All notable changes to the "opsi-script" extension will be documented in this fi
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+
+## [0.1.5]
+
+- Add icon
+
 ## [0.1.4]
 
 - Update description
