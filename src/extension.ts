@@ -1,8 +1,10 @@
 /*
-Copyright (C) uib GmbH. All rights reserved.
-
-Samples: https://github.com/microsoft/vscode-extension-samples/blob/main/completions-sample
+Copyright (c) 2022 uib GmbH <info@uib.de>
+All rights reserved.
+License: AGPL-3.0
 */
+
+// Samples: https://github.com/microsoft/vscode-extension-samples/blob/main/completions-sample
 
 import * as vscode from 'vscode';
 import * as path from 'path';

@@ -2,6 +2,7 @@ image: node:14-slim
 
 stages:
   - build
+  - publish
 
 .install_tools: &install_tools |
   export DEBIAN_FRONTEND=noninteractive
@@ -26,3 +27,12 @@ build:extension:
     paths:
       - '*.vsix'
     expire_in: 2 days
+
+
+publish:extension:
+  stage: publish
+  when: manual
+  script:
+    #- version=$(grep '"version"' package.json | cut -d'"' -f4)
+    - npm install --unsafe-perm -g vsce
+    - vsce publish -p ${MS_MARKETPLACE_PUBLISH_TOKEN}
