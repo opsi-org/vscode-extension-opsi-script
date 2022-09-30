@@ -33,6 +33,7 @@ publish:extension:
   stage: publish
   when: manual
   script:
-    #- version=$(grep '"version"' package.json | cut -d'"' -f4)
-    - npm install --unsafe-perm -g vsce
+    - *install_tools
+    - npm install
+    - npm install --unsafe-perm -g js-yaml vsce
     - vsce publish -p ${MS_MARKETPLACE_PUBLISH_TOKEN}
