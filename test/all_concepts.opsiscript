@@ -1,0 +1,94 @@
+VSCode Theme: Dark Modern
+
+
+; This is a valid script comment and completely dark green.
+# This is not a valid script comment since comments must start with a semicolon.
+some line start ; Comments are only highlighted at line start.
+
+
+;PRIMARY SECTIONS:
+
+; Keywords to include code from other files are purple:
+; There is not yet a specification that only an exactly one string expression is allowed afterwards.
+importlib ""
+include_insert ""
+include_append ""
+sub ""
+importlib
+importlib "" "" "" some words
+
+
+; Variable names and script configs are light blue.
+$myVar$
+setloglevel=8
+; Strings are orange.
+'str'
+; Booleans are not highlighted yet since they are only half valid data types in opsi-script.
+true
+; Numbers are highlighted although they are only half valid data types in opsi-script.
+5.1
+; Script functions and statements are yellow.
+getos
+takestring()
+comment ""
+exitwindows /immediatereboot
+; TODO: Allow any number of spaces.
+exitwindows  /immediatereboot
+; Other functions are turquoise.
+mytestdeffunc()
+; TODO: Script constants outside of strings should not be highlighted since this is invalid syntax!
+%scriptpath%
+; Script constants inside of strings are light blue like variables.
+; TODO: Highlight variables equally in secondary sections and differently in primary sections due to the automatic replacement!
+"%scriptpath%"
+; Variables inside of strings are not highlighted.
+"$myVar$"
+; Random non-keyword words are not highlighted, i.e. white.
+random
+
+
+; Keywords are dark blue:
+defvar defstringlist set
+if else elseif endif
+and or not
+switch case defaultcase endcase endswitch
+for in to do
+deffunc endfunc
+; What TODO with defined function return types?
+void string stringlist
+
+
+; Secondary section calls are turquoise like defined functions:
+Winbatchx
+ShellScriptx
+; Execwith needs string afterwards
+ExecWithx ""
+Filesx
+Registryx
+Patchesx
+Patchtextfilex
+LinkFolderx
+Opsiservicecallx
+Patchhostsx
+xml2x
+ExecPythonx
+Ldapsearchx
+; TODO: Should we demand an underscore after the section type?
+
+
+; Deprecated selection (many TODOs):
+Dosbatch
+Dosbatchx
+[Dosbatch]
+[Dosbatchx]
+%WinstVersion%
+"%WinstVersion%"
+LogLevel
+errorsOccuredSinceMark
+SubstringBefore
+SubstringBefore("", "")
+off
+AllNTUserProfiles
+/AllNTUserProfiles
+ExitWindows /RebootWanted
+ExitWindows  /RebootWanted
