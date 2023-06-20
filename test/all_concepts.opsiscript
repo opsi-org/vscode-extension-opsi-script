@@ -18,8 +18,9 @@ importlib
 importlib "" "" "" some words
 
 
-; Variable names and script configs are light blue.
+; Variable names (enclosed in two dollars!) and script configs are light blue.
 $myVar$
+$myvar
 setloglevel=8
 ; Strings are orange.
 'str'
@@ -34,8 +35,10 @@ comment ""
 exitwindows /immediatereboot
 ; TODO: Allow any number of spaces.
 exitwindows  /immediatereboot
-; Other functions are turquoise.
+; Other (user defined) functions are turquoise.
 mytestdeffunc()
+; TODO: Highlighting in defined function calls
+mytestdeffunc("'" + $myVar$)
 ; TODO: Script constants outside of strings should not be highlighted since this is invalid syntax!
 %scriptpath%
 ; Script constants inside of strings are light blue like variables.
@@ -58,7 +61,8 @@ deffunc endfunc
 void string stringlist
 
 
-; Secondary section calls are turquoise like defined functions:
+; Section calls are turquoise like defined functions:
+Subx
 Winbatchx
 ShellScriptx
 ; Execwith needs string afterwards
@@ -76,11 +80,23 @@ Ldapsearchx
 ; TODO: Should we demand an underscore after the section type?
 
 
+Registry loadUnicodeTextFile("") /regedit
+; TODO: Registry command so far only works with loadUnicodeTextFile.
+; But every Stringlist or String is also possible (search for 'tsecExpected:' in opsi-script osparser.pas).
+Registry loadTextFile("") /regedit
+Registry "" /regedit
+; Btw (TODO): I think for the registry command there are all modifiers available as for the normal section since the command is actually handled like a section.
+Registry loadUnicodeTextFile("") /regedit /Sysnative
+; Btw (TODO): Special treatment of command does not breaks highlighting if quote in loadUnicodeTextFile is missing.
+Registry loadUnicodeTextFile(') /regedit
+
+
 ; Deprecated selection (many TODOs):
 Dosbatch
 Dosbatchx
 [Dosbatch]
 [Dosbatchx]
+[Aktionen]
 %WinstVersion%
 "%WinstVersion%"
 LogLevel
@@ -92,3 +108,45 @@ AllNTUserProfiles
 /AllNTUserProfiles
 ExitWindows /RebootWanted
 ExitWindows  /RebootWanted
+
+
+; Section heads are also turquoise:
+; Actions and Profileactions do not allow following characters.
+[Actions]
+[Actionsx]
+[Profileactions]
+[Profileactionsx]
+[Subx]
+; TODO? 'Sub' without following characters is interpreted as the include statement.
+[Sub]
+[Winbatchx]
+[ShellScriptx]
+[ExecWithx]
+[Filesx]
+[Files]
+[Registryx]
+; TODO? 'Registry' without following characters is interpreted as the registry command.
+[Registry]
+
+
+;SECONDARY SECTIONS:
+
+[Winbatchx]
+; No special highlighting except for constants and variables which will be replaced in execution and strings.
+echo "test" %scriptpath% $myvar$
+$Today = (Get-Date).DateTime
+
+[ShellScriptx]
+; No special highlighting except for constants and variables which will be replaced in execution and strings.
+echo "test" %scriptpath% $myvar$
+$Today = (Get-Date).DateTime
+
+[Execwithx]
+; No special highlighting except for constants and variables which will be replaced in execution and strings.
+echo "test" %scriptpath% $myvar$
+$Today = (Get-Date).DateTime
+
+[Execwithxpowershellyz]
+; Special powershell highlighting if 'powershell' occurs after 'execwith' in the section name.
+echo "test" %scriptpath% $myvar$
+$Today = (Get-Date).DateTime
