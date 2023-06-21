@@ -97,7 +97,6 @@ Dosbatchx
 [Dosbatch]
 [Dosbatchx]
 [Aktionen]
-; TODO: Percents red
 %WinstVersion%
 "%WinstVersion%"
 LogLevel

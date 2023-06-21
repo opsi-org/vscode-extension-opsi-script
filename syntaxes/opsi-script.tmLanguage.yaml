@@ -68,6 +68,8 @@ repository:
     patterns:
     - name: variable.other.script-constants.opsi-script
       match: '(?i)(%)(ProgramFilesDir|ProgramFiles32Dir|ProgramFiles64Dir|ProgramFilesSysnativeDir|Systemroot|System|Systemdrive|ProfileDir|AllUsersProfileDir|CommonProfileDir|CommonStartMenuPath|CommonStartmenuDir|CommonAppdataDir|CommonDesktopDir|CommonStartupDir|CommonProgramsDir|DefaultUserProfileDir|AppdataDir|CurrentAppdataDir|CurrentStartmenuDir|CurrentDesktopDir|CurrentStartupDir|CurrentProgramsDir|CurrentSendToDir|UserProfileDir|CurrentProfileDir|ScriptPath|ScriptDir|RealScriptPath|ScriptDrive|OpsiscriptDir|OpsiscriptVersion|opsiscriptProcname|Logfile|opsiScriptHelperPath|opsiTmpDir|opsiUserTmpDir|opsiLogDir|opsidata|opsiapplog|PCName|Username|IPName|HostID|FQDN|opsiserviceURL|opsiServer|opsiDepotId|opsiserviceUser|opsiserviceClientId|opsiservicePassword|installingProdName|installingProdVersion)(%)'
+    - name: invalid.deprecated.script-constants.opsi-script
+      match: '(?i)(%)(WinstDir|WinstVersion|installingProduct|Host|IPAddress)(%)'
 
   literal-variable:
     patterns:
@@ -149,7 +151,7 @@ repository:
     patterns:
      - include: '#primary-section-function-registry'
      - name: invalid.deprecated.opsi-script
-       match: (?i)\b(WinstDir|WinstVersion|installingProduct|Host|IPAddress|Aktionen|Initial|IdapiConfig|progmangroups|XMLPatch|dosbatch|dosinanicon|shellbatch|shellinanicon|LogLevel|errorsOccuredSinceMark|IniVar|StringSplit|SubstringBefore|GetIni|getLocaleInfo|addstringlistelement_to_netscape_user_pref|set_netscape_user_pref|getntversion|ReconstructFrom|on|off|AllNTUserProfiles|GetRegistryStringValue|ExitWindows\s+/RebootWanted)\b
+       match: (?i)\b(Aktionen|Initial|IdapiConfig|progmangroups|XMLPatch|dosbatch|dosinanicon|shellbatch|shellinanicon|LogLevel|errorsOccuredSinceMark|IniVar|StringSplit|SubstringBefore|GetIni|getLocaleInfo|addstringlistelement_to_netscape_user_pref|set_netscape_user_pref|getntversion|ReconstructFrom|on|off|AllNTUserProfiles|GetRegistryStringValue|ExitWindows\s+/RebootWanted)\b
      - name: variable.other.opsi-script
        match: (?i)\b(encoding|ExitOnError|ScriptErrorMessages|FatalOnSyntaxError|FatalOnRuntimeError|SetLogLevel|SetDebug_Lib|forceLogInAppendMode|requiredOpsiscriptVersion|requiredWinstVersion|SetSkinDirectory|AutoActivityDisplay|TraceMode|StayOnTop|SetConfidential)\b
      - name: support.function.opsi-script
