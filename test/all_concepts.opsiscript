@@ -108,6 +108,8 @@ AllNTUserProfiles
 /AllNTUserProfiles
 ExitWindows /RebootWanted
 ExitWindows  /RebootWanted
+; TODO: Should be white everywhere except registry section, there red.
+ReconstructFrom
 
 
 ; Section heads are also turquoise:
@@ -132,17 +134,17 @@ ExitWindows  /RebootWanted
 ;SECONDARY SECTIONS:
 
 [Winbatchx]
-; No special highlighting except for constants and variables which will be replaced in execution and strings.
+; No special highlighting except for strings and for constants and variables which will be replaced in execution.
 echo "test" %scriptpath% $myvar$
 $Today = (Get-Date).DateTime
 
 [ShellScriptx]
-; No special highlighting except for constants and variables which will be replaced in execution and strings.
+; No special highlighting except for strings and for constants and variables which will be replaced in execution.
 echo "test" %scriptpath% $myvar$
 $Today = (Get-Date).DateTime
 
 [Execwithx]
-; No special highlighting except for constants and variables which will be replaced in execution and strings.
+; No special highlighting except for strings and for constants and variables which will be replaced in execution.
 echo "test" %scriptpath% $myvar$
 $Today = (Get-Date).DateTime
 
@@ -150,3 +152,100 @@ $Today = (Get-Date).DateTime
 ; Special powershell highlighting if 'powershell' occurs after 'execwith' in the section name.
 echo "test" %scriptpath% $myvar$
 $Today = (Get-Date).DateTime
+
+[Execpythonx]
+; Special python highlighting.
+import sys
+testvar = ""
+if testvar:
+    print("")
+
+[filesx]
+; Selection of commands: All commands should be purple!
+SourcePath
+SourcePath = ""
+copy
+copy ""
+copy -seVvcduxwnrh "" "" "" ""
+delete
+delete ""
+delete -fsd3c ""
+del -fsd3c ""
+chmod 777
+chmod 777 ""
+move
+move "" "" "" ""
+
+[registryx]
+; Selection of commands: All commands should be purple!
+OpenKey
+OpenKey [x]
+Set
+Set "" =
+Supp
+Supp "" ;
+SaveValueToFile
+SaveValueToFile "" "" "" ""
+DeleteVar
+DeleteVar "" "" ""
+FlushKey
+; TODO: Should be deprecated.
+ReconstructFrom
+
+[patchesx]
+; Selection of commands: All commands should be purple!
+add
+add [] test=test
+del
+del [] test
+delsec
+delsec []
+replace
+replace test=test test2=test2
+
+[patchtextfilex]
+; Selection of commands: All commands should be purple!
+Set_Mozilla_Pref
+Set_Mozilla_Pref("")
+FindLine
+FindLine ""
+AddLine
+GoToTop
+GoToTop ""
+
+[Linkfolderx]
+; Selection of commands: All commands should be purple!
+set_basefolder
+set_basefolder common_programs
+set_subfolder
+set_subfolder ""
+delete_element
+delete_subfolder
+set_link
+  name: ""
+  target: ""
+  parameters:
+  icon_file:
+end_link
+
+[patchhostsx]
+; Selection of commands: All commands should be purple!
+; The following need one or more arguments.
+setaddr
+delhost
+setComment
+
+[xml2x]
+; Selection of commands: All commands should be purple!
+strictMode
+strictMode = true
+openNode
+openNode "" "" ""
+SetAttribute
+gotoParentNode ""
+rootNodeOnCreate
+rootNodeOnCreate = ""
+
+[Ldapsearchx]
+targethost:
+dn:
