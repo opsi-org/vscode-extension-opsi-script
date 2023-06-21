@@ -33,8 +33,7 @@ getos
 takestring()
 comment ""
 exitwindows /immediatereboot
-; TODO: Allow any number of spaces.
-exitwindows  /immediatereboot
+exitwindows     /immediatereboot
 ; Other (user defined) functions are turquoise.
 mytestdeffunc()
 ; TODO: Highlighting in defined function calls
