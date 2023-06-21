@@ -67,6 +67,7 @@ ShellScriptx
 ; Execwith needs string afterwards
 ExecWithx ""
 Filesx
+Filesx /alluserprofiles /32Bit
 Registryx
 Patchesx
 Patchtextfilex
@@ -94,6 +95,26 @@ Registry loadUnicodeTextFile(') /regedit
 
 
 ; Deprecated selection:
+%WinstVersion%
+"%WinstVersion%"
+LogLevel
+errorsOccuredSinceMark
+; TODO: No idea why SubstringBefore is not recognized as deprecated.
+substringbefore
+SubstringBefore
+SubstringBefore("", "")
+stringsplit
+stringsplit("")
+off
+ScriptErrorMessages = off
+; Modifier is red if and only if used as modifier.
+/AllNTUserProfiles
+filesx /AllNTUserProfiles
+; ExitWindows with modifier is handled as one ingle command for each modifier.
+ExitWindows /RebootWanted
+ExitWindows     /RebootWanted
+; Deprecated section command outside of the section is white.
+ReconstructFrom
 ; Primary sections cannot be called and have no name extension.
 Aktionen
 Aktionenx
@@ -105,26 +126,6 @@ Dosbatchx
 Dosbatchx /32Bit
 [Dosbatch]
 [Dosbatchx]
-
-%WinstVersion%
-"%WinstVersion%"
-LogLevel
-errorsOccuredSinceMark
-; No idea why SubstringBefore is not recognized as deprecated
-substringbefore
-SubstringBefore
-SubstringBefore("", "")
-stringsplit
-off
-ScriptErrorMessages = off
-; TODO: Modifier red if and only if used as modifier
-AllNTUserProfiles
-/AllNTUserProfiles
-filesx /AllNTUserProfiles
-ExitWindows /RebootWanted
-ExitWindows     /RebootWanted
-; TODO: Should be white everywhere except registry section, there red.
-ReconstructFrom
 
 
 ; Section heads are also turquoise:
@@ -204,7 +205,7 @@ SaveValueToFile "" "" "" ""
 DeleteVar
 DeleteVar "" "" ""
 FlushKey
-; TODO: Should be deprecated.
+; Deprecated command is red.
 ReconstructFrom
 
 [patchesx]

@@ -160,7 +160,7 @@ repository:
     patterns:
      - include: '#primary-section-function-registry'
      - name: invalid.deprecated.opsi-script
-       match: (?i)\b(LogLevel|errorsOccuredSinceMark|IniVar|StringSplit|SubstringBefore|GetIni|getLocaleInfo|addstringlistelement_to_netscape_user_pref|set_netscape_user_pref|getntversion|ReconstructFrom|on|off|AllNTUserProfiles|GetRegistryStringValue|ExitWindows\s+/RebootWanted)\b
+       match: (?i)\b(LogLevel|errorsOccuredSinceMark|IniVar|StringSplit|SubstringBefore|GetIni|getLocaleInfo|getntversion|on|off|GetRegistryStringValue|ExitWindows\s+/RebootWanted)\b
      - name: variable.other.opsi-script
        match: (?i)\b(encoding|ExitOnError|ScriptErrorMessages|FatalOnSyntaxError|FatalOnRuntimeError|SetLogLevel|SetDebug_Lib|forceLogInAppendMode|requiredOpsiscriptVersion|requiredWinstVersion|SetSkinDirectory|AutoActivityDisplay|TraceMode|StayOnTop|SetConfidential)\b
      - name: support.function.opsi-script
@@ -319,6 +319,8 @@ repository:
       match: (?i)\/AllNTUserSendTo\b
     - name: constant.character.param.32bit64bitsysnative.opsi-script
       match: (?i)\/(32Bit|64Bit|SysNative)\b
+    - name: invalid.deprecated.param.opsi-script
+      match: (?i)\/(AllNTUserProfiles)\b
 
   secondary-section-params-registry:
     patterns:
@@ -342,6 +344,8 @@ repository:
         '2':
           patterns:
           - include: '#primary-section-string'
+    - name: invalid.deprecated.param.opsi-script
+      match: (?i)\/(AllNTUserProfiles)\b
 
   secondary-section-params-patchtextfile:
     patterns:
@@ -354,6 +358,8 @@ repository:
         '2':
           patterns:
           - include: '#primary-section-string'
+    - name: invalid.deprecated.param.opsi-script
+      match: (?i)\/(AllNTUserProfiles)\b
 
   secondary-section-params-opsiservicecall:
     patterns:
@@ -398,6 +404,8 @@ repository:
         '2':
           patterns:
           - include: '#primary-section-string'
+    - name: invalid.deprecated.param.opsi-script
+      match: (?i)\/(AllNTUserProfiles)\b
 
   secondary-section-params-execpython:
     patterns:
@@ -751,6 +759,8 @@ repository:
       match: '(?i)\b(REG_SZ|REG_EXPAND_SZ|REG_DWORD|REG_QWORD|REG_BINARY|REG_MULTI_SZ)'
     - name: keyword.control.secondary-section.registry.opsi-script
       match: (?i)\b(OpenKey|set|add|supp|GetMultiSZFromFile|SaveValueToFile|DeleteVar|DeleteKey|Flushkey)\b
+    - name: invalid.deprecated.secondary-section.registry.opsi-script
+      match: (?i)\b(ReconstructFrom)\b
 
   secondary-section-patches:
     patterns:
@@ -761,6 +771,8 @@ repository:
     patterns:
     - name: keyword.control.secondary-section.patchtextfile.opsi-script
       match: (?i)\b(Set_Mozilla_Pref|AddStringListElement_To_Mozilla_Pref|findline|findline_startingwith|findline_containing|gototop|gotobottom|advanceline|deletetheline|addline|add_line|insertline|appendline|append_file|subtract_file|savetofile|sorted|setKeyValueSeparator|setValueByKey)\b
+    - name: invalid.deprecated.secondary-section.patchtextfile.opsi-script
+      match: (?i)\b(addstringlistelement_to_netscape_user_pref|set_netscape_user_pref)\b
 
   secondary-section-linkfolder:
     patterns:
