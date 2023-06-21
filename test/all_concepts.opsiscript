@@ -9,7 +9,7 @@ some line start ; Comments are only highlighted at line start.
 ;PRIMARY SECTIONS:
 
 ; Keywords to include code from other files are purple:
-; There is not yet a specification that only an exactly one string expression is allowed afterwards.
+; TODO?: There is not yet a specification that only exactly one string expression is allowed afterwards.
 importlib ""
 include_insert ""
 include_append ""
@@ -117,10 +117,9 @@ SubstringBefore("", "")
 stringsplit
 off
 ScriptErrorMessages = off
+; TODO: Modifier red if and only if used as modifier
 AllNTUserProfiles
-; TODO: Slash red
 /AllNTUserProfiles
-; TODO: Modifier red
 filesx /AllNTUserProfiles
 ExitWindows /RebootWanted
 ExitWindows     /RebootWanted
