@@ -90,23 +90,32 @@ Registry loadUnicodeTextFile("") /regedit /Sysnative
 Registry loadUnicodeTextFile(') /regedit
 
 
-; Deprecated selection (many TODOs):
+; Deprecated selection:
+; TODO: All section calls and heads red
 Dosbatch
 Dosbatchx
 [Dosbatch]
 [Dosbatchx]
 [Aktionen]
+; TODO: Percents red
 %WinstVersion%
 "%WinstVersion%"
 LogLevel
 errorsOccuredSinceMark
+; No idea why SubstringBefore is not recognized as deprecated
+substringbefore
 SubstringBefore
 SubstringBefore("", "")
+stringsplit
 off
+ScriptErrorMessages = off
 AllNTUserProfiles
+; TODO: Slash red
 /AllNTUserProfiles
+; TODO: Modifier red
+filesx /AllNTUserProfiles
 ExitWindows /RebootWanted
-ExitWindows  /RebootWanted
+ExitWindows     /RebootWanted
 ; TODO: Should be white everywhere except registry section, there red.
 ReconstructFrom
 
