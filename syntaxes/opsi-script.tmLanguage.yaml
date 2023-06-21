@@ -122,6 +122,15 @@ repository:
   primary-sections:
     patterns:
     - name: meta.primary-section.actions.opsi-script
+      begin: (?i)^\s*\[(Aktionen|Initial)\]
+      beginCaptures:
+        '1': {name: invalid.deprecated.primary-section.opsi-script}
+      while: ^(?!\1\[.*\]$)
+      patterns:
+      - include: '#primary-section'
+      - include: '#primary-sections'
+      - include: '#secondary-sections'
+    - name: meta.primary-section.actions.opsi-script
       begin: (?i)^\s*\[(Actions)\]
       beginCaptures:
         '1': {name: entity.name.type.primary-section.opsi-script}
@@ -151,7 +160,7 @@ repository:
     patterns:
      - include: '#primary-section-function-registry'
      - name: invalid.deprecated.opsi-script
-       match: (?i)\b(Aktionen|Initial|IdapiConfig|progmangroups|XMLPatch|dosbatch|dosinanicon|shellbatch|shellinanicon|LogLevel|errorsOccuredSinceMark|IniVar|StringSplit|SubstringBefore|GetIni|getLocaleInfo|addstringlistelement_to_netscape_user_pref|set_netscape_user_pref|getntversion|ReconstructFrom|on|off|AllNTUserProfiles|GetRegistryStringValue|ExitWindows\s+/RebootWanted)\b
+       match: (?i)\b(LogLevel|errorsOccuredSinceMark|IniVar|StringSplit|SubstringBefore|GetIni|getLocaleInfo|addstringlistelement_to_netscape_user_pref|set_netscape_user_pref|getntversion|ReconstructFrom|on|off|AllNTUserProfiles|GetRegistryStringValue|ExitWindows\s+/RebootWanted)\b
      - name: variable.other.opsi-script
        match: (?i)\b(encoding|ExitOnError|ScriptErrorMessages|FatalOnSyntaxError|FatalOnRuntimeError|SetLogLevel|SetDebug_Lib|forceLogInAppendMode|requiredOpsiscriptVersion|requiredWinstVersion|SetSkinDirectory|AutoActivityDisplay|TraceMode|StayOnTop|SetConfidential)\b
      - name: support.function.opsi-script
@@ -440,6 +449,11 @@ repository:
 
   secondary-section-calls:
     patterns:
+    - name: meta.secondary-section-call.deprecated.opsi-script
+      match: (?i)\b(IdapiConfig|progmangroups|XMLPatch|dosbatch|dosinanicon|shellbatch|shellinanicon)\S+\b\s*(.*)
+      captures:
+        '1': {name: invalid.deprecated.secondary-section-call.opsi-script}
+
     - name: meta.secondary-section-call.execwith.opsi-script
       match: (?i)\b(execwith\S+)\b\s*(["'].*["'])\s*(.*)
       captures:
@@ -555,6 +569,14 @@ repository:
 
   secondary-sections:
     patterns:
+    - name: meta.secondary-section.deprecated.opsi-script
+      begin: (?i)^\s*\[(IdapiConfig|progmangroups|XMLPatch|dosbatch|dosinanicon|shellbatch|shellinanicon)[^\]]+\]
+      beginCaptures:
+        '1': {name: invalid.deprecated.secondary-section.opsi-script}
+      while: ^(?i)(?!\s*(\[.*\]|EndFunc)\s*$)
+      patterns:
+      - include: '#secondary-section'
+
     - name: meta.secondary-section.exec-with-powershell.opsi-script
       begin: (?i)^\s*\[(ExecWith[^\]]*powershell[^\]]*)\]
       beginCaptures:

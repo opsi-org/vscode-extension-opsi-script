@@ -90,13 +90,22 @@ Registry loadUnicodeTextFile("") /regedit /Sysnative
 Registry loadUnicodeTextFile(') /regedit
 
 
+; TODO: Section calls with modifiers.
+
+
 ; Deprecated selection:
-; TODO: All section calls and heads red
+; Primary sections cannot be called and have no name extension.
+Aktionen
+Aktionenx
+[Aktionen]
+[Aktionenx]
+; Secondary sections need a name extension.
 Dosbatch
 Dosbatchx
+Dosbatchx /32Bit
 [Dosbatch]
 [Dosbatchx]
-[Aktionen]
+
 %WinstVersion%
 "%WinstVersion%"
 LogLevel
