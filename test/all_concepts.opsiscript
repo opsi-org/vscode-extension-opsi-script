@@ -9,7 +9,6 @@ some line start ; Comments are only highlighted at line start.
 ;PRIMARY SECTIONS:
 
 ; Keywords to include code from other files are purple:
-; TODO?: There is not yet a specification that only exactly one string expression is allowed afterwards.
 importlib ""
 include_insert ""
 include_append ""
@@ -140,7 +139,6 @@ Dosbatchx /32Bit
 [Profileactions]
 [Profileactionsx]
 [Subx]
-; TODO? 'Sub' without following characters is interpreted as the include statement.
 [Sub]
 [Winbatchx]
 [ShellScriptx]
@@ -148,24 +146,23 @@ Dosbatchx /32Bit
 [Filesx]
 [Files]
 [Registryx]
-; TODO? 'Registry' without following characters is interpreted as the registry command.
 [Registry]
 
 
 ;SECONDARY SECTIONS:
 
 [Winbatchx]
-; No special highlighting except for strings and for constants and variables which will be replaced in execution.
+; No special highlighting (except for strings and for constants and variables which will be replaced in execution).
 echo "test" %scriptpath% $myvar$
 $Today = (Get-Date).DateTime
 
 [ShellScriptx]
-; No special highlighting except for strings and for constants and variables which will be replaced in execution.
+; No special highlighting (except for strings and for constants and variables which will be replaced in execution).
 echo "test" %scriptpath% $myvar$
 $Today = (Get-Date).DateTime
 
 [Execwithx]
-; No special highlighting except for strings and for constants and variables which will be replaced in execution.
+; No special highlighting (except for strings and for constants and variables which will be replaced in execution).
 echo "test" %scriptpath% $myvar$
 $Today = (Get-Date).DateTime
 
