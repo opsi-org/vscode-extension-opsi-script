@@ -83,17 +83,17 @@ Ldapsearchx
 ; TODO: Should we demand an underscore after the section type?
 
 
+; Every Stringlist or String is possible after registry command (search for 'tsecExpected:' in opsi-script osparser.pas).
 Registry loadUnicodeTextFile("") /regedit
-; TODO: Registry command so far only works with loadUnicodeTextFile.
-; But every Stringlist or String is also possible (search for 'tsecExpected:' in opsi-script osparser.pas).
 Registry loadTextFile("") /regedit
 Registry "" /regedit
-; Btw (TODO): I think for the registry command there are all modifiers available as for the normal section since the command is actually handled like a section.
 Registry loadUnicodeTextFile("") /regedit /Sysnative
-; Btw (TODO): Special treatment of command does not breaks highlighting if quote in loadUnicodeTextFile is missing.
+; User defined functions and functions after registry command with incomplete string do not break the following highlighting like script functions
+; but the brackets show the error an that must be enough for now.
+mytestdeffunc("')
 Registry loadUnicodeTextFile(') /regedit
-; TODO: Also for user defined functions.
-mytestdeffunc(')
+; Compare to:
+;loadUnicodeTextFile(')
 
 
 ; TODO: Section calls with modifiers.
