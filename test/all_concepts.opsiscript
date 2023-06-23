@@ -36,7 +36,6 @@ exitwindows /immediatereboot
 exitwindows     /immediatereboot
 ; Other (user defined) functions are turquoise.
 mytestdeffunc()
-; TODO: Highlighting in defined function calls
 mytestdeffunc("'" + $myVar$)
 
 ; Constants outside of strings are not highlighted since this is invalid syntax! (Except for for-loops)
@@ -93,6 +92,8 @@ Registry "" /regedit
 Registry loadUnicodeTextFile("") /regedit /Sysnative
 ; Btw (TODO): Special treatment of command does not breaks highlighting if quote in loadUnicodeTextFile is missing.
 Registry loadUnicodeTextFile(') /regedit
+; TODO: Also for user defined functions.
+mytestdeffunc(')
 
 
 ; TODO: Section calls with modifiers.
