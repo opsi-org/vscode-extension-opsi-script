@@ -56,7 +56,10 @@ defvar defstringlist set
 if else elseif endif
 and or not
 switch case defaultcase endcase endswitch
-for in to do
+; "for" keyword: See above in the part about script constants
+for
+for %s%
+in to do
 deffunc endfunc
 ; What TODO with defined function return types?
 void string stringlist
