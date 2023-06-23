@@ -87,10 +87,10 @@ Registry loadUnicodeTextFile("") /regedit
 Registry loadTextFile("") /regedit
 Registry "" /regedit
 Registry loadUnicodeTextFile("") /regedit /Sysnative
-; User defined functions and functions after registry command with incomplete string do not break the following highlighting like script functions
+; User defined functions and functions after registry command with incomplete string do not completely break the following highlighting like script functions
 ; but the brackets show the error an that must be enough for now.
-mytestdeffunc("')
-Registry loadUnicodeTextFile(') /regedit
+;mytestdeffunc("')
+;Registry loadUnicodeTextFile(') /regedit
 ; Compare to:
 ;loadUnicodeTextFile(')
 
@@ -111,7 +111,7 @@ stringsplit
 stringsplit("")
 off
 ScriptErrorMessages = off
-; Modifier is red if and only if used as modifier.
+; Modifier is red if and only if used as modifier, else unhighlighted.
 /AllNTUserProfiles
 filesx /AllNTUserProfiles
 ; ExitWindows with modifier is handled as one ingle command for each modifier.
