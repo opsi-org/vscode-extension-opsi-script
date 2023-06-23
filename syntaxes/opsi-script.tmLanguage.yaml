@@ -37,7 +37,6 @@ repository:
     - include: '#primary-section-operators'
     - include: '#primary-section-number'
     - include: '#primary-section-string'
-    - include: '#literal-constant-percent'
     - include: '#literal-variable'
 
   comments:
@@ -66,10 +65,16 @@ repository:
 
   literal-constant-percent:
     patterns:
-    - name: variable.other.script-constants.opsi-script
-      match: '(?i)(%)(ProgramFilesDir|ProgramFiles32Dir|ProgramFiles64Dir|ProgramFilesSysnativeDir|Systemroot|System|Systemdrive|ProfileDir|AllUsersProfileDir|CommonProfileDir|CommonStartMenuPath|CommonStartmenuDir|CommonAppdataDir|CommonDesktopDir|CommonStartupDir|CommonProgramsDir|DefaultUserProfileDir|AppdataDir|CurrentAppdataDir|CurrentStartmenuDir|CurrentDesktopDir|CurrentStartupDir|CurrentProgramsDir|CurrentSendToDir|UserProfileDir|CurrentProfileDir|ScriptPath|ScriptDir|RealScriptPath|ScriptDrive|OpsiscriptDir|OpsiscriptVersion|opsiscriptProcname|Logfile|opsiScriptHelperPath|opsiTmpDir|opsiUserTmpDir|opsiLogDir|opsidata|opsiapplog|PCName|Username|IPName|HostID|FQDN|opsiserviceURL|opsiServer|opsiDepotId|opsiserviceUser|opsiserviceClientId|opsiservicePassword|installingProdName|installingProdVersion)(%)'
+    # Since the user can define own constants in for-loops (wtf why not variables?), we need a general constant-recognition.
+    # But there are not enough effective colours to highlight script constants and general user constants differently,
+    # therefore we don't need to put all script constants here.
     - name: invalid.deprecated.script-constants.opsi-script
       match: '(?i)(%)(WinstDir|WinstVersion|installingProduct|Host|IPAddress)(%)'
+    - name: variable.other.percent.opsi-script
+      match: '(%)\S+(%)'
+      captures:
+        '1': {name: punctuation.percent.opsi-script}
+        '2': {name: punctuation.percent.opsi-script}
 
   literal-variable:
     patterns:
@@ -190,7 +195,12 @@ repository:
   primary-section-keywords:
     patterns:
     - name: keyword.opsi-script
-      match: (?i)\b(DefVar|DefStringList|Set|DefFunc|EndFunc|if|else|elseif|endif|for|in|to|do|Switch|EndSwitch|Case|DefaultCase|EndCase|and|or|not)\b
+      match: (?i)\b(DefVar|DefStringList|Set|DefFunc|EndFunc|if|else|elseif|endif|in|to|do|Switch|EndSwitch|Case|DefaultCase|EndCase|and|or|not)\b
+    - name: meta.keyword.for-loop.opsi-script
+      match: (?i)\b(for\s+)(%\S+%)\s+
+      captures:
+        '1': {name: keyword.for-loop.opsi-script}
+        '2': {name: variable.other.for-loop.constant.opsi-script}
 
   primary-section-string:
     patterns:

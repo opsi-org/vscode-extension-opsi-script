@@ -38,11 +38,15 @@ exitwindows     /immediatereboot
 mytestdeffunc()
 ; TODO: Highlighting in defined function calls
 mytestdeffunc("'" + $myVar$)
-; TODO: Script constants outside of strings should not be highlighted since this is invalid syntax!
+
+; Constants outside of strings are not highlighted since this is invalid syntax! (Except for for-loops)
 %scriptpath%
-; Script constants inside of strings are light blue like variables.
-; TODO: Highlight variables equally in secondary sections and differently in primary sections due to the automatic replacement!
+; Constants inside of strings are light blue like variables.
 "%scriptpath%"
+; In for loops the iterating constant must not be quoted!
+for %s% in createstringlist("") do
+for "%s%" in createstringlist("") do
+
 ; Variables inside of strings are not highlighted.
 "$myVar$"
 ; Random non-keyword words are not highlighted, i.e. white.
