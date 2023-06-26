@@ -73,12 +73,18 @@ endfunc
 
 ; Section calls are turquoise like defined functions:
 Subx
+Subx /invalidmodifier
 Winbatchx
+Winbatchx /WaitSeconds 2
 ShellScriptx
-; Execwith needs string afterwards
+ShellScriptx winst /64bit
+; Execwith needs string or word afterwards
 ExecWithx ""
+execWith_hello "python" PASS -a "hello" -b "world" WINST /EscapeStrings
+execWith_hello python PASS -a "hello" -b "world" WINST /EscapeStrings
+execWith_hello PASS -a "hello" -b "world" WINST /EscapeStrings
 Filesx
-Filesx /alluserprofiles /32Bit
+Filesx /alluserprofiles /invalidmodifier /32Bit /WaitSeconds 2
 Registryx
 Patchesx
 Patchtextfilex
@@ -86,6 +92,7 @@ LinkFolderx
 Opsiservicecallx
 Patchhostsx
 xml2x
+xml2x /invalidmodifier /AllUserProfiles /AllNTUserProfiles /encoding "utf8"
 ExecPythonx
 Ldapsearchx
 ; TODO: Should we demand an underscore after the section type?
@@ -102,9 +109,6 @@ Registry loadUnicodeTextFile("") /regedit /Sysnative
 ;Registry loadUnicodeTextFile(') /regedit
 ; Compare to:
 ;loadUnicodeTextFile(')
-
-
-; TODO: Section calls with modifiers.
 
 
 ; Deprecated selection:
