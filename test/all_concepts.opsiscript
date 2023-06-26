@@ -61,8 +61,14 @@ for
 for %s%
 in to do
 deffunc endfunc
-; What TODO with defined function return types?
+val ref
 void string stringlist
+; in use:
+deffunc test($var$: string): void
+  Filesx
+  [filesx]
+  copy ""
+endfunc
 
 
 ; Section calls are turquoise like defined functions:

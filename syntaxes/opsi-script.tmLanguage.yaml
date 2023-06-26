@@ -196,7 +196,7 @@ repository:
   primary-section-keywords:
     patterns:
     - name: keyword.opsi-script
-      match: (?i)\b(DefVar|DefStringList|Set|DefFunc|EndFunc|if|else|elseif|endif|in|to|do|Switch|EndSwitch|Case|DefaultCase|EndCase|and|or|not)\b
+      match: (?i)\b(DefVar|DefStringList|Set|DefFunc|EndFunc|void|string|stringlist|if|else|elseif|endif|in|to|do|Switch|EndSwitch|Case|DefaultCase|EndCase|and|or|not|val|ref)\b
     - name: meta.keyword.for-loop.opsi-script
       match: (?i)\b(for\s+)(%\S+%)\s+
       captures:
