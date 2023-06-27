@@ -51,7 +51,7 @@ for "%s%" in createstringlist("") do
 ; Variables inside of strings are not highlighted.
 "$myVar$"
 ; Random non-keyword words are not highlighted, i.e. white.
-random
+randomword
 
 
 ; Keywords are dark blue:
@@ -68,39 +68,41 @@ val ref
 void string stringlist
 ; in use:
 deffunc test($var$: string): void
-  Filesx
-  [filesx]
+  Files_x
+  [files_x]
   copy ""
 endfunc
 
 
 ; Section calls are turquoise like defined functions:
+; We demand an underscore and then at least one char after the section type.
 Subx
-Subx /invalidmodifier
-Winbatchx
-Winbatchx /WaitSeconds 2
-ShellScriptx
-ShellScriptx winst /64bit
+Sub_
+Sub_x
+Sub_x /invalidmodifier
+Winbatch_x
+Winbatch_x /WaitSeconds 2
+ShellScript_x
+ShellScript_x winst /64bit
 ; Execwith needs string or word afterwards
-ExecWithx ""
+ExecWith_x ""
 execWith_hello "python" PASS -a "hello" -b "world" WINST /EscapeStrings
 execWith_hello python PASS -a "hello" -b "world" WINST /EscapeStrings
 ; Missing program path leaves PASS and WINST unhighlighted.
 execWith_hello WINST /EscapeStrings
 execWith_hello PASS -a "hello" -b "world" WINST /EscapeStrings
-Filesx
-Filesx /alluserprofiles /invalidmodifier /32Bit /WaitSeconds 2
-Registryx
-Patchesx
-Patchtextfilex
-LinkFolderx
-Opsiservicecallx
-Patchhostsx
-xml2x
-xml2x /invalidmodifier /AllUserProfiles /AllNTUserProfiles /encoding "utf8"
-ExecPythonx
-Ldapsearchx
-; TODO: Should we demand an underscore after the section type?
+Files_x
+Files_x /alluserprofiles /invalidmodifier /32Bit /WaitSeconds 2
+Registry_x
+Patches_x
+Patchtextfile_x
+LinkFolder_x
+Opsiservicecall_x
+Patchhosts_x
+xml2_x
+xml2_x /invalidmodifier /AllUserProfiles /AllNTUserProfiles /encoding "utf8"
+ExecPython_x
+Ldapsearch_x
 
 
 ; Every Stringlist or String is possible after registry command (search for 'tsecExpected:' in opsi-script osparser.pas).
@@ -122,8 +124,6 @@ Registry loadUnicodeTextFile("") /regedit /Sysnative
 "%WinstVersion%,%s%"
 LogLevel
 errorsOccuredSinceMark
-; TODO: No idea why SubstringBefore is not recognized as deprecated.
-substringbefore
 SubstringBefore
 SubstringBefore("", "")
 stringsplit
@@ -132,7 +132,7 @@ off
 ScriptErrorMessages = off
 ; Modifiers are red if and only if used as modifier, else unhighlighted.
 /AllNTUserProfiles
-filesx /AllNTUserProfiles
+files_x /AllNTUserProfiles
 ; ExitWindows with modifier is handled as one single command for each modifier.
 ExitWindows /RebootWanted
 ExitWindows     /RebootWanted
@@ -140,64 +140,69 @@ ExitWindows     /RebootWanted
 ReconstructFrom
 ; Primary sections cannot be called and have no name extension.
 Aktionen
-Aktionenx
+Aktionen_x
 [Aktionen]
-[Aktionenx]
+[Aktionen_x]
 ; Secondary sections need a name extension.
 Dosbatch
-Dosbatchx
-Dosbatchx /32Bit
+Dosbatch_x
+Dosbatchy
+Dosbatch_x /32Bit
 [Dosbatch]
-[Dosbatchx]
+[Dosbatchy]
+[Dosbatch_x]
 
 
 ; Section heads are also turquoise:
 ; Actions and Profileactions do not allow following characters.
 [Actions]
-[Actionsx]
+[Actions_x]
 [Profileactions]
-[Profileactionsx]
+[Profileactions_x]
+; Other sections require underscore and then at least one char.
+[Sub_x]
+[Sub_]
 [Subx]
 [Sub]
-[Winbatchx]
-[ShellScriptx]
-[ExecWithx]
-[Filesx]
+[Winbatch_x]
+[ShellScript_x]
+[ExecWith_x]
+[Files_x]
 [Files]
-[Registryx]
+[Registry_x]
 [Registry]
 
 
 ;SECONDARY SECTIONS:
 
-[Winbatchx]
+[Winbatch_x]
 ; No special highlighting (except for strings and for constants and variables which will be replaced in execution).
 echo "test" %scriptpath% $myvar$
 $Today = (Get-Date).DateTime
 
-[ShellScriptx]
+[ShellScript_x]
 ; No special highlighting (except for strings and for constants and variables which will be replaced in execution).
 echo "test" %scriptpath% $myvar$
 $Today = (Get-Date).DateTime
 
-[Execwithx]
+[Execwith_x]
 ; No special highlighting (except for strings and for constants and variables which will be replaced in execution).
 echo "test" %scriptpath% $myvar$
 $Today = (Get-Date).DateTime
 
-[Execwithxpowershellyz]
+[Execwith_xpowershellyz]
 ; Special powershell highlighting if 'powershell' occurs after 'execwith' in the section name.
 echo "test" %scriptpath% $myvar$
 $Today = (Get-Date).DateTime
 
-[Execpythonx]
+[Execpython_x]
 ; Special python highlighting.
 import sys
 testvar = ""
 if testvar:
     print("")
 
-[filesx]
+[files_x]
 ; Selection of commands: All commands should be purple!
 SourcePath
 SourcePath = ""
@@ -214,7 +219,7 @@ chmod 777 ""
 move
 move "" "" "" ""
 
-[registryx]
+[registry_x]
 ; Selection of commands: All commands should be purple!
 OpenKey
 OpenKey [x]
@@ -230,7 +235,7 @@ FlushKey
 ; Deprecated command is red.
 ReconstructFrom
 
-[patchesx]
+[patches_x]
 ; Selection of commands: All commands should be purple!
 add
 add [] test=test
@@ -241,7 +246,7 @@ delsec []
 replace
 replace test=test test2=test2
 
-[patchtextfilex]
+[patchtextfile_x]
 ; Selection of commands: All commands should be purple!
 Set_Mozilla_Pref
 Set_Mozilla_Pref("")
@@ -251,7 +256,7 @@ AddLine
 GoToTop
 GoToTop ""
 
-[Linkfolderx]
+[Linkfolder_x]
 ; Selection of commands: All commands should be purple!
 set_basefolder
 set_basefolder common_programs
@@ -266,14 +271,14 @@ set_link
   icon_file:
 end_link
 
-[patchhostsx]
+[patchhosts_x]
 ; Selection of commands: All commands should be purple!
 ; The following need one or more arguments.
 setaddr
 delhost
 setComment
 
-[xml2x]
+[xml2_x]
 ; Selection of commands: All commands should be purple!
 strictMode
 strictMode = true
@@ -284,7 +289,7 @@ gotoParentNode ""
 rootNodeOnCreate
 rootNodeOnCreate = ""
 
-[Ldapsearchx]
+[Ldapsearch_x]
 ; Selection of commands: All commands should be purple!
 targethost:
 dn:

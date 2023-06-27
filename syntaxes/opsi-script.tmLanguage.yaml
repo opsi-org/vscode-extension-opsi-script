@@ -145,7 +145,7 @@ repository:
       - include: '#primary-sections'
       - include: '#secondary-sections'
     - name: meta.primary-section.sub.opsi-script
-      begin: (?i)^\s*\[(Sub\S+)\]
+      begin: (?i)^\s*\[(Sub_\w+)\]
       beginCaptures:
         '1': {name: entity.name.type.primary-section.opsi-script}
       while: ^(?!\s*\[.*\]$)
@@ -465,7 +465,7 @@ repository:
   sub-section-calls:
     patterns:
     - name: meta.sub-section-call.opsi-script
-      match: (?i)\b(Sub\S+)\b
+      match: (?i)\b(Sub_\w+)\b
       captures:
         '1': {name: entity.name.type.sub-section-call.opsi-script}
 
@@ -477,7 +477,7 @@ repository:
         '1': {name: invalid.deprecated.secondary-section-call.opsi-script}
 
     - name: meta.secondary-section-call.execwith.opsi-script
-      match: (?i)\b(execwith\S+)\b\s*(["'][^"']*["']|\S+)\s*(.*)
+      match: (?i)\b(execwith_\w+)\b\s*(["'][^"']*["']|\S+)\s*(.*)
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
         '2':
@@ -490,7 +490,7 @@ repository:
           - include: '#secondary-section-params-execwith'
 
     - name: meta.secondary-section-call.winbatch.opsi-script
-      match: (?i)\b(winbatch\S+)\b\s*(.*)
+      match: (?i)\b(winbatch_\w+)\b\s*(.*)
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
         '2':
@@ -499,7 +499,7 @@ repository:
           - include: '#secondary-section-params-winbatch'
 
     - name: meta.secondary-section-call.shellscript.opsi-script
-      match: (?i)\b(shellscript\S+)\b\s*(.*)
+      match: (?i)\b(shellscript_\w+)\b\s*(.*)
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
         '2':
@@ -508,7 +508,7 @@ repository:
           - include: '#secondary-section-params-shellscript'
 
     - name: meta.secondary-section-call.files.opsi-script
-      match: (?i)\b(files\S+)\b\s*(.*)
+      match: (?i)\b(files_\w+)\b\s*(.*)
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
         '2':
@@ -517,7 +517,7 @@ repository:
           - include: '#secondary-section-params-files'
 
     - name: meta.secondary-section-call.registry.opsi-script
-      match: (?i)\b(registry\S+)\b\s*(.*)
+      match: (?i)\b(registry_\w+)\b\s*(.*)
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
         '2':
@@ -526,7 +526,7 @@ repository:
           - include: '#secondary-section-params-registry'
 
     - name: meta.secondary-section-call.patches.opsi-script
-      match: (?i)\b(patches\S+)\b\s*(.*)
+      match: (?i)\b(patches_\w+)\b\s*(.*)
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
         '2':
@@ -535,7 +535,7 @@ repository:
           - include: '#secondary-section-params-patches'
 
     - name: meta.secondary-section-call.patchtextfile.opsi-script
-      match: (?i)\b(patchtextfile\S+)\b\s*(.*)
+      match: (?i)\b(patchtextfile_\w+)\b\s*(.*)
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
         '2':
@@ -544,12 +544,12 @@ repository:
           - include: '#secondary-section-params-patchtextfile'
 
     - name: meta.secondary-section-call.linkfolder.opsi-script
-      match: (?i)\b(linkfolder\S+)\b
+      match: (?i)\b(linkfolder_\w+)\b
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
 
     - name: meta.secondary-section-call.opsiservicecall.opsi-script
-      match: (?i)\b(opsiservicecall\S+)\b\s*(.*)
+      match: (?i)\b(opsiservicecall_\w+)\b\s*(.*)
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
         '2':
@@ -558,12 +558,12 @@ repository:
           - include: '#secondary-section-params-opsiservicecall'
 
     - name: meta.secondary-section-call.patchhosts.opsi-script
-      match: (?i)\b(patchhosts\S+)\b
+      match: (?i)\b(patchhosts_\w+)\b
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
 
     - name: meta.secondary-section-call.xml2.opsi-script
-      match: (?i)\b(xml2\S+)\b\s*(.*)
+      match: (?i)\b(xml2_\w+)\b\s*(.*)
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
         '2':
@@ -572,7 +572,7 @@ repository:
           - include: '#secondary-section-params-xml2'
 
     - name: meta.secondary-section-call.execpython.opsi-script
-      match: (?i)\b(execpython\S+)\b\s*(.*)
+      match: (?i)\b(execpython_\w+)\b\s*(.*)
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
         '2':
@@ -581,7 +581,7 @@ repository:
           - include: '#secondary-section-params-execpython'
 
     - name: meta.secondary-section-call.ldapsearch.opsi-script
-      match: (?i)\b(ldapsearch\S+)\b\s*(.*)
+      match: (?i)\b(ldapsearch_\w+)\b\s*(.*)
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
         '2':
@@ -600,7 +600,7 @@ repository:
       - include: '#secondary-section'
 
     - name: meta.secondary-section.exec-with-powershell.opsi-script
-      begin: (?i)^\s*\[(ExecWith[^\]]*powershell[^\]]*)\]
+      begin: (?i)^\s*\[(ExecWith_\w*powershell\w*)\]
       beginCaptures:
         '1': {name: entity.name.type.secondary-section-exec-with-powershell.opsi-script}
       while: ^(?i)(?!\s*(\[.*\]|EndFunc)\s*$)
@@ -610,7 +610,7 @@ repository:
       - include: source.powershell
 
     - name: meta.secondary-section.winbatch.opsi-script
-      begin: (?i)^\s*\[(winbatch[^\]]+)\]
+      begin: (?i)^\s*\[(winbatch_\w+)\]
       beginCaptures:
         '1': {name: entity.name.type.secondary-section-winbatch.opsi-script}
       while: ^(?i)(?!\s*(\[.*\]|EndFunc)\s*$)
@@ -619,7 +619,7 @@ repository:
       - include: '#secondary-section'
 
     - name: meta.secondary-section.shellscript.opsi-script
-      begin: (?i)^\s*\[(shellscript[^\]]+)\]
+      begin: (?i)^\s*\[(shellscript_\w+)\]
       beginCaptures:
         '1': {name: entity.name.type.secondary-section-shellscript.opsi-script}
       while: ^(?i)(?!\s*(\[.*\]|EndFunc)\s*$)
@@ -628,7 +628,7 @@ repository:
       - include: '#secondary-section'
 
     - name: meta.secondary-section.execwith.opsi-script
-      begin: (?i)^\s*\[(execwith[^\]]+)\]
+      begin: (?i)^\s*\[(execwith_\w+)\]
       beginCaptures:
         '1': {name: entity.name.type.secondary-section-execwith.opsi-script}
       while: ^(?i)(?!\s*(\[.*\]|EndFunc)\s*$)
@@ -637,7 +637,7 @@ repository:
       - include: '#secondary-section'
 
     - name: meta.secondary-section.execpython.opsi-script
-      begin: (?i)^\s*\[(execpython[^\]]+)\]
+      begin: (?i)^\s*\[(execpython_\w+)\]
       beginCaptures:
         '1': {name: entity.name.type.secondary-section-execpython.opsi-script}
       while: ^(?i)(?!\s*(\[.*\]|EndFunc)\s*$)
@@ -647,7 +647,7 @@ repository:
       - include: source.python
 
     - name: meta.secondary-section.files.opsi-script
-      begin: (?i)^\s*\[(files[^\]]+)\]
+      begin: (?i)^\s*\[(files_\w+)\]
       beginCaptures:
         '1': {name: entity.name.type.secondary-section-files.opsi-script}
       while: ^(?i)(?!\s*(\[.*\]|EndFunc)\s*$)
@@ -656,7 +656,7 @@ repository:
       - include: '#secondary-section-files'
 
     - name: meta.secondary-section.registry.opsi-script
-      begin: (?i)^\s*\[(registry[^\]]+)\]
+      begin: (?i)^\s*\[(registry_\w+)\]
       beginCaptures:
         '1': {name: entity.name.type.secondary-section-registry.opsi-script}
       while: ^(?i)(?!\s*(\[.*\]|EndFunc)\s*$)
@@ -665,7 +665,7 @@ repository:
       - include: '#secondary-section-registry'
 
     - name: meta.secondary-section.patches.opsi-script
-      begin: (?i)^\s*\[(patches[^\]]+)\]
+      begin: (?i)^\s*\[(patches_\w+)\]
       beginCaptures:
         '1': {name: entity.name.type.secondary-section-patches.opsi-script}
       while: ^(?i)(?!\s*(\[.*\]|EndFunc)\s*$)
@@ -674,7 +674,7 @@ repository:
       - include: '#secondary-section-patches'
 
     - name: meta.secondary-section.patchtextfile.opsi-script
-      begin: (?i)^\s*\[(patchtextfile[^\]]+)\]
+      begin: (?i)^\s*\[(patchtextfile_\w+)\]
       beginCaptures:
         '1': {name: entity.name.type.secondary-section-patchtextfile.opsi-script}
       while: ^(?i)(?!\s*(\[.*\]|EndFunc)\s*$)
@@ -683,7 +683,7 @@ repository:
       - include: '#secondary-section-patchtextfile'
 
     - name: meta.secondary-section.patchhosts.opsi-script
-      begin: (?i)^\s*\[(patchhosts[^\]]+)\]
+      begin: (?i)^\s*\[(patchhosts_\w+)\]
       beginCaptures:
         '1': {name: entity.name.type.secondary-section-patchhosts.opsi-script}
       while: ^(?i)(?!\s*(\[.*\]|EndFunc)\s*$)
@@ -692,7 +692,7 @@ repository:
       - include: '#secondary-section-patchhosts'
 
     - name: meta.secondary-section.linkfolder.opsi-script
-      begin: (?i)^\s*\[(linkfolder[^\]]+)\]
+      begin: (?i)^\s*\[(linkfolder_\w+)\]
       beginCaptures:
         '1': {name: entity.name.type.secondary-section-linkfolder.opsi-script}
       while: ^(?i)(?!\s*(\[.*\]|EndFunc)\s*$)
@@ -701,7 +701,7 @@ repository:
       - include: '#secondary-section-linkfolder'
 
     - name: meta.secondary-section.opsiservicecall.opsi-script
-      begin: (?i)^\s*\[(opsiservicecall[^\]]+)\]
+      begin: (?i)^\s*\[(opsiservicecall_\w+)\]
       beginCaptures:
         '1': {name: entity.name.type.secondary-section-opsiservicecall.opsi-script}
       while: ^(?i)(?!\s*(\[.*\]|EndFunc)\s*$)
@@ -710,7 +710,7 @@ repository:
       - include: '#secondary-section-opsiservicecall'
 
     - name: meta.secondary-section.xml2.opsi-script
-      begin: (?i)^\s*\[(xml2[^\]]+)\]
+      begin: (?i)^\s*\[(xml2_\w+)\]
       beginCaptures:
         '1': {name: entity.name.type.secondary-section-xml2.opsi-script}
       while: ^(?i)(?!\s*(\[.*\]|EndFunc)\s*$)
@@ -719,7 +719,7 @@ repository:
       - include: '#secondary-section-xml2'
 
     - name: meta.secondary-section.ldapsearch.opsi-script
-      begin: (?i)^\s*\[(ldapsearch[^\]]+)\]
+      begin: (?i)^\s*\[(ldapsearch_\w+)\]
       beginCaptures:
         '1': {name: entity.name.type.secondary-section-ldapsearch.opsi-script}
       while: ^(?i)(?!\s*(\[.*\]|EndFunc)\s*$)
