@@ -20,6 +20,7 @@ importlib "" "" "" some words
 ; Variable names (enclosed in two dollars!) and script configs are light blue.
 $myVar$
 $myvar
+DefVar $var$ = $var$+$var$+"test"+$var$
 setloglevel=8
 ; Strings are orange.
 'str'
@@ -31,6 +32,7 @@ true
 getos
 takestring()
 comment ""
+; ExitWindows with modifier is handled as one single command for each modifier.
 exitwindows /immediatereboot
 exitwindows     /immediatereboot
 ; Other (user defined) functions are turquoise.
@@ -41,6 +43,7 @@ mytestdeffunc("'" + $myVar$)
 %scriptpath%
 ; Constants inside of strings are light blue like variables.
 "%scriptpath%"
+DefVar $var$ = "%scriptpath%\test\%myconst%"
 ; In for loops the iterating constant must not be quoted!
 for %s% in createstringlist("") do
 for "%s%" in createstringlist("") do
@@ -82,6 +85,8 @@ ShellScriptx winst /64bit
 ExecWithx ""
 execWith_hello "python" PASS -a "hello" -b "world" WINST /EscapeStrings
 execWith_hello python PASS -a "hello" -b "world" WINST /EscapeStrings
+; Missing program path leaves PASS and WINST unhighlighted.
+execWith_hello WINST /EscapeStrings
 execWith_hello PASS -a "hello" -b "world" WINST /EscapeStrings
 Filesx
 Filesx /alluserprofiles /invalidmodifier /32Bit /WaitSeconds 2
@@ -104,7 +109,7 @@ Registry loadTextFile("") /regedit
 Registry "" /regedit
 Registry loadUnicodeTextFile("") /regedit /Sysnative
 ; User defined functions and functions after registry command with incomplete string do not completely break the following highlighting like script functions
-; but the brackets show the error an that must be enough for now.
+; but the brackets show the error and that must be enough for now.
 ;mytestdeffunc("')
 ;Registry loadUnicodeTextFile(') /regedit
 ; Compare to:
@@ -112,8 +117,9 @@ Registry loadUnicodeTextFile("") /regedit /Sysnative
 
 
 ; Deprecated selection:
+; Constants are red inside of strings, else unhighlighted.
 %WinstVersion%
-"%WinstVersion%"
+"%WinstVersion%,%s%"
 LogLevel
 errorsOccuredSinceMark
 ; TODO: No idea why SubstringBefore is not recognized as deprecated.
@@ -124,10 +130,10 @@ stringsplit
 stringsplit("")
 off
 ScriptErrorMessages = off
-; Modifier is red if and only if used as modifier, else unhighlighted.
+; Modifiers are red if and only if used as modifier, else unhighlighted.
 /AllNTUserProfiles
 filesx /AllNTUserProfiles
-; ExitWindows with modifier is handled as one ingle command for each modifier.
+; ExitWindows with modifier is handled as one single command for each modifier.
 ExitWindows /RebootWanted
 ExitWindows     /RebootWanted
 ; Deprecated section command outside of the section is white.
@@ -196,7 +202,8 @@ if testvar:
 SourcePath
 SourcePath = ""
 copy
-copy ""
+; Constants and Variables are always light blue (no matter whether in- or outside of strings)
+copy "%scriptpath%\$var$\%myconst%" %scriptpath%\$var$\%s%
 copy -seVvcduxwnrh "" "" "" ""
 delete
 delete ""
@@ -278,5 +285,6 @@ rootNodeOnCreate
 rootNodeOnCreate = ""
 
 [Ldapsearchx]
+; Selection of commands: All commands should be purple!
 targethost:
 dn:

@@ -71,7 +71,7 @@ repository:
     - name: invalid.deprecated.script-constants.opsi-script
       match: '(?i)(%)(WinstDir|WinstVersion|installingProduct|Host|IPAddress)(%)'
     - name: variable.other.percent.opsi-script
-      match: '(%)\S+(%)'
+      match: '(%)\w+(%)'
       captures:
         '1': {name: punctuation.percent.opsi-script}
         '2': {name: punctuation.percent.opsi-script}
@@ -79,7 +79,7 @@ repository:
   literal-variable:
     patterns:
     - name: variable.other.dollar.opsi-script
-      match: '(\$)\S+(\$)'
+      match: '(\$)\w+(\$)'
       captures:
         '1': {name: punctuation.dollar.opsi-script}
         '2': {name: punctuation.dollar.opsi-script}
@@ -198,7 +198,7 @@ repository:
     - name: keyword.opsi-script
       match: (?i)\b(DefVar|DefStringList|Set|DefFunc|EndFunc|void|string|stringlist|if|else|elseif|endif|in|to|do|Switch|EndSwitch|Case|DefaultCase|EndCase|and|or|not|val|ref)\b
     - name: meta.keyword.for-loop.opsi-script
-      match: (?i)\b(for\s+)(%\S+%)\s+
+      match: (?i)\b(for\s+)(%\w+%)\s+
       captures:
         '1': {name: keyword.for-loop.opsi-script}
         '2': {name: variable.other.for-loop.constant.opsi-script}
