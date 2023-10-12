@@ -65,7 +65,7 @@ repository:
 
   literal-constant-percent:
     patterns:
-    # Since the user can define own constants in for-loops (wtf why not variables?), we need a general constant-recognition.
+    # Since the user can define own constants in for-loops, we need a general constant-recognition.
     # But there are not enough effective colours to highlight script constants and general user constants differently,
     # therefore we don't need to put all script constants here.
     - name: invalid.deprecated.script-constants.opsi-script
