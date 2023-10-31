@@ -1,0 +1,125 @@
+[Actions]
+
+; comment
+
+importlib "mylib"
+
+DefVar $myVar$ = 'str'
+DefVar $myVar$ = true
+DefVar $myVar$ = 5
+DefVar $myVar$ = getos
+DefVar $myVar$ = mytestdeffunc()
+DefVar $myVar$ = "%scriptpath%\file"
+DefVar $myVar$ = %scriptpath%
+
+if true and False
+    comment ""
+endif
+
+takeString(3, \
+    $mylist$, "invalid arg")
+takeString(3,
+    $mylist$, "invalid arg")
+
+; Remove single quote in the end:
+; Special treatment of powershellcall was buggy
+PowershellCall('Rename-Item "' + $BinDir$ + '" "' + $BinDir1$ + '"')
+; Removing last single quote breaks highlighting
+takeString(3, "'mystring" + '"')
+
+deffunc testfunc(): void
+patchhosts_test
+sub_test
+[patchhosts_test]
+[sub_test]
+defvar $i$ = %scriptpath%
+endfunc
+defvar $j$
+
+ExitOnError=true
+/immediatereboot
+exitwindows /immediatereboot
+
+execwith_py /32bit
+execwith_py winst /32bit
+execwith_py "pyth" /32bit
+execwith_py "pyth" winst /32bit
+execwith_py "pyth" pass "" winst /32bit
+files_r /32bit
+
+; Remove quote in the end:
+; Special treatment of loadunicodetextfile is buggy
+registry loadunicodetextfile("'") /regedit
+registry "" /regedit
+[ProfileActions]
+[Sub_test]
+# this is a comment in vscode LOL WHAT !!!???
+
+; deprecated:
+inivar
+errorsoccuredsincemark
+
+if true and False
+    comment ""
+else
+    message ""
+endif
+
+include_insert ""
+sub ""
+
+Files_copy /32bit /allntuserprofiles
+sub_test
+
+opsiservicecall_test /username "" /password ""
+OpsiserviceCall_test /username "" /password ""
+
+[Files_copy]
+copy -s "f1" "f2"
+copy -s "f1" "f2" "f3"
+copy -sf "f1" "f2"
+copy -s "f1" "f2"
+copy -s c:\my test program\
+defvar
+defvar $me$
+deffunc testfunc(): void
+; defvar as solo-keyword can so far end a section in vscode...:
+deffunc
+defvar $tests$ = "string"
+files_test
+[files_test]
+copy "" ""
+endfunc
+copy "" ""
+
+[sub_test]
+copy "f1" "f2"
+deffunc testfunc(): void
+defvar $tests$ = "string"
+endfunc
+defvar $tests$ = "string"
+
+[LinkFolder_Acrobat]
+set_basefolder common_programs
+
+set_subfolder "acrobat"
+set_link
+  name: Acrobat Reader
+  target: C:\Programme\adobe\Acrobat\reader\acrord32.exe
+  parameters:
+  working_dir: C:\Programme\adobe\Acrobat\reader
+  icon_file:
+  icon_index:
+  shortcut:
+end_link
+
+[opsiservicecall_clientIdsList]
+"timeout":50
+"test": whaat?
+"method": "getClientIds_list"
+"params": []
+
+[Registry_TestPatch]
+openkey [HKEY_Current_User\Environment\Test]
+set "Testvar1"  = "c:\rutils;%Systemroot%\hey"
+set "Testvar2" = REG_DWORD:0001
