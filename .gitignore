@@ -1,2 +1,8 @@
 node_modules
 *.vsix
+
+syntaxes/opsi-script.tmLanguage.json
+syntaxes/opsi-script.tmLanguage_*
+package-lock.json
+out/*
+

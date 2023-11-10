@@ -37,13 +37,12 @@ repository:
     - include: '#primary-section-operators'
     - include: '#primary-section-number'
     - include: '#primary-section-string'
-    - include: '#literal-constant'
     - include: '#literal-variable'
 
   comments:
     patterns:
     - name: comment.line.semicolon-or-hash.opsi-script
-      match: ^\s*(;|#).*$\n?
+      match: ^\s*(;).*$\n?
       captures:
         '1': {name: punctuation.definition.comment.opsi-script}
 
@@ -64,51 +63,26 @@ repository:
       - include: '#expressions'
       - include: '#primary-section-functions'
 
-  literal-constant-slash:
-    patterns:
-    - name: constant.language.exit-params.opsi-script
-      match: '(?i)(/)(Reboot|RebootWanted|ImmediateReboot|ImmediateLogout|ShutdownWanted)\b'
-
   literal-constant-percent:
     patterns:
-    - name: constant.language.win-system-directories.opsi-script
-      match: '(?i)(%)(ProgramFilesDir|ProgramFiles32Dir|ProgramFiles64Dir|ProgramFilesSysnativeDir|Systemroot|System|Systemdrive|ProfileDir)(%)'
-    - name: constant.language.win-common-user.opsi-script
-      match: '(?i)(%)(AllUsersProfileDir|CommonProfileDir|CommonStartMenuPath|CommonStartmenuDir|CommonAppdataDir|CommonDesktopDir|CommonStartupDir|CommonProgramsDir)(%)'
-    - name: constant.language.win-default-user.opsi-script
-      match: '(?i)(%)(DefaultUserProfileDir)(%)'
-    - name: constant.language.win-current-user.opsi-script
-      match: '(?i)(%)(AppdataDir|CurrentAppdataDir|CurrentStartmenuDir|CurrentDesktopDir|CurrentStartupDir|CurrentProgramsDir|CurrentSendToDir|CurrentProfileDir)(%)'
-    - name: constant.language.win-all-nt-user-profiles.opsi-script
-      match: '(?i)(%)(UserProfileDir|CurrentProfileDir)(%)'
-    - name: constant.language.win-all-nt-user-profiles.opsi-script
-      match: '(?i)(%)(UserProfileDir|CurrentProfileDir)(%)'
-    - name: constant.language.opsi-script-path.opsi-script
-      match: '(?i)(%)(ScriptPath|ScriptDir|ScriptDrive|OpsiscriptDir|WinstDir|OpsiscriptVersion|WinstVersion|Logfile|opsiScriptHelperPath|opsiTmpDir|opsiLogDir|opsidata|opsiapplog)(%)'
-    - name: constant.language.network-info.opsi-script
-      match: '(?i)(%)(Host|PCName|Username|IPName|IPAddress)(%)'
-    - name: constant.language.service-data.opsi-script
-      match: '(?i)(%)(HostID|opsiserviceURL|opsiServer|opsiDepotId|opsiserviceUser|opsiservicePassword|installingProdName|installingProdVersion|installingProduct)(%)'
-
-  literal-constant:
-    patterns:
-    - name: constant.language.opsi-script
-      match: '(?i)\b(PARAMSTR)\b'
-    - include: '#literal-constant-percent'
-    - include: '#literal-constant-slash'
+    # Since the user can define own constants in for-loops, we need a general constant-recognition.
+    # But there are not enough effective colours to highlight script constants and general user constants differently,
+    # therefore we don't need to put all script constants here.
+    - name: invalid.deprecated.script-constants.opsi-script
+      match: '(?i)(%)(WinstDir|WinstVersion|installingProduct|Host|IPAddress)(%)'
+    - name: variable.other.percent.opsi-script
+      match: '(%)\w+(%)'
+      captures:
+        '1': {name: punctuation.percent.opsi-script}
+        '2': {name: punctuation.percent.opsi-script}
 
   literal-variable:
     patterns:
     - name: variable.other.dollar.opsi-script
-      match: '(\$)\S+(\$)'
+      match: '(\$)\w+(\$)'
       captures:
         '1': {name: punctuation.dollar.opsi-script}
         '2': {name: punctuation.dollar.opsi-script}
-    - name: variable.other.percent.opsi-script
-      match: '(%)\S+(%)'
-      captures:
-        '1': {name: punctuation.percent.opsi-script}
-        '2': {name: punctuation.percent.opsi-script}
 
   # function-definition:
   #   patterns:
@@ -152,33 +126,35 @@ repository:
 
   primary-sections:
     patterns:
-    - name: meta.primary-section.initial.opsi-script
-      begin: (?i)^\s*(\[)(Initial)(\])
+    - name: meta.primary-section.actions.opsi-script
+      begin: (?i)^\s*\[(Aktionen|Initial)\]
       beginCaptures:
-        '2': {name: entity.name.type.primary-section.opsi-script}
-      while: ^(?!\s*\[.*\]$)
+        '1': {name: invalid.deprecated.primary-section.opsi-script}
+      while: ^(?!\1\[.*\]$)
       patterns:
       - include: '#primary-section'
+      - include: '#primary-sections'
+      - include: '#secondary-sections'
     - name: meta.primary-section.actions.opsi-script
-      begin: (?i)^(\s*)(\[)(Actions|Aktionen)(\])
+      begin: (?i)^\s*\[(Actions)\]
       beginCaptures:
-        '3': {name: entity.name.type.primary-section.opsi-script}
+        '1': {name: entity.name.type.primary-section.opsi-script}
       while: ^(?!\1\[.*\]$)
       patterns:
       - include: '#primary-section'
       - include: '#primary-sections'
       - include: '#secondary-sections'
     - name: meta.primary-section.sub.opsi-script
-      begin: (?i)^\s*(\[)(Sub\S+)(\])
+      begin: (?i)^\s*\[(Sub_\w+)\]
       beginCaptures:
-        '2': {name: entity.name.type.primary-section.opsi-script}
+        '1': {name: entity.name.type.primary-section.opsi-script}
       while: ^(?!\s*\[.*\]$)
       patterns:
       - include: '#primary-section'
     - name: meta.primary-section.profile-actions.opsi-script
-      begin: (?i)^(\s*)(\[)(ProfileActions)(\])
+      begin: (?i)^\s*\[(ProfileActions)\]
       beginCaptures:
-        '2': {name: entity.name.type.primary-section.opsi-script}
+        '1': {name: entity.name.type.primary-section.opsi-script}
       while: ^(?!\1\[.*\]$)
       patterns:
       - include: '#primary-section'
@@ -187,142 +163,49 @@ repository:
 
   primary-section-functions:
     patterns:
-     - include: '#primary-section-function-shellcall'
-     - include: '#primary-section-function-powershellcall'
      - include: '#primary-section-function-registry'
      - name: invalid.deprecated.opsi-script
-       match: (?i)\b(LogLevel|errorsOccuredSinceMark)\b
-     - name: support.function.sub-call.opsi-script
-       match: (?i)\b(Sub)\b
-     - name: support.function.constants.opsi-script
-       match: (?i)\b(replaceOpsiConstants)\b
-     - name: support.variable.other.opsi-script
-       match: (?i)\b(requiredWinstVersion|requiredOpsiscriptVersion|AutoActivityDisplay)\b
-     - name: support.function.other.opsi-script
-       match: (?i)\b(ExitWindows|noUpdateScript|HasMinimumSpace)\b
-    # 2.4. By Topic
-     - name: support.function.compare.opsi-script
-       match: (?i)\b(CompareDotSeparatedStrings|CompareDotSeparatedStrings|CompareDotSeparatedNumbers|CompareDotSeparatedNumbers|boolToString|stringToBool)\b
-     - name: support.function.crypt.opsi-script
-       match: (?i)\b(DecStrToHexStr|HexStrToDecStr|base64EncodeStr|base64DecodeStr|RandomStr|RandomIntStr|encryptStringBlow|decryptStringBlow|md5sumFromFile)\b
-     - name: support.function.import-lib.opsi-script
-       match: (?i)\b(ImportLib)\b
-     - name: storage.type.function.def-func.opsi-script
-       match: (?i)\b(DefFunc|EndFunc)\b
-     - name: support.variable.encoding.opsi-script
-       match: (?i)\b(encoding)\b
-     - name: support.function.encoding.opsi-script
-       match: (?i)\b(GetLocaleInfoMap|ReEncodeStr|ReEncodeStrList|fileHasBom|loadUnicodeTextFile|loadTextFileWithEncoding|strLoadTextFileWithEncoding|saveTextFileWithEncoding|includelog)\b
-     - name: support.variable.error.opsi-script
-       match: (?i)\b(ExitOnError|ScriptErrorMessages|FatalOnSyntaxError|FatalOnRuntimeError)\b
-     - name: support.function.error.opsi-script
-       match: (?i)\b(isFatalError|isSuccess|isSuspended|markErrorNumber|errorsOccurredSinceMark|getLastServiceErrorClass|getLastServiceErrorMessage)\b
-     - name: support.function.file-handling.opsi-script
-       match: (?i)\b(strLoadTextFile|strLoadTextFileWithEncoding|loadTextFile|loadUnicodeTextFile|loadTextFileWithEncoding|fileHasBom|FileExists|FileExists32|FileExists64|FileExistsSysNative|FileOrFolderExists|listFiles|DirectoryExists|LineExistsIn|LineBeginning_ExistsIn|LineContaining_ExistsIn|saveTextFile|saveTextFileWithEncoding|getFileInfoMap|getFileInfoMap32|getFileInfoMap64|getFileInfoMapSysnative|ExtractFilePath|ExtractFileExtension|ExtractFileName)\b
-     - name: support.function.ini-file.opsi-script
-       match: (?i)\b(GetValueFromInifile|GetValueFromInifile|getSectionNames|GetSectionFromInifile|getValue|getValueBySeparator|getValueFromFile|getValueFromFileBySeparator)\b
-     - name: support.function.interaction.opsi-script
-       match: (?i)\b(Pause|Stop|setActionProgress|Message|ShowMessageFile|ShowBitMap|stringinput|editmap)\b
-     - name: support.function.license-management.opsi-script
-       match: (?i)\b(DemandLicenseKey|FreeLicense|opsiLicenseManagementEnabled)\b
-     - name: support.function.system-linux.opsi-script
-       match: (?i)\b(getLinuxDistroType|getLinuxVersionMap|cleanupPackageSystem|installupdates|debinstall|redinstall|suseinstall|ucsinstall|genericLinInstall|linuxInstallOneOf|isOneInstalled|linuxInstallOneFile|linuxRemoveOnePackage|linuxRemoveOneOf)\b
-     - name: support.variable.logging.opsi-script
-       match: (?i)\b(SetLogLevel|forceLogInAppendMode)\b
-     - name: support.function.logging.opsi-script
-       match: (?i)\b(Message|comment|LogError|LogWarning|includelog|SetConfidential|asConfidential)\b
-     - name: support.function.system-macos.opsi-script
-       match: (?i)\b(getMacosVersionInfo|getMacosVersionMap|install_macos_app|install_macos_pkg|install_macos_dmg|install_macos_zip|install_macos_generic)\b
-     - name: support.function.network.opsi-script
-       match: (?i)\b(GetHostsName|GetHostsAddr|GetMyIpByTarget|GetIpByName|isValidIP4|isValidIP4Network|isValidIP4Host|getIP4NetworkByAdrAndMask|getDefaultNetmaskByIP4adr|parseUrl|createUrl|isPingReachable|isValidFQDN)\b
-     - name: support.function.numeric.opsi-script
-       match: (?i)\b(isNumber|CompareDotSeparatedNumbers|CompareDotSeparatedNumbers|calculate|DecStrToHexStr|HexStrToDecStr|RandomIntStr)\b
-     - name: support.function.system.opsi-script
-       match: (?i)\b(GetOS|GetMsVersionInfo|GetMSVersionMap|getLinuxDistroType|getLinuxVersionMap|getMacosVersionInfo|getMacosVersionMap|GetSystemType|getOSArchitecture|getListFromWMI|EnvVar|getProfilesDirList|listFiles|runningAsAdmin|runningOnUefi|runningInPE|isDriveReady|runningWithGui)\b
-     - name: support.function.json.opsi-script
-       match: (?i)\b(jsonIsValid|jsonIsArray|jsonIsObject|jsonAsObjectHasKey|jsonAsArrayCountElements|jsonAsObjectCountElements|jsonAsArrayGetElementByIndex|jsonAsObjectGetValueByKey|jsonAsObjectSetValueByKey|jsonAsObjectSetStringtypeValueByKey|jsonAsObjectDeleteByKey|jsonAsArrayPutObjectByIndex|jsonAsArrayDeleteObjectByIndex|jsonAsArrayToStringList|jsonAsObjectGetKeyList|jsonStringListToJsonArray|convert2Jsonstr)\b
-     - name: support.function.opsi.opsi-script
-       match: (?i)\b(getProductMap|LoadProductProperties|getProductPropertyList|GetProductProperty|GetConfidentialProductProperty|setActionProgress|retrieveSection|replaceOpsiConstants|replaceOpsiConstants|runningInWanMode)\b
-     - name: support.function.subprocess.opsi-script
-       match: (?i)\b(Killtask|ChangeDirectory|GetProcessList|processIsRunning|getOutStreamFromSection|processCall|getLastExitCode|waitForPackageLock|which|executeSection)\b
-     - name: support.function.regex.opsi-script
-       match: (?i)\b(isRegexMatch|getSubListByContainingRegex|getRegexMatchList|removeFromListByContainingRegex|stringReplaceRegex|stringReplaceRegexInList)\b
-     - name: support.function.win-registry.opsi-script
-       match: (?i)\b(getRegistryValue|GetRegistryStringValue|GetRegistryStringValue32|GetRegistryStringValue64|GetRegistryStringValueSysNative|getRegistryKeyList32|getRegistryKeyList64|getRegistryKeyListSysnative|getRegistryVarList32|getRegistryVarList64|getRegistryVarListSysnative|getRegistryVarMap32|getRegistryVarMap64|getRegistryVarMapSysnative|RegKeyExists|RegVarExists)\b
-     - name: support.function.string-handling.opsi-script
-       match: (?i)\b(splitString|splitStringOnWhiteSpace|getIndexFromListByContaining|contains|isNumber|trim|lower|upper|unquote|unquote2|stringReplace|strLength|strPos|strPart|getValue|getValueBySeparator|getValueFromFile|getValueFromFileBySeparator|EscapeString)\b
-     - name: support.function.stringlist-handling.opsi-script
-       match: (?i)\b(GetReturnListFromSection|getListContaining|getListContainingList|getIndexFromListByContaining|count|emptylist|composeString|createStringList|reverse|getSubList|getSubListByMatch|getSubListByContaining|getSubListByKey|getKeyList|addtolist|addListToList|reencodestrlist|removeFromListByContaining|removeFromListByMatch|takeString|takeFirstStringContaining|setStringInListAtIndex|getValue|areListsEqual)\b
-     - name: support.function.time.opsi-script
-       match: (?i)\b(sleepSeconds|markTime|getDiffTimeSec|timeStampAsFloatStr)\b
-     - name: support.function.usercontext.opsi-script
-       match: (?i)\b(GetUserSID|GetLoggedInUser|GetUsercontext|GetScriptMode|saveVersionToProfile|readVersionFromProfile|scriptWasExecutedBefore)\b
-     - name: support.function.xml.opsi-script
-       match: (?i)\b(getXml2DocumentFromFile|getXml2Document|xml2GetFirstChildNodeByName|getXml2UniqueChildnodeByName|getXml2AttributeValueByKey|getXml2Text)\b
-
-  primary-section-function-shellcall:
-    patterns:
-    - name: meta.function.shellcall.opsi-script
-      match: (?i)\b(ShellCall)\s*\(\s*(["'].*["'])\s*\)
-      captures:
-        '1': {name: support.function.shellcall.opsi-script}
-        '2':
-          name: meta.embedded.block.shellscript
-          patterns:
-          - include: '#primary-section-string'
-          #- include: '#literal-constant'
-          #- include: '#literal-variable'
-          #- include: source.shell
-
-  primary-section-function-powershellcall:
-    patterns:
-    - name: meta.function.powershellcall.opsi-script
-      match: (?i)\b(PowershellCall)\s*\(\s*(["'].*["'])\s*\)
-      captures:
-        '1': {name: support.function.powershell.opsi-script}
-        '2':
-          name: meta.embedded.block.powershell
-          patterns:
-          - include: '#primary-section-string'
-          #- include: '#literal-constant'
-          #- include: '#literal-variable'
-          #- include: source.powershell
+       match: (?i)\b(LogLevel|errorsOccuredSinceMark|IniVar|StringSplit|SubstringBefore|GetIni|getLocaleInfo|getntversion|on|off|GetRegistryStringValue|ExitWindows\s+/RebootWanted)\b
+     - name: variable.other.opsi-script
+       match: (?i)\b(encoding|ExitOnError|ScriptErrorMessages|FatalOnSyntaxError|FatalOnRuntimeError|SetLogLevel|SetDebug_Lib|forceLogInAppendMode|requiredOpsiscriptVersion|requiredWinstVersion|SetSkinDirectory|AutoActivityDisplay|TraceMode|StayOnTop|SetConfidential)\b
+     - name: support.function.opsi-script
+       match: (?i)\b(base64EncodeStr|base64DecodeStr|encryptStringBlow|decryptStringBlow|md5sumFromFile|hashFromFile|isCertInstalledInSystem|importCertToSystem|removeCertFromSystem|listCertificatesFromSystem|isFatalError|isSuccess|isSuspended|markErrorNumber|errorsOccurredSinceMark|strLoadTextFile|strLoadTextFileWithEncoding|loadTextFile|loadUnicodeTextFile|loadTextFileWithEncoding|fileHasBom|FileExists|FileExists32|FileExists64|FileExistsSysNative|DirectoryExists|FileOrFolderExists|fileIsSymlink|resolveSymlink|forcePathDelims|LineExistsIn|LineBeginning_ExistsIn|LineContaining_ExistsIn|saveTextFile|saveTextFileWithEncoding|getFileInfoMap|getFileInfoMap32|getFileInfoMap64|getFileInfoMapSysnative|ExtractFilePath|ExtractFileExtension|ExtractFileName|getValueFromFile|getValueFromFileBySeparator|GetValueFromInifile|getSectionNames|GetSectionFromInifile|jsonIsValid|jsonIsArray|jsonIsObject|jsonAsObjectHasKey|jsonAsArrayCountElements|jsonAsObjectCountElements|jsonAsArrayGetElementByIndex|jsonAsObjectGetValueByKey|jsonAsObjectSetValueByKey|jsonAsObjectSetStringtypeValueByKey|jsonAsObjectDeleteByKey|jsonAsArrayPutObjectByIndex|jsonAsArrayDeleteObjectByIndex|jsonAsArrayToStringList|jsonAsObjectGetKeyList|jsonStringListToJsonArray|convert2Jsonstr|DemandLicenseKey|FreeLicense|getLastServiceErrorClass|getLastServiceErrorMessage|opsiLicenseManagementEnabled|asConfidential|GetHostsName|GetHostsAddr|GetMyIpByTarget|GetIpByName|isValidIP4|isValidIP4Network|isValidIP4Host|getIP4NetworkByAdrAndMask|getDefaultNetmaskByIP4adr|parseUrl|createUrl|isPingReachable|isValidFQDN|cidrToNetmask|netmaskToCidr|isNumber|CompareDotSeparatedNumbers|calculate|DecStrToHexStr|HexStrToDecStr|RandomIntStr|sleepSeconds|markTime|diffTime|getDiffTimeSec|timeStampAsFloatStr|getProductMap|LoadProductProperties|getProductPropertyList|GetProductProperty|GetConfidentialProductProperty|setActionProgress|retrieveSection|replaceOpsiConstants|runningInWanMode|noUpdateScript|reloadProductList|NormalizeWinst|IconizeWinst|RestoreWinst|MaximizeWinst|Killtask|ChangeDirectory|GetProcessList|processIsRunning|isProcessChildOf|shellCall|powershellcall|getOutStreamFromSection|processCall|getLastExitCode|executeSection|isRegexMatch|getSubListByContainingRegex|getRegexMatchList|removeFromListByContainingRegex|stringReplaceRegex|stringReplaceRegexInList|getRegistryValue|GetRegistryStringValue32|GetRegistryStringValue64|GetRegistryStringValueSysNative|getRegistryKeyList32|getRegistryKeyList64|getRegistryKeyListSysnative|getRegistryKeyList|getRegistryVarList32|getRegistryVarList64|getRegistryVarListSysnative|getRegistryVarList|getRegistryVarMap32|getRegistryVarMap64|getRegistryVarMapSysnative|RegKeyExists|RegVarExists|splitString|splitStringOnWhiteSpace|contains|trim|lower|upper|unquote|unquote2|stringReplace|strLength|strPos|strPart|EscapeString|ReEncodeStr|RandomStr|CompareDotSeparatedStrings|boolToString|stringToBool|stringinput|regstring|ParamStr|GetReturnListFromSection|getListContaining|getListContainingList|getIndexFromListByContaining|count|emptylist|composeString|createStringList|reverse|getSubList|getSubListByMatch|getSubListByContaining|getSubListByKey|getKeyList|addtolist|addListToList|removeFromListByContaining|removeFromListByMatch|takeString|takeFirstStringContaining|setStringInListAtIndex|getValue|getValueBySeparator|setValueByKey|areListsEqual|ReEncodeStrList|editmap|GetOS|GetMsVersionInfo|GetMSVersionMap|getLinuxDistroType|getLinuxVersionMap|getMacosVersionInfo|getMacosVersionMap|GetSystemType|getOSArchitecture|getListFromWMI|EnvVar|getProfilesDirList|listFiles|which|runningAsAdmin|runningOnUefi|runningInPE|runningInWAnMode|isDriveReady|runningWithGui|GetLocaleInfoMap|HasMinimumSpace|chmod|waitForPackageLock|UpdateEnvironment|SidToName|getHWBiosInfoMap|GetShortWinPathName|GetUserSID|GetLoggedInUser|GetUsercontext|GetScriptMode|saveVersionToProfile|readVersionFromProfile|scriptWasExecutedBefore|isLoginScript|getXml2DocumentFromFile|getXml2Document|xml2GetFirstChildNodeByName|getXml2UniqueChildnodeByName|getXml2AttributeValueByKey|getXml2Text|XMLAddNamespace|XMLRemoveNamespace)\b
+     - name: support.function.statement.opsi-script
+       match: (?i)\b(LogError|LogWarning|Pause|Stop|Message|ShowMessageFile|ShowBitMap|comment|includelog|ExitWindows\s+/Reboot|ExitWindows\s+/ImmediateReboot|ExitWindows\s+/ImmediateLogout|ExitWindows\s+/ShutdownWanted)\b
+     - name: keyword.control.include.opsi-script
+       match: (?i)^\s*(include_insert|include_append|sub|importLib)\b
 
   primary-section-function-registry:
     patterns:
     - name: meta.function.registry.opsi-script
-      match: (?i)\b(Registry)\b\s+(loadUnicodeTextFile)\(([^\)]+)\)\s+(/regedit|/addreg)\s*(\S*.*)
+      match: (?i)\b(Registry)\b\s+(.*)\s+(/regedit|/addreg)\s*(\S*.*)
       captures:
         '1': {name: support.function.registry.opsi-script}
-        '2': {name: support.function.load-unicode-text-file.opsi-script}
-        '3':
-          name: meta.function.registry.filename.opsi-script
+        '2':
           patterns:
-          - include: '#primary-section-string'
-        '4':
+          - include: '#expressions'
+          - include: '#primary-section-functions'
+        '3':
           name: constant.character.opsi-script
           patterns:
           - include: '#secondary-section-string'
-        '5': {name: invalid.illegal.arguments.opsi-script}
-
-  primary-section-keyword-storage:
-    patterns:
-    - name: storage.type.opsi-script
-      match: (?i)\b(DefVar|DefStringList|Set)\b
+        '4':
+          patterns:
+          - include: '#secondary-section-params-registry'
 
   primary-section-keywords:
     patterns:
-    - include: '#primary-section-keyword-storage'
-    - name: keyword.control.opsi-script
-      match: (?i)\b(if|else|elseif|endif|for|in|do|Switch|EndSwitch|Case|DefaultCase|EndCase)\b
-
-  primary-section-operators:
-    patterns:
-    - name: keyword.operator.wordlike.opsi-script
-      match: \b(and|or|not)\b
+    - name: keyword.opsi-script
+      match: (?i)\b(DefVar|DefStringList|Set|DefFunc|EndFunc|void|string|stringlist|if|else|elseif|endif|in|to|do|Switch|EndSwitch|Case|DefaultCase|EndCase|and|or|not|val|ref)\b
+    - name: meta.keyword.for-loop.opsi-script
+      match: (?i)\b(for\s+)(%\w+%)\s+
+      captures:
+        '1': {name: keyword.for-loop.opsi-script}
+        '2': {name: variable.other.for-loop.constant.opsi-script}
 
   primary-section-string:
     patterns:
+    - include: '#literal-variable'
     - name: string.quoted.single.primary-section-string.opsi-script
       begin: "'"
       beginCaptures:
@@ -332,7 +215,7 @@ repository:
         '1': {name: punctuation.definition.string.end.opsi-script}
         '2': {name: invalid.illegal.newline.opsi-script}
       patterns:
-      - include: '#literal-constant'
+      - include: '#literal-constant-percent'
 
     - name: string.quoted.double.primary-section-string.opsi-script
       begin: '"'
@@ -343,206 +226,289 @@ repository:
         '1': {name: punctuation.definition.string.end.opsi-script}
         '2': {name: invalid.illegal.newline.opsi-script}
       patterns:
-      - include: '#literal-constant'
-    - include: '#literal-constant'
-    - include: '#literal-variable'
+      - include: '#literal-constant-percent'
 
   primary-section-number:
     patterns:
     - name: constant.numeric.opsi-script
       match: (?xi)\b[0-9]+
 
-  secondary-section-param-winst:
+  secondary-section-params-winbatch:
+    patterns:
+    - name: constant.character.param.letthemgo.opsi-script
+      match: (?i)\/LetThemGo\b
+    - name: constant.character.param.timeoutseconds.opsi-script
+      match: (?i)\/TimeOutSeconds\b\s+\d+
+    - name: constant.character.param.waitforprocessending.opsi-script
+      match: (?i)(/WaitForProcessEnding)\b\s+(["'].*["'])
+      captures:
+        '1': {name: constant.character.param.waitforprocessending.opsi-script}
+        '2':
+          patterns:
+          - include: '#primary-section-string'
+    - name: constant.character.param.waitforwindowappearing.opsi-script
+      match: (?i)(/WaitForWindowAppearing)\b\s+(["'].*["'])
+      captures:
+        '1': {name: constant.character.param.waitforwindowappearing.opsi-script}
+        '2':
+          patterns:
+          - include: '#primary-section-string'
+    - name: constant.character.param.waitforwindowvanish.opsi-script
+      match: (?i)(/WaitForWindowVanish)\b\s+(["'].*["'])
+      captures:
+        '1': {name: constant.character.param.waitforwindowvanish.opsi-script}
+        '2':
+          patterns:
+          - include: '#primary-section-string'
+    - name: constant.character.param.waitonclose.opsi-script
+      match: (?i)\/WaitOnClose\b
+    - name: constant.character.param.waitseconds.opsi-script
+      match: (?i)\/WaitSeconds\b\s+\d+
+    - name: constant.character.param.runelevated.opsi-script
+      match: (?i)\/RunElevated\b
+    - name: constant.character.param.runasloggedonuser.opsi-script
+      match: (?i)\/RunAsLoggedOnUser\b
+    - name: constant.character.param.32bit64bitsysnative.opsi-script
+      match: (?i)\/(32Bit|64Bit|SysNative)\b
+
+  secondary-section-params-shellscript:
     patterns:
     - name: constant.character.param.winst.opsi-script
       match: (?i)\bwinst\b
-
-  secondary-section-param-let-them-go:
-    patterns:
-    - name: constant.character.param.let-them-go.opsi-script
-      match: (?i)\/LetThemGo\b
-
-  secondary-section-param-timeout-seconds:
-    patterns:
-    - name: constant.character.param.timeout-seconds.opsi-script
+    - name: constant.character.param.timeoutseconds.opsi-script
       match: (?i)\/TimeOutSeconds\b\s+\d+
-
-  secondary-section-param-wait-for-process-ending:
-    patterns:
-    - name: meta.param.wait-for-process-ending.opsi-script
+    - name: constant.character.param.waitforprocessending.opsi-script
       match: (?i)(/WaitForProcessEnding)\b\s+(["'].*["'])
       captures:
-        '1': {name: constant.character.param.wait-for-process-ending.opsi-script}
+        '1': {name: constant.character.param.waitforprocessending.opsi-script}
         '2':
           patterns:
           - include: '#primary-section-string'
-
-  secondary-section-param-wait-for-window-appearing:
-    patterns:
-    - name: constant.character.param.wait-for-window-appearing.opsi-script
-      match: (?i)(/WaitForWindowAppearing)\b\s+(["'].*["'])
-      captures:
-        '1': {name: constant.character.param.wait-for-window-appearing.opsi-script}
-        '2':
-          patterns:
-          - include: '#primary-section-string'
-
-  secondary-section-param-wait-for-window-vanish:
-    patterns:
-    - name: constant.character.param.wait-for-window-vanish.opsi-script
-      match: (?i)(/WaitForWindowVanish)\b\s+(["'].*["'])
-      captures:
-        '1': {name: constant.character.param.wait-for-window-vanish.opsi-script}
-        '2':
-          patterns:
-          - include: '#primary-section-string'
-
-  secondary-section-param-run-elevated:
-    patterns:
-    - name: constant.character.param.run-elevated.opsi-script
+    - name: constant.character.param.runelevated.opsi-script
       match: (?i)\/RunElevated\b
-
-  secondary-section-param-run-as-logged-on-user:
-    patterns:
-    - name: constant.character.param.run-as-logged-on-user.opsi-script
+    - name: constant.character.param.runasloggedonuser.opsi-script
       match: (?i)\/RunAsLoggedOnUser\b
-
-  secondary-section-param-architecture:
-    patterns:
-    - name: constant.character.param.32bit.opsi-script
+    - name: constant.character.param.32bit64bitsysnative.opsi-script
       match: (?i)\/(32Bit|64Bit|SysNative)\b
-
-  secondary-section-param-show-output:
-    patterns:
-    - name: constant.character.param.show-output.opsi-script
-      match: (?i)\/ShowOutput\b
-
-  secondary-section-param-escape-strings:
-    patterns:
-    - name: constant.character.param.escape-strings.opsi-script
-      match: (?i)\/EscapeStrings\b
-
-  secondary-section-param-all-nt-user-profiles:
-    patterns:
-    - name: constant.character.param.all-nt-user-profiles.opsi-script
-      match: (?i)\/AllNTUserProfiles\b
-
-  secondary-section-param-all-nt-user-send-to:
-    patterns:
-    - name: constant.character.param.all-nt-user-send-to.opsi-script
-      match: (?i)\/AllNTUserSendTo\b
-
-  secondary-section-param-all-nt-user-dats:
-    patterns:
-    - name: constant.character.param.all-nt-user-dats.opsi-script
-      match: (?i)\/AllNTUserDats\b
-
-  secondary-section-param-encoding:
-    patterns:
+    - name: constant.character.param.showoutput.opsi-script
+      match: (?i)\/showoutput\b
     - name: constant.character.param.encoding.opsi-script
-      match: (?i)\/encoding\b\s\S+
+      match: (?i)(/encoding)\b\s+(["'].*["'])
+      captures:
+        '1': {name: constant.character.param.encoding.opsi-script}
+        '2':
+          patterns:
+          - include: '#primary-section-string'
 
-  secondary-section-params-win-batch:
+  secondary-section-params-execwith:
     patterns:
-    - include: "#secondary-section-param-winst"
-    - include: "#secondary-section-param-architecture"
-    - include: "#secondary-section-param-timeout-seconds"
-    - include: "#secondary-section-param-run-elevated"
-    - include: "#secondary-section-param-wait-for-process-ending"
-    - include: "#secondary-section-param-wait-for-window-appearing"
-    - include: "#secondary-section-param-wait-for-window-vanish"
-    - include: "#secondary-section-param-let-them-go"
-    - include: "#secondary-section-param-run-as-logged-on-user"
-
-  secondary-section-params-shell-batch:
-    patterns:
-    - include: "#secondary-section-param-winst"
-    - include: "#secondary-section-param-architecture"
-    - include: "#secondary-section-param-timeout-seconds"
-    - include: "#secondary-section-param-run-elevated"
-    - include: "#secondary-section-param-wait-for-process-ending"
-    - include: "#secondary-section-param-show-output"
-
-  secondary-section-params-exec-with:
-    patterns:
-    - include: "#secondary-section-param-winst"
-    - include: "#secondary-section-param-architecture"
-    - include: "#secondary-section-param-let-them-go"
-    - include: "#secondary-section-param-escape-strings"
+    - name: constant.character.param.pass.opsi-script
+      match: (?i)\bpass\b
+    - name: constant.character.param.winst.opsi-script
+      match: (?i)\bwinst\b
+    - name: constant.character.param.letthemgo.opsi-script
+      match: (?i)\/LetThemGo\b
+    - name: constant.character.param.escapestrings.opsi-script
+      match: (?i)\/EscapeStrings\b
+    - name: constant.character.param.runasloggedonuser.opsi-script
+      match: (?i)\/RunAsLoggedOnUser\b
+    - name: constant.character.param.32bit64bitsysnative.opsi-script
+      match: (?i)\/(32Bit|64Bit|SysNative)\b
+    - name: constant.character.param.encoding.opsi-script
+      match: (?i)(/encoding)\b\s+(["'].*["'])
+      captures:
+        '1': {name: constant.character.param.encoding.opsi-script}
+        '2':
+          patterns:
+          - include: '#primary-section-string'
 
   secondary-section-params-files:
     patterns:
-    - include: "#secondary-section-param-winst"
-    - include: "#secondary-section-param-architecture"
-    - include: "#secondary-section-param-all-nt-user-profiles"
-    - include: "#secondary-section-param-all-nt-user-send-to"
+    - name: constant.character.param.alluserprofiles.opsi-script
+      match: (?i)\/AllUserProfiles\b
+    - name: constant.character.param.allntusersendto.opsi-script
+      match: (?i)\/AllNTUserSendTo\b
+    - name: constant.character.param.32bit64bitsysnative.opsi-script
+      match: (?i)\/(32Bit|64Bit|SysNative)\b
+    - name: invalid.deprecated.param.opsi-script
+      match: (?i)\/(AllNTUserProfiles)\b
 
   secondary-section-params-registry:
     patterns:
-    - include: "#secondary-section-param-winst"
-    - include: "#secondary-section-param-architecture"
-    - include: "#secondary-section-param-all-nt-user-dats"
+    - name: constant.character.param.allntuserdats.opsi-script
+      match: (?i)\/AllNTUserDats\b
+    - name: constant.character.param.32bit64bitsysnative.opsi-script
+      match: (?i)\/(32Bit|64Bit|SysNative)\b
+    - name: constant.character.param.regedit.opsi-script
+      match: (?i)\/regedit\b
+    - name: constant.character.param.addreg.opsi-script
+      match: (?i)\/addReg\b
 
   secondary-section-params-patches:
     patterns:
-    - include: "#secondary-section-param-winst"
-    - include: "#secondary-section-param-all-nt-user-profiles"
+    - name: constant.character.param.alluserprofiles.opsi-script
+      match: (?i)\/AllUserProfiles\b
+    - name: constant.character.param.encoding.opsi-script
+      match: (?i)(/encoding)\b\s+(["'].*["'])
+      captures:
+        '1': {name: constant.character.param.encoding.opsi-script}
+        '2':
+          patterns:
+          - include: '#primary-section-string'
+    - name: invalid.deprecated.param.opsi-script
+      match: (?i)\/(AllNTUserProfiles)\b
 
-  secondary-section-params-patch-text-file:
+  secondary-section-params-patchtextfile:
     patterns:
-    - include: "#secondary-section-param-winst"
-    - include: "#secondary-section-param-all-nt-user-profiles"
-    - include: "#secondary-section-param-encoding"
+    - name: constant.character.param.alluserprofiles.opsi-script
+      match: (?i)\/AllUserProfiles\b
+    - name: constant.character.param.encoding.opsi-script
+      match: (?i)(/encoding)\b\s+(["'].*["'])
+      captures:
+        '1': {name: constant.character.param.encoding.opsi-script}
+        '2':
+          patterns:
+          - include: '#primary-section-string'
+    - name: invalid.deprecated.param.opsi-script
+      match: (?i)\/(AllNTUserProfiles)\b
+
+  secondary-section-params-opsiservicecall:
+    patterns:
+    - name: constant.character.param.serviceurl.opsi-script
+      match: (?i)(/serviceurl)\b\s+(["'].*["'])
+      captures:
+        '1': {name: constant.character.param.serviceurl.opsi-script}
+        '2':
+          patterns:
+          - include: '#primary-section-string'
+    - name: constant.character.param.username.opsi-script
+      match: (?i)(/username)\b\s+(["'].*["'])
+      captures:
+        '1': {name: constant.character.param.username.opsi-script}
+        '2':
+          patterns:
+          - include: '#primary-section-string'
+    - name: constant.character.param.password.opsi-script
+      match: (?i)(/password)\b\s+(["'].*["'])
+      captures:
+        '1': {name: constant.character.param.password.opsi-script}
+        '2':
+          patterns:
+          - include: '#primary-section-string'
+    - name: constant.character.param.interactive.opsi-script
+      match: (?i)\/interactive\b
+    - name: constant.character.param.preloginservice.opsi-script
+      match: (?i)\/preloginservice\b
+    - name: constant.character.param.opsiclientd.opsi-script
+      match: (?i)\/opsiclientd\b
+    - name: constant.character.param.opsiclientd-once.opsi-script
+      match: (?i)\/opsiclientd-once\b
+
+  secondary-section-params-xml2:
+    patterns:
+    - name: constant.character.param.alluserprofiles.opsi-script
+      match: (?i)\/AllUserProfiles\b
+    - name: constant.character.param.encoding.opsi-script
+      match: (?i)(/encoding)\b\s+(["'].*["'])
+      captures:
+        '1': {name: constant.character.param.encoding.opsi-script}
+        '2':
+          patterns:
+          - include: '#primary-section-string'
+    - name: invalid.deprecated.param.opsi-script
+      match: (?i)\/(AllNTUserProfiles)\b
+
+  secondary-section-params-execpython:
+    patterns:
+    - name: constant.character.param.letthemgo.opsi-script
+      match: (?i)\/LetThemGo\b
+    - name: constant.character.param.escapestrings.opsi-script
+      match: (?i)\/EscapeStrings\b
+    - name: constant.character.param.runasloggedonuser.opsi-script
+      match: (?i)\/RunAsLoggedOnUser\b
+    - name: constant.character.param.32bit64bitsysnative.opsi-script
+      match: (?i)\/(32Bit|64Bit|SysNative)\b
+    - name: constant.character.param.encoding.opsi-script
+      match: (?i)(/encoding)\b\s+(["'].*["'])
+      captures:
+        '1': {name: constant.character.param.encoding.opsi-script}
+        '2':
+          patterns:
+          - include: '#primary-section-string'
+
+  secondary-section-params-ldapsearch:
+    patterns:
+    - name: constant.character.param.cache.opsi-script
+      match: (?i)\/cache\b
+    - name: constant.character.param.cached.opsi-script
+      match: (?i)\/cached\b
+    - name: constant.character.param.free.opsi-script
+      match: (?i)\/free\b
+    - name: constant.character.param.objects.opsi-script
+      match: (?i)\/objects\b
+    - name: constant.character.param.attributes.opsi-script
+      match: (?i)\/attributes\b
+    - name: constant.character.param.values.opsi-script
+      match: (?i)\/values\b
+
 
   function-calls:
     patterns:
     - name: meta.function-call.opsi-script
-      match: (?i)\b(\S+)\([^\)]*\)
+      match: (?i)\b(\S+)(\([^\)]*\))
       captures:
         '1': {name: entity.name.type.function-call.opsi-script}
+        '2':
+          patterns:
+          - include: '#round-brackets'
 
   sub-section-calls:
     patterns:
     - name: meta.sub-section-call.opsi-script
-      match: (?i)\b(Sub\S+)\b
+      match: (?i)\b(Sub_\w+)\b
       captures:
         '1': {name: entity.name.type.sub-section-call.opsi-script}
 
   secondary-section-calls:
     patterns:
-    - name: meta.secondary-section-call.win-batch.opsi-script
-      match: (?i)\b(Winbatch\S+)\b\s*(.*)
+    - name: meta.secondary-section-call.deprecated.opsi-script
+      match: (?i)\b(IdapiConfig|progmangroups|XMLPatch|dosbatch|dosinanicon|shellbatch|shellinanicon)\S+\b\s*(.*)
       captures:
-        '1': {name: entity.name.type.secondary-section-call.opsi-script}
-        '2':
-          name: meta.secondary-section-call.win-batch.params.opsi-script
-          patterns:
-          - include: '#secondary-section-params-win-batch'
+        '1': {name: invalid.deprecated.secondary-section-call.opsi-script}
 
-    - name: meta.secondary-section-call.shell-batch.opsi-script
-      match: (?i)\b(ShellBatch\S+|ShellInAnIcon\S+|DosBatch\S+|DosInAnIcon\S+)\b\s*(.*)
+    - name: meta.secondary-section-call.execwith.opsi-script
+      match: (?i)\b(execwith_\w+)\b\s*(["'][^"']*["']|\S+)\s*(.*)
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
         '2':
-          name: meta.secondary-section-call.shell-batch.params.opsi-script
-          patterns:
-          - include: '#secondary-section-params-shell-batch'
-
-    - name: meta.secondary-section-call.exec-with.opsi-script
-      match: (?i)\b(ExecWith\S+)\b\s*(["']?.*["']?)\s*(.*)
-      captures:
-        '1': {name: entity.name.type.secondary-section-call.opsi-script}
-        '2':
-          name: meta.secondary-section-call.exec-with.interpreter.opsi-script
+          name: meta.secondary-section-call.execwith.interpreter.opsi-script
           patterns:
           - include: '#primary-section-string'
         '3':
-          name: meta.secondary-section-call.exec-with.params.opsi-script
+          name: meta.secondary-section-call.execwith.params.opsi-script
           patterns:
-          - include: '#secondary-section-params-exec-with'
+          - include: '#secondary-section-params-execwith'
+
+    - name: meta.secondary-section-call.winbatch.opsi-script
+      match: (?i)\b(winbatch_\w+)\b\s*(.*)
+      captures:
+        '1': {name: entity.name.type.secondary-section-call.opsi-script}
+        '2':
+          name: meta.secondary-section-call.winbatch.params.opsi-script
+          patterns:
+          - include: '#secondary-section-params-winbatch'
+
+    - name: meta.secondary-section-call.shellscript.opsi-script
+      match: (?i)\b(shellscript_\w+)\b\s*(.*)
+      captures:
+        '1': {name: entity.name.type.secondary-section-call.opsi-script}
+        '2':
+          name: meta.secondary-section-call.shellscript.params.opsi-script
+          patterns:
+          - include: '#secondary-section-params-shellscript'
 
     - name: meta.secondary-section-call.files.opsi-script
-      match: (?i)\b(Files\S+)\b\s*(.*)
+      match: (?i)\b(files_\w+)\b\s*(.*)
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
         '2':
@@ -551,7 +517,7 @@ repository:
           - include: '#secondary-section-params-files'
 
     - name: meta.secondary-section-call.registry.opsi-script
-      match: (?i)\b(Registry\S+)\b\s*(.*)
+      match: (?i)\b(registry_\w+)\b\s*(.*)
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
         '2':
@@ -560,7 +526,7 @@ repository:
           - include: '#secondary-section-params-registry'
 
     - name: meta.secondary-section-call.patches.opsi-script
-      match: (?i)\b(Patches\S+)\b\s*(.*)
+      match: (?i)\b(patches_\w+)\b\s*(.*)
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
         '2':
@@ -568,200 +534,210 @@ repository:
           patterns:
           - include: '#secondary-section-params-patches'
 
-    - name: meta.secondary-section-call.patch-text-file.opsi-script
-      match: (?i)\b(PatchTextFile\S+)\b\s*(.*)
+    - name: meta.secondary-section-call.patchtextfile.opsi-script
+      match: (?i)\b(patchtextfile_\w+)\b\s*(.*)
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
         '2':
-          name: meta.secondary-section-call.patch-text-file.params.opsi-script
+          name: meta.secondary-section-call.patchtextfile.params.opsi-script
           patterns:
-          - include: '#secondary-section-params-patch-text-file'
+          - include: '#secondary-section-params-patchtextfile'
 
-    - name: meta.secondary-section-call.link-folder.opsi-script
-      match: (?i)\b(LinkFolder\S+)\b
+    - name: meta.secondary-section-call.linkfolder.opsi-script
+      match: (?i)\b(linkfolder_\w+)\b
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
 
-    - name: meta.secondary-section-call.opsi-service-call.opsi-script
-      match: (?i)\b(OpsiServiceCall\S+)\b
+    - name: meta.secondary-section-call.opsiservicecall.opsi-script
+      match: (?i)\b(opsiservicecall_\w+)\b\s*(.*)
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
+        '2':
+          name: meta.secondary-section-call.opsiservicecall.params.opsi-script
+          patterns:
+          - include: '#secondary-section-params-opsiservicecall'
 
-    - name: meta.secondary-section-call.patch-hosts.opsi-script
-      match: (?i)\b(PatchHosts\S+)\b
+    - name: meta.secondary-section-call.patchhosts.opsi-script
+      match: (?i)\b(patchhosts_\w+)\b
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
 
     - name: meta.secondary-section-call.xml2.opsi-script
-      match: (?i)\b(XML2\S+)\b
+      match: (?i)\b(xml2_\w+)\b\s*(.*)
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
+        '2':
+          name: meta.secondary-section-call.xml2.params.opsi-script
+          patterns:
+          - include: '#secondary-section-params-xml2'
 
-    - name: meta.secondary-section-call.xml-patch.opsi-script
-      match: (?i)\b(XMLPatch\S+)\b
-      captures:
-        '1': {name: invalid.deprecated.opsi-script}
-
-    - name: meta.secondary-section-call.exec-python.opsi-script
-      match: (?i)\b(ExecPython\S+)\b
-      captures:
-        '1': {name: entity.name.type.secondary-section-call.opsi-script}
-
-    - name: meta.secondary-section-call.ldap-search.opsi-script
-      match: (?i)\b(LDAPSearch\S+)\b
+    - name: meta.secondary-section-call.execpython.opsi-script
+      match: (?i)\b(execpython_\w+)\b\s*(.*)
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
+        '2':
+          name: meta.secondary-section-call.execpython.params.opsi-script
+          patterns:
+          - include: '#secondary-section-params-execpython'
+
+    - name: meta.secondary-section-call.ldapsearch.opsi-script
+      match: (?i)\b(ldapsearch_\w+)\b\s*(.*)
+      captures:
+        '1': {name: entity.name.type.secondary-section-call.opsi-script}
+        '2':
+          name: meta.secondary-section-call.ldapsearch.params.opsi-script
+          patterns:
+          - include: '#secondary-section-params-ldapsearch'
 
   secondary-sections:
     patterns:
-
-    - name: meta.secondary-section.shell-batch.opsi-script
-      begin: (?i)^\s*(\[)(ShellBatch[^\]]+|ShellInAnIcon[^\]]+)(\])
+    - name: meta.secondary-section.deprecated.opsi-script
+      begin: (?i)^\s*\[(IdapiConfig|progmangroups|XMLPatch|dosbatch|dosinanicon|shellbatch|shellinanicon)[^\]]+\]
       beginCaptures:
-        '2': {name: entity.name.type.secondary-section-shell-batch.opsi-script}
-      while: ^(?i)(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
-      contentName: meta.embedded.block.shellscript
-      patterns:
-      - include: '#secondary-section'
-      - include: source.shell
-
-    - name: meta.secondary-section.dos-batch.opsi-script
-      begin: (?i)^\s*(\[)(DosBatch[^\]]+|DosInAnIcon[^\]]+)(\])
-      beginCaptures:
-        '2': {name: entity.name.type.secondary-section-dos-batch.opsi-script}
-      while: ^(?i)(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
-      contentName: meta.embedded.block.dosbatch
-      patterns:
-      - include: '#secondary-section'
-      - include: source.batchfile
-
-    - name: meta.secondary-section.win-batch.opsi-script
-      begin: (?i)^\s*(\[)(WinBatch[^\]]+)(\])
-      beginCaptures:
-        '2': {name: entity.name.type.secondary-section-dos-batch.opsi-script}
-      while: ^(?i)(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
+        '1': {name: invalid.deprecated.secondary-section.opsi-script}
+      while: ^(?i)(?!\s*(\[.*\]|EndFunc)\s*$)
       patterns:
       - include: '#secondary-section'
 
     - name: meta.secondary-section.exec-with-powershell.opsi-script
-      begin: (?i)^\s*(\[)(ExecWith[^\]]*powershell[^\]]*)(\])
+      begin: (?i)^\s*\[(ExecWith_\w*powershell\w*)\]
       beginCaptures:
-        '2': {name: entity.name.type.secondary-section-exec-with-powershell.opsi-script}
-      while: ^(?i)(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
+        '1': {name: entity.name.type.secondary-section-exec-with-powershell.opsi-script}
+      while: ^(?i)(?!\s*(\[.*\]|EndFunc)\s*$)
       contentName: meta.embedded.block.powershell
       patterns:
       - include: '#secondary-section'
       - include: source.powershell
 
-    - name: meta.secondary-section.exec-with-general.opsi-script
-      begin: (?i)^\s*(\[)(ExecWith[^\]]+)(\])
+    - name: meta.secondary-section.winbatch.opsi-script
+      begin: (?i)^\s*\[(winbatch_\w+)\]
       beginCaptures:
-        '2': {name: entity.name.type.secondary-section-exec-with-general.opsi-script}
-      while: ^(?i)(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
+        '1': {name: entity.name.type.secondary-section-winbatch.opsi-script}
+      while: ^(?i)(?!\s*(\[.*\]|EndFunc)\s*$)
       contentName: meta.embedded.block.general.opsi-script
       patterns:
       - include: '#secondary-section'
 
-    - name: meta.secondary-section.files.opsi-script
-      begin: (?i)^\s*(\[)(Files[^\]]+)(\])
+    - name: meta.secondary-section.shellscript.opsi-script
+      begin: (?i)^\s*\[(shellscript_\w+)\]
       beginCaptures:
-        '2': {name: entity.name.type.secondary-section-files.opsi-script}
-      while: ^(?i)(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
+        '1': {name: entity.name.type.secondary-section-shellscript.opsi-script}
+      while: ^(?i)(?!\s*(\[.*\]|EndFunc)\s*$)
+      contentName: meta.embedded.block.general.opsi-script
       patterns:
       - include: '#secondary-section'
-      - include: '#secondary-section-files'
 
-    - name: meta.secondary-section.registry.opsi-script
-      begin: (?i)^\s*(\[)(Registry[^\]]+)(\])
+    - name: meta.secondary-section.execwith.opsi-script
+      begin: (?i)^\s*\[(execwith_\w+)\]
       beginCaptures:
-        '2': {name: entity.name.type.secondary-section-registry.opsi-script}
-      while: ^(?i)(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
+        '1': {name: entity.name.type.secondary-section-execwith.opsi-script}
+      while: ^(?i)(?!\s*(\[.*\]|EndFunc)\s*$)
+      contentName: meta.embedded.block.general.opsi-script
       patterns:
       - include: '#secondary-section'
-      - include: '#secondary-section-registry'
 
-    - name: meta.secondary-section.patches.opsi-script
-      begin: (?i)^\s*(\[)(Patches[^\]]+)(\])
+    - name: meta.secondary-section.execpython.opsi-script
+      begin: (?i)^\s*\[(execpython_\w+)\]
       beginCaptures:
-        '2': {name: entity.name.type.secondary-section-patches.opsi-script}
-      while: ^(?i)(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
-      patterns:
-      - include: '#secondary-section'
-      - include: '#secondary-section-patches'
-
-    - name: meta.secondary-section.patch-text-file.opsi-script
-      begin: (?i)^\s*(\[)(PatchTextFile[^\]]+)(\])
-      beginCaptures:
-        '2': {name: entity.name.type.secondary-section-patch-text-file.opsi-script}
-      while: ^(?i)(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
-      patterns:
-      - include: '#secondary-section'
-      - include: '#secondary-section-patch-text-file'
-
-    - name: meta.secondary-section.link-folder.opsi-script
-      begin: (?i)^\s*(\[)(LinkFolder[^\]]+)(\])
-      beginCaptures:
-        '2': {name: entity.name.type.secondary-section-link-folder.opsi-script}
-      while: ^(?i)(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
-      patterns:
-      - include: '#secondary-section'
-      - include: '#secondary-section-link-folder'
-
-    - name: meta.secondary-section.opsi-service-call.opsi-script
-      begin: (?i)^\s*(\[)(OpsiServiceCall[^\]]+)(\])
-      beginCaptures:
-        '2': {name: entity.name.type.secondary-section-opsi-service-call.opsi-script}
-      while: ^(?i)(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
-      patterns:
-      - include: '#secondary-section'
-      - include: '#secondary-section-opsi-service-call'
-
-    - name: meta.secondary-section.patch-host.opsi-script
-      begin: (?i)^\s*(\[)(PatchHost[^\]]+)(\])
-      beginCaptures:
-        '2': {name: entity.name.type.secondary-section-patch-host.opsi-script}
-      while: ^(?i)(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
-      patterns:
-      - include: '#secondary-section'
-      - include: '#secondary-section-patch-host'
-
-    - name: meta.secondary-section.xml2.opsi-script
-      begin: (?i)^\s*(\[)(XML2[^\]]+)(\])
-      beginCaptures:
-        '2': {name: entity.name.type.secondary-section-xml2.opsi-script}
-      while: ^(?i)(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
-      patterns:
-      - include: '#secondary-section'
-      - include: '#secondary-section-xml2'
-
-    - name: meta.secondary-section.exec-python.opsi-script
-      begin: (?i)^\s*(\[)(ExecPython[^\]]+)(\])
-      beginCaptures:
-        '2': {name: entity.name.type.secondary-section-exec-python.opsi-script}
-      while: ^(?i)(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
+        '1': {name: entity.name.type.secondary-section-execpython.opsi-script}
+      while: ^(?i)(?!\s*(\[.*\]|EndFunc)\s*$)
       contentName: meta.embedded.block.python
       patterns:
       - include: '#secondary-section'
       - include: source.python
 
-    - name: meta.secondary-section.ldap-search.opsi-script
-      begin: (?i)^\s*(\[)(LDAPSearch[^\]]+)(\])
+    - name: meta.secondary-section.files.opsi-script
+      begin: (?i)^\s*\[(files_\w+)\]
       beginCaptures:
-        '2': {name: entity.name.type.secondary-section-ldap-search.opsi-script}
-      while: ^(?i)(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
+        '1': {name: entity.name.type.secondary-section-files.opsi-script}
+      while: ^(?i)(?!\s*(\[.*\]|EndFunc)\s*$)
       patterns:
       - include: '#secondary-section'
-      - include: '#secondary-section-ldap-search'
+      - include: '#secondary-section-files'
+
+    - name: meta.secondary-section.registry.opsi-script
+      begin: (?i)^\s*\[(registry_\w+)\]
+      beginCaptures:
+        '1': {name: entity.name.type.secondary-section-registry.opsi-script}
+      while: ^(?i)(?!\s*(\[.*\]|EndFunc)\s*$)
+      patterns:
+      - include: '#secondary-section'
+      - include: '#secondary-section-registry'
+
+    - name: meta.secondary-section.patches.opsi-script
+      begin: (?i)^\s*\[(patches_\w+)\]
+      beginCaptures:
+        '1': {name: entity.name.type.secondary-section-patches.opsi-script}
+      while: ^(?i)(?!\s*(\[.*\]|EndFunc)\s*$)
+      patterns:
+      - include: '#secondary-section'
+      - include: '#secondary-section-patches'
+
+    - name: meta.secondary-section.patchtextfile.opsi-script
+      begin: (?i)^\s*\[(patchtextfile_\w+)\]
+      beginCaptures:
+        '1': {name: entity.name.type.secondary-section-patchtextfile.opsi-script}
+      while: ^(?i)(?!\s*(\[.*\]|EndFunc)\s*$)
+      patterns:
+      - include: '#secondary-section'
+      - include: '#secondary-section-patchtextfile'
+
+    - name: meta.secondary-section.patchhosts.opsi-script
+      begin: (?i)^\s*\[(patchhosts_\w+)\]
+      beginCaptures:
+        '1': {name: entity.name.type.secondary-section-patchhosts.opsi-script}
+      while: ^(?i)(?!\s*(\[.*\]|EndFunc)\s*$)
+      patterns:
+      - include: '#secondary-section'
+      - include: '#secondary-section-patchhosts'
+
+    - name: meta.secondary-section.linkfolder.opsi-script
+      begin: (?i)^\s*\[(linkfolder_\w+)\]
+      beginCaptures:
+        '1': {name: entity.name.type.secondary-section-linkfolder.opsi-script}
+      while: ^(?i)(?!\s*(\[.*\]|EndFunc)\s*$)
+      patterns:
+      - include: '#secondary-section'
+      - include: '#secondary-section-linkfolder'
+
+    - name: meta.secondary-section.opsiservicecall.opsi-script
+      begin: (?i)^\s*\[(opsiservicecall_\w+)\]
+      beginCaptures:
+        '1': {name: entity.name.type.secondary-section-opsiservicecall.opsi-script}
+      while: ^(?i)(?!\s*(\[.*\]|EndFunc)\s*$)
+      patterns:
+      - include: '#secondary-section'
+      - include: '#secondary-section-opsiservicecall'
+
+    - name: meta.secondary-section.xml2.opsi-script
+      begin: (?i)^\s*\[(xml2_\w+)\]
+      beginCaptures:
+        '1': {name: entity.name.type.secondary-section-xml2.opsi-script}
+      while: ^(?i)(?!\s*(\[.*\]|EndFunc)\s*$)
+      patterns:
+      - include: '#secondary-section'
+      - include: '#secondary-section-xml2'
+
+    - name: meta.secondary-section.ldapsearch.opsi-script
+      begin: (?i)^\s*\[(ldapsearch_\w+)\]
+      beginCaptures:
+        '1': {name: entity.name.type.secondary-section-ldapsearch.opsi-script}
+      while: ^(?i)(?!\s*(\[.*\]|EndFunc)\s*$)
+      patterns:
+      - include: '#secondary-section'
+      - include: '#secondary-section-ldapsearch'
 
   secondary-section:
     patterns:
     - include: '#comments'
     - include: '#secondary-section-string'
-    - include: '#literal-constant'
+    - include: '#literal-constant-percent'
     - include: '#literal-variable'
 
   secondary-section-string:
     patterns:
+    - include: '#literal-constant-percent'
+    - include: '#literal-variable'
     - name: string.quoted.single.secondary-section-string.opsi-script
       begin: "'"
       beginCaptures:
@@ -771,10 +747,8 @@ repository:
         '1': {name: punctuation.definition.string.end.opsi-script}
         '2': {name: invalid.illegal.newline.opsi-script}
       patterns:
-      - include: '#literal-constant'
+      - include: '#literal-constant-percent'
       - include: '#literal-variable'
-    - include: '#literal-constant'
-    - include: '#literal-variable'
 
     - name: string.quoted.double.secondary-section-string.opsi-script
       begin: '"'
@@ -785,233 +759,58 @@ repository:
         '1': {name: punctuation.definition.string.end.opsi-script}
         '2': {name: invalid.illegal.newline.opsi-script}
       patterns:
-      - include: '#literal-constant'
+      - include: '#literal-constant-percent'
       - include: '#literal-variable'
 
   secondary-section-files:
     patterns:
-
-    - name: support.variable.secondary-section.files.opsi-script
-      match: (?i)\b(SourcePath|checkTargetPath)\b
-
-    - name: meta.function.secondary-section.files.copy.opsi-script
-      match: \b((?i)copy)\b(\s+-[seVvduxwncrh]+)?\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s*(\S*.*)
-      captures:
-        '1': {name: support.function.secondary-section.files.copy.opsi-script}
-        '2': {name: constant.character.secondary-section.files.copy.arguments.opsi-script}
-        '3':
-          name: meta.secondary-section.files.copy.source.opsi-script
-          patterns:
-          - include: '#secondary-section-string'
-        '4':
-          name: meta.secondary-section.files.copy.destination.opsi-script
-          patterns:
-          - include: '#secondary-section-string'
-        '5': {name: invalid.illegal.arguments.opsi-script}
-
-    - name: meta.function.secondary-section.files.del.opsi-script
-      match: \b((?i)Del)\b(\s+-(?:s|f|c|d\d*)+)?\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s*(\S*.*)
-      captures:
-        '1': {name: support.function.secondary-section.files.del.opsi-script}
-        '2': {name: constant.character.secondary-section.files.del.arguments.opsi-script}
-        '3':
-          name: meta.secondary-section.files.del.path.opsi-script
-          patterns:
-          - include: '#secondary-section-string'
-        '4': {name: invalid.illegal.arguments.opsi-script}
-
-    - name: meta.function.secondary-section.files.delete.opsi-script
-      match: \b((?i)Delete)\b(\s+-(?:s|f|c|d\d*)+)?\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s*(\S*.*)
-      captures:
-        '1': {name: support.function.secondary-section.files.delete.opsi-script}
-        '2': {name: constant.character.secondary-section.files.delete.arguments.opsi-script}
-        '3':
-          name: meta.secondary-section.files.delete.path.opsi-script
-          patterns:
-          - include: '#secondary-section-string'
-        '4': {name: invalid.illegal.arguments.opsi-script}
-
-    - name: meta.function.secondary-section.files.chmod.opsi-script
-      match: \b((?i)chmod)\b\s+([0-8]{3,4})\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s*(\S*.*)
-      captures:
-        '1': {name: support.function.secondary-section.files.chmod.opsi-script}
-        '2': {name: constant.character.secondary-section.files.chmod.mask.opsi-script}
-        '3':
-          name: meta.secondary-section.files.chmod.path.opsi-script
-          patterns:
-          - include: '#secondary-section-string'
-        '4': {name: invalid.illegal.arguments.opsi-script}
-
-    - name: meta.function.secondary-section.files.link-move-zip.opsi-script
-      match: (?i)\b(hardlink|symlink|rename|move|zipfile|unzipfile)\b\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s*(\S*.*)
-      captures:
-        '1': {name: support.function.secondary-section.files.link-move-zip.opsi-script}
-        '2':
-          name: meta.secondary-section.files.link-move-zip.source.opsi-script
-          patterns:
-          - include: '#secondary-section-string'
-        '3':
-          name: meta.secondary-section.files.link-move-zip.destination.opsi-script
-          patterns:
-          - include: '#secondary-section-string'
-        '4': {name: invalid.illegal.arguments.opsi-script}
-
-  secondary-section-registry-constants:
-    patterns:
-    - name: constant.language.registry-type.opsi-script
-      match: '(?i)\b(REG_SZ|REG_EXPAND_SZ|REG_DWORD|REG_BINARY|REG_MULTI_SZ)'
+    - name: keyword.control.secondary-section.files.opsi-script
+      match: (?i)\b(checktargetpath|copy|delete|del|sourcepath|chmod|hardlink|symlink|rename|move|zipfile|unzipfile)\b
 
   secondary-section-registry:
     patterns:
-    - include: '#secondary-section-registry-constants'
-
-    - name: meta.function.secondary-section.registry.flush-key.opsi-script
-      match: (?i)\b(FlushKey)\b
-      captures:
-        '1': {name: support.function.secondary-section.registry.flush-key.opsi-script}
-
-    - name: meta.function.secondary-section.registry.open-delete-key.opsi-script
-      match: (?i)\b(OpenKey|DeleteKey)\b\s+\[([^\]]+)\]\s*(\S*.*)
-      captures:
-        '1': {name: support.function.secondary-section.registry.open-delete-key.opsi-script}
-        '2':
-          name: meta.secondary-section.registry.open-delete-key.key.opsi-script
-          patterns:
-          - include: '#secondary-section-string'
-        '3': {name: invalid.illegal.arguments.opsi-script}
-
-    - name: meta.function.secondary-section.registry.set-add.opsi-script
-      match: '(?i)\b(Set|Add)\b\s+(\"[^"]*\")\s+=\s+(?:(REG_SZ|REG_EXPAND_SZ|REG_DWORD|REG_BINARY|REG_MULTI_SZ)\s*:)?\s*(.*)'
-      captures:
-        '1': {name: support.function.secondary-section.registry.set-add.opsi-script}
-        '2':
-          name: meta.secondary-section.registry.set-add.key.opsi-script
-          patterns:
-          - include: '#secondary-section-string'
-        '3': {name: constant.character.secondary-section.registry.set-add.type.opsi-script}
-        '4':
-          name: meta.secondary-section.registry.set-add.value.opsi-script
-          patterns:
-          - include: '#secondary-section-string'
-
-    - name: meta.function.secondary-section.registry.delete-var.opsi-script
-      match: (?i)\b(DeleteVar)\b\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s*(\S*.*)
-      captures:
-        '1': {name: support.function.secondary-section.registry.delete-var.opsi-script}
-        '2':
-          name: meta.secondary-section.registry.delete-var.name.opsi-script
-          patterns:
-          - include: '#secondary-section-string'
-        '3': {name: invalid.illegal.arguments.opsi-script}
-
-    - name: meta.function.secondary-section.registry.supp.opsi-script
-      match: (?i)\b(Supp)\b\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s+(\S)\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s*(\S*.*)
-      captures:
-        '1': {name: support.function.secondary-section.registry.supp.opsi-script}
-        '2':
-          name: meta.secondary-section.registry.supp.varname.opsi-script
-          patterns:
-          - include: '#secondary-section-string'
-        '3': {name: constant.character.opsi-script}
-        '4':
-          name: meta.secondary-section.registry.supp.supplement.opsi-script
-          patterns:
-          - include: '#secondary-section-string'
-        '5': {name: invalid.illegal.arguments.opsi-script}
-
-    - name: meta.function.secondary-section.registry.file.opsi-script
-      match: (?i)\b(GetMultiSZFromFile|SaveValueToFile)\b\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s+("(?:(?:\\"|(?:(?!")).)*)"|'(?:(?:\\'|(?:(?!')).)*)'|[^"'\s]*)\s*(\S*.*)
-      captures:
-        '1': {name: support.function.secondary-section.registry.file.opsi-script}
-        '2':
-          name: meta.secondary-section.registry.file.varname.opsi-script
-          patterns:
-          - include: '#secondary-section-string'
-        '3':
-          name: meta.secondary-section.registry.file.filename.opsi-script
-          patterns:
-          - include: '#secondary-section-string'
-        '4': {name: invalid.illegal.arguments.opsi-script}
+    - name: variable.other.secondary-section.registry.opsi-script
+      match: '(?i)\b(REG_SZ|REG_EXPAND_SZ|REG_DWORD|REG_QWORD|REG_BINARY|REG_MULTI_SZ)'
+    - name: keyword.control.secondary-section.registry.opsi-script
+      match: (?i)\b(OpenKey|set|add|supp|GetMultiSZFromFile|SaveValueToFile|DeleteVar|DeleteKey|Flushkey)\b
+    - name: invalid.deprecated.secondary-section.registry.opsi-script
+      match: (?i)\b(ReconstructFrom)\b
 
   secondary-section-patches:
     patterns:
-    - name: support.function.secondary-section.patches.opsi-script
-      match: (?i)\b(Add|Set|AddNew|Del|DelSec|Replace)\b
+    - name: keyword.control.secondary-section.patches.opsi-script
+      match: (?i)\b(add|addnew|set|change|del|delsec|replace)\b
 
-  secondary-section-patch-text-file-constants:
+  secondary-section-patchtextfile:
     patterns:
-    - name: constant.language.secondary-section.patch-text-file.mozilla-preference-types.opsi-script
-      match: '(?i)\b(pref|user_pref|lock_pref|lockPref)'
+    - name: keyword.control.secondary-section.patchtextfile.opsi-script
+      match: (?i)\b(Set_Mozilla_Pref|AddStringListElement_To_Mozilla_Pref|findline|findline_startingwith|findline_containing|gototop|gotobottom|advanceline|deletetheline|addline|add_line|insertline|appendline|append_file|subtract_file|savetofile|sorted|setKeyValueSeparator|setValueByKey)\b
+    - name: invalid.deprecated.secondary-section.patchtextfile.opsi-script
+      match: (?i)\b(addstringlistelement_to_netscape_user_pref|set_netscape_user_pref)\b
 
-  secondary-section-patch-text-file:
+  secondary-section-linkfolder:
     patterns:
-    - include: "#secondary-section-patch-text-file-constants"
+    - name: variable.other.secondary-section.linkfolder.opsi-script
+      match: '(?i)\b(desktop|sendto|startmenu|startup|programs|desktopdirectory|common_startmenu|common_programs|common_startup|common_desktopdirectory|AudioVideo|Audio|Video|Development|Education|Game|Graphics|Network|Office|Settings|System|Utility)'
+    - name: keyword.control.secondary-section.linkfolder.opsi-script
+      match: (?i)\b(set_basefolder|set_subfolder|delete_element|delete_subfolder|set_link|name|target|parameters|working_dir|icon_file|icon_index|shortcut|window_state|link_categories|end_link)\b
 
-    - name: support.function.secondary-section.patch-text-file.mozilla.opsi-script
-      match: (?i)\b(AddStringListElement_To_Mozilla_Pref|Set_Netscape_User_Pref|AddstringListElement_To_Netscape_User_Pref)\b
-
-    - name: support.function.secondary-section.patch-text-file.opsi-script
-      match: (?i)\b(FindLine|FindLine_StartingWith|FindLine_Containing|GoToTop|AdvanceLine|GoToBottom|DeleteTheLine|AddLine_|Add_Line_|InsertLine|AppendLine|Append_Line|Append_File|Subtract_File|SaveToFile|Sorted|setKeyValueSeparator|setValueByKey)\b
-
-  secondary-section-link-folder-constants:
+  secondary-section-patchhosts:
     patterns:
-    - name: constant.language.secondary-section.link-folder.predefined-virtual-system-folders-windows.opsi-script
-      match: '(?i)\b(desktop|sendto|startmenu|startup|programs|desktopdirectory|common_startmenu|common_programs|common_startup|common_desktopdirectory)'
-    - name: constant.language.secondary-section.link-folder.predefined-virtual-system-folders-linux.opsi-script
-      match: '(?i)\b(common_programs|common_startup|desktop|startup)'
-    - name: constant.language.secondary-section.link-folder.predefined-link-categories-linux.opsi-script
-      match: '(?i)\b(AudioVideo|Audio|Video|Development|Education|Game|Graphics|Network|Office|Settings|System|Utility)'
-
-  secondary-section-link-folder-attributes:
-    patterns:
-    - name: keyword.other.secondary-section.link-folder.link-attributes.opsi-script
-      match: (?i)\b(name|target|parameters|working_dir|icon_file|icon_index|shortcut|link_categories)\b
-
-  secondary-section-link-folder:
-    patterns:
-    - include: '#secondary-section-link-folder-constants'
-    - include: '#secondary-section-link-folder-attributes'
-
-    - name: support.function.secondary-section.link-folder.opsi-script
-      match: (?i)\b(set_basefolder|set_subfolder|set_link|end_link|delete_element|delete_subfolder)\b
-
-  secondary-section-opsi-service-call-constants:
-    patterns:
-    - name: constant.language.secondary-section.opsi-service-call.opsi-script
-      match: '(?i)\b("method":|"params":)'
-
-  secondary-section-opsi-service-call:
-    patterns:
-      - include: "#secondary-section-opsi-service-call-constants"
-
-  secondary-section-patch-host:
-    patterns:
-    - name: support.function.secondary-section.patch-host.opsi-script
-      match: (?i)\b(SetAddr|SetName|SetAlias|DelAlias|DelHost|SetComment)\b
-
-  secondary-section-xml2-constants:
-    patterns:
-    - name: constant.language.secondary-section.xml2.opsi-script
-      match: '(?i)\b(true|false)'
+    - name: keyword.control.secondary-section.patchhosts.opsi-script
+      match: (?i)\b(setaddr|setname|setalias|delalias|delhost|setComment)\b
 
   secondary-section-xml2:
     patterns:
-    - include: "#secondary-section-xml2-constants"
+    - name: variable.other.secondary-section.xml2.opsi-script
+      match: '(?i)\b(True|False)'
+    - name: keyword.control.secondary-section.xml2.opsi-script
+      match: (?i)\b(strictMode|openNode|SetAttribute|AddAttribute|DeleteAttribute|addNewNode|setNodeText|DeleteNode|gotoParentNode|rootNodeOnCreate|setNodePair)\b
 
-    - name: support.variable.secondary-section.xml2.opsi-script
-      match: (?i)\b(strictMode)\b
-
-    - name: support.function.secondary-section.xml2.opsi-script
-      match: (?i)\b(OpenNode|SetAttribute|AddAttribute|DeleteAttribute|AddNewNode|SetNodeText|DeleteNode|GotoParentNode)\b
-
-  secondary-section-ldap-search-keywords:
+  secondary-section-ldapsearch:
     patterns:
-    - name: keyword.other.secondary-section.ldap-search.opsi-script
-      match: '(?i)\b(targethost|targetport|user|password|dn|attributes|filter)'
-
-  secondary-section-ldap-search:
-    patterns:
-    - include: "#secondary-section-ldap-search-keywords"
+    - name: keyword.control.secondary-section.ldapsearch.opsi-script
+      match: '(?i)\b(targethost|targetport|user|password|dn|typesonly|attributes|filter)'
 
 patterns:
   - include: '#core'

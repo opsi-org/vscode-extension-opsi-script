@@ -1,0 +1,295 @@
+VSCode Theme: Dark Modern
+
+
+; This is a valid script comment and completely dark green.
+# This is not a valid script comment since comments must start with a semicolon.
+some line start ; Comments are only highlighted at line start.
+
+
+;PRIMARY SECTIONS:
+
+; Keywords to include code from other files are purple:
+importlib ""
+include_insert ""
+include_append ""
+sub ""
+importlib
+importlib "" "" "" some words
+
+
+; Variable names (enclosed in two dollars!) and script configs are light blue.
+$myVar$
+$myvar
+DefVar $var$ = $var$+$var$+"test"+$var$
+setloglevel=8
+; Strings are orange.
+'str'
+; Booleans are not highlighted yet since they are only half valid data types in opsi-script.
+true
+; Numbers are highlighted although they are only half valid data types in opsi-script.
+5.1
+; Script functions and statements are yellow.
+getos
+takestring()
+comment ""
+; ExitWindows with modifier is handled as one single command for each modifier.
+exitwindows /immediatereboot
+exitwindows     /immediatereboot
+; Other (user defined) functions are turquoise.
+mytestdeffunc()
+mytestdeffunc("'" + $myVar$)
+
+; Constants outside of strings are not highlighted since this is invalid syntax! (Except for for-loops)
+%scriptpath%
+; Constants inside of strings are light blue like variables.
+"%scriptpath%"
+DefVar $var$ = "%scriptpath%\test\%myconst%"
+; In for loops the iterating constant must not be quoted!
+for %s% in createstringlist("") do
+for "%s%" in createstringlist("") do
+
+; Variables inside of strings are not highlighted.
+"$myVar$"
+; Random non-keyword words are not highlighted, i.e. white.
+randomword
+
+
+; Keywords are dark blue:
+defvar defstringlist set
+if else elseif endif
+and or not
+switch case defaultcase endcase endswitch
+; "for" keyword: See above in the part about script constants
+for
+for %s%
+in to do
+deffunc endfunc
+val ref
+void string stringlist
+; in use:
+deffunc test($var$: string): void
+  Files_x
+  [files_x]
+  copy ""
+endfunc
+
+
+; Section calls are turquoise like defined functions:
+; We demand an underscore and then at least one char after the section type.
+Subx
+Sub_
+Sub_x
+Sub_x /invalidmodifier
+Winbatch_x
+Winbatch_x /WaitSeconds 2
+ShellScript_x
+ShellScript_x winst /64bit
+; Execwith needs string or word afterwards
+ExecWith_x ""
+execWith_hello "python" PASS -a "hello" -b "world" WINST /EscapeStrings
+execWith_hello python PASS -a "hello" -b "world" WINST /EscapeStrings
+; Missing program path leaves PASS and WINST unhighlighted.
+execWith_hello WINST /EscapeStrings
+execWith_hello PASS -a "hello" -b "world" WINST /EscapeStrings
+Files_x
+Files_x /alluserprofiles /invalidmodifier /32Bit /WaitSeconds 2
+Registry_x
+Patches_x
+Patchtextfile_x
+LinkFolder_x
+Opsiservicecall_x
+Patchhosts_x
+xml2_x
+xml2_x /invalidmodifier /AllUserProfiles /AllNTUserProfiles /encoding "utf8"
+ExecPython_x
+Ldapsearch_x
+
+
+; Every Stringlist or String is possible after registry command (search for 'tsecExpected:' in opsi-script osparser.pas).
+Registry loadUnicodeTextFile("") /regedit
+Registry loadTextFile("") /regedit
+Registry "" /regedit
+Registry loadUnicodeTextFile("") /regedit /Sysnative
+; User defined functions and functions after registry command with incomplete string do not completely break the following highlighting like script functions
+; but the brackets show the error and that must be enough for now.
+;mytestdeffunc("')
+;Registry loadUnicodeTextFile(') /regedit
+; Compare to:
+;loadUnicodeTextFile(')
+
+
+; Deprecated selection:
+; Constants are red inside of strings, else unhighlighted.
+%WinstVersion%
+"%WinstVersion%,%s%"
+LogLevel
+errorsOccuredSinceMark
+SubstringBefore
+SubstringBefore("", "")
+stringsplit
+stringsplit("")
+off
+ScriptErrorMessages = off
+; Modifiers are red if and only if used as modifier, else unhighlighted.
+/AllNTUserProfiles
+files_x /AllNTUserProfiles
+; ExitWindows with modifier is handled as one single command for each modifier.
+ExitWindows /RebootWanted
+ExitWindows     /RebootWanted
+; Deprecated section command outside of the section is white.
+ReconstructFrom
+; Primary sections cannot be called and have no name extension.
+Aktionen
+Aktionen_x
+[Aktionen]
+[Aktionen_x]
+; Secondary sections need a name extension.
+Dosbatch
+Dosbatch_x
+Dosbatchy
+Dosbatch_x /32Bit
+[Dosbatch]
+[Dosbatchy]
+[Dosbatch_x]
+
+
+; Section heads are also turquoise:
+; Actions and Profileactions do not allow following characters.
+[Actions]
+[Actions_x]
+[Profileactions]
+[Profileactions_x]
+; Other sections require underscore and then at least one char.
+[Sub_x]
+[Sub_]
+[Subx]
+[Sub]
+[Winbatch_x]
+[ShellScript_x]
+[ExecWith_x]
+[Files_x]
+[Files]
+[Registry_x]
+[Registry]
+
+
+;SECONDARY SECTIONS:
+
+[Winbatch_x]
+; No special highlighting (except for strings and for constants and variables which will be replaced in execution).
+echo "test" %scriptpath% $myvar$
+$Today = (Get-Date).DateTime
+
+[ShellScript_x]
+; No special highlighting (except for strings and for constants and variables which will be replaced in execution).
+echo "test" %scriptpath% $myvar$
+$Today = (Get-Date).DateTime
+
+[Execwith_x]
+; No special highlighting (except for strings and for constants and variables which will be replaced in execution).
+echo "test" %scriptpath% $myvar$
+$Today = (Get-Date).DateTime
+
+[Execwith_xpowershellyz]
+; Special powershell highlighting if 'powershell' occurs after 'execwith' in the section name.
+echo "test" %scriptpath% $myvar$
+$Today = (Get-Date).DateTime
+
+[Execpython_x]
+; Special python highlighting.
+import sys
+testvar = ""
+if testvar:
+    print("")
+
+[files_x]
+; Selection of commands: All commands should be purple!
+SourcePath
+SourcePath = ""
+copy
+; Constants and Variables are always light blue (no matter whether in- or outside of strings)
+copy "%scriptpath%\$var$\%myconst%" %scriptpath%\$var$\%s%
+copy -seVvcduxwnrh "" "" "" ""
+delete
+delete ""
+delete -fsd3c ""
+del -fsd3c ""
+chmod 777
+chmod 777 ""
+move
+move "" "" "" ""
+
+[registry_x]
+; Selection of commands: All commands should be purple!
+OpenKey
+OpenKey [x]
+Set
+Set "" =
+Supp
+Supp "" ;
+SaveValueToFile
+SaveValueToFile "" "" "" ""
+DeleteVar
+DeleteVar "" "" ""
+FlushKey
+; Deprecated command is red.
+ReconstructFrom
+
+[patches_x]
+; Selection of commands: All commands should be purple!
+add
+add [] test=test
+del
+del [] test
+delsec
+delsec []
+replace
+replace test=test test2=test2
+
+[patchtextfile_x]
+; Selection of commands: All commands should be purple!
+Set_Mozilla_Pref
+Set_Mozilla_Pref("")
+FindLine
+FindLine ""
+AddLine
+GoToTop
+GoToTop ""
+
+[Linkfolder_x]
+; Selection of commands: All commands should be purple!
+set_basefolder
+set_basefolder common_programs
+set_subfolder
+set_subfolder ""
+delete_element
+delete_subfolder
+set_link
+  name: ""
+  target: ""
+  parameters:
+  icon_file:
+end_link
+
+[patchhosts_x]
+; Selection of commands: All commands should be purple!
+; The following need one or more arguments.
+setaddr
+delhost
+setComment
+
+[xml2_x]
+; Selection of commands: All commands should be purple!
+strictMode
+strictMode = true
+openNode
+openNode "" "" ""
+SetAttribute
+gotoParentNode ""
+rootNodeOnCreate
+rootNodeOnCreate = ""
+
+[Ldapsearch_x]
+; Selection of commands: All commands should be purple!
+targethost:
+dn:

@@ -13,6 +13,13 @@
 - Debug: <F5>
 - Debug Syntax Highlighting: <F1> "Developer: Inspect Editor Tokens and Scopes"
 - Package extension: `vsce package`
+- Install .vsix file by right-click
+
+All required commands summarized for manual testing:
+sudo npm install --unsafe-perm -g js-yaml vsce typescript && npm install
+js-yaml syntaxes/opsi-script.tmLanguage.yaml > syntaxes/opsi-script.tmLanguage.json
+tsc -p ./
+vsce package
 
 # ToDo
 - OpsiServiceCall call parameters (/interactive, /opsiclientd, ...)
