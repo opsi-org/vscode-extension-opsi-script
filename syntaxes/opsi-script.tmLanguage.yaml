@@ -207,6 +207,10 @@ repository:
        match: (?i)\b(DecStrToHexStr|HexStrToDecStr|base64EncodeStr|base64DecodeStr|RandomStr|RandomIntStr|encryptStringBlow|decryptStringBlow|md5sumFromFile)\b
      - name: support.function.import-lib.opsi-script
        match: (?i)\b(ImportLib)\b
+     - name: support.function.include-insert.opsi-script
+       match: (?i)\b(include_insert)\b
+     - name: support.function.include-append.opsi-script
+       match: (?i)\b(include_append)\b
      - name: storage.type.function.def-func.opsi-script
        match: (?i)\b(DefFunc|EndFunc)\b
      - name: support.variable.encoding.opsi-script
@@ -520,7 +524,7 @@ repository:
           - include: '#secondary-section-params-win-batch'
 
     - name: meta.secondary-section-call.shell-batch.opsi-script
-      match: (?i)\b(ShellScript\S+ShellBatch\S+|ShellInAnIcon\S+|DosBatch\S+|DosInAnIcon\S+)\b\s*(.*)
+      match: (?i)\b(ShellScript\S+|ShellBatch\S+|ShellInAnIcon\S+|DosBatch\S+|DosInAnIcon\S+)\b\s*(.*)
       captures:
         '1': {name: entity.name.type.secondary-section-call.opsi-script}
         '2':
@@ -616,7 +620,7 @@ repository:
     patterns:
 
     - name: meta.secondary-section.shell-batch.opsi-script
-      begin: (?i)^\s*(\[)(ShellBatch[^\]]+|ShellInAnIcon[^\]]+)(\])
+      begin: (?i)^\s*(\[)(ShellScript[^\]]+|ShellBatch[^\]]+|ShellInAnIcon[^\]]+)(\])
       beginCaptures:
         '2': {name: entity.name.type.secondary-section-shell-batch.opsi-script}
       while: ^(?i)(?!\s*(\[.*\]|DefFunc|EndFunc)\s*$)
@@ -951,7 +955,7 @@ repository:
       match: (?i)\b(AddStringListElement_To_Mozilla_Pref|Set_Netscape_User_Pref|AddstringListElement_To_Netscape_User_Pref)\b
 
     - name: support.function.secondary-section.patch-text-file.opsi-script
-      match: (?i)\b(FindLine|FindLine_StartingWith|FindLine_Containing|GoToTop|AdvanceLine|GoToBottom|DeleteTheLine|AddLine_|Add_Line_|InsertLine|AppendLine|Append_Line|Append_File|Subtract_File|SaveToFile|Sorted|setKeyValueSeparator|setValueByKey)\b
+      match: (?i)\b(FindLine|FindLine_StartingWith|FindLine_Containing|GoToTop|AdvanceLine|GoToBottom|DeleteTheLine|AddLine|Add_Line|InsertLine|AppendLine|Append_Line|Append_File|Subtract_File|SaveToFile|Sorted|setKeyValueSeparator|setValueByKey|Set_Mozilla_Pref)\b
 
   secondary-section-link-folder-constants:
     patterns:
@@ -1002,7 +1006,7 @@ repository:
       match: (?i)\b(strictMode)\b
 
     - name: support.function.secondary-section.xml2.opsi-script
-      match: (?i)\b(OpenNode|SetAttribute|AddAttribute|DeleteAttribute|AddNewNode|SetNodeText|DeleteNode|GotoParentNode)\b
+      match: (?i)\b(OpenNode|SetAttribute|AddAttribute|DeleteAttribute|AddNewNode|SetNodeText|DeleteNode|GotoParentNode|rootNodeOnCreate)\b
 
   secondary-section-ldap-search-keywords:
     patterns:
