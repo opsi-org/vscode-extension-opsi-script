@@ -281,7 +281,7 @@ repository:
   primary-section-function-powershellcall:
     patterns:
     - name: meta.function.powershellcall.opsi-script
-      match: (?i)\b(PowershellCall)\s*\(\s*(["'].*["'])\s*\)
+      match: (?i)\b(PowershellCall)\s*\(\s*(["'][^)]*["'])\s*\)
       captures:
         '1': {name: support.function.powershell.opsi-script}
         '2':
@@ -331,7 +331,7 @@ repository:
       begin: "'"
       beginCaptures:
         '0': {name: punctuation.definition.string.begin.opsi-script}
-      end: "(?<!\\\\)'|(\n)"
+      end: "(')|(\n)"
       endCaptures:
         '1': {name: punctuation.definition.string.end.opsi-script}
         '2': {name: invalid.illegal.newline.opsi-script}
@@ -342,7 +342,7 @@ repository:
       begin: '"'
       beginCaptures:
         '0': {name: punctuation.definition.string.begin.opsi-script}
-      end: '(?<!\\\\)"|(\n)'
+      end: '(")|(\n)'
       endCaptures:
         '1': {name: punctuation.definition.string.end.opsi-script}
         '2': {name: invalid.illegal.newline.opsi-script}
