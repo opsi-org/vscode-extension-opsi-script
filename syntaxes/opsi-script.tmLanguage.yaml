@@ -61,8 +61,11 @@ repository:
       endCaptures:
         '0': {name: meta.brace.round.opsi-script}
       patterns:
-      - include: '#expressions'
       - include: '#primary-section-functions'
+      - include: '#primary-section-string'
+      - include: '#primary-section-number'
+      - include: '#literal-constant'
+      - include: '#literal-variable'
 
   literal-constant-slash:
     patterns:
