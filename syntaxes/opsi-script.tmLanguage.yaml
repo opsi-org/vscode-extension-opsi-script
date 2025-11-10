@@ -61,11 +61,8 @@ repository:
       endCaptures:
         '0': {name: meta.brace.round.opsi-script}
       patterns:
+      - include: '#expressions'
       - include: '#primary-section-functions'
-      - include: '#primary-section-string'
-      - include: '#primary-section-number'
-      - include: '#literal-constant'
-      - include: '#literal-variable'
 
   literal-constant-slash:
     patterns:
@@ -334,7 +331,7 @@ repository:
       begin: "'"
       beginCaptures:
         '0': {name: punctuation.definition.string.begin.opsi-script}
-      end: (')|(\n)
+      end: "(?<!\\\\)'|(\n)"
       endCaptures:
         '1': {name: punctuation.definition.string.end.opsi-script}
         '2': {name: invalid.illegal.newline.opsi-script}
@@ -345,7 +342,7 @@ repository:
       begin: '"'
       beginCaptures:
         '0': {name: punctuation.definition.string.begin.opsi-script}
-      end: (")|(\n)
+      end: '(?<!\\\\)"|(\n)'
       endCaptures:
         '1': {name: punctuation.definition.string.end.opsi-script}
         '2': {name: invalid.illegal.newline.opsi-script}
