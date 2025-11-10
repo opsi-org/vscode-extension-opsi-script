@@ -281,7 +281,7 @@ repository:
   primary-section-function-powershellcall:
     patterns:
     - name: meta.function.powershellcall.opsi-script
-      match: (?i)\b(PowershellCall)\s*\(\s*(["'][^)]*["'])\s*\)
+      match: (?i)\b(PowershellCall)\s*\(\s*(["'][^\)]*["'])\s*\)
       captures:
         '1': {name: support.function.powershell.opsi-script}
         '2':
