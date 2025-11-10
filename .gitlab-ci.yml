@@ -1,4 +1,4 @@
-image: node:14-slim
+image: node:25-slim
 
 stages:
   - build
@@ -7,7 +7,7 @@ stages:
 .install_tools: &install_tools |
   export DEBIAN_FRONTEND=noninteractive
   apt update
-  apt -y install tar wget grep coreutils
+  apt -y install tar curl grep coreutils
 
 build:extension:
   stage: build
@@ -18,10 +18,9 @@ build:extension:
     - npm install --unsafe-perm -g js-yaml vsce
     - js-yaml syntaxes/opsi-script.tmLanguage.yaml > syntaxes/opsi-script.tmLanguage.json
     - vsce package
-    - wget "$OPSIDEVTOOLS_URL_LINUX_X64" -O opsi-dev-tools.tar.gz
-    - tar -xvf opsi-dev-tools.tar.gz
-    - '[ "${CI_COMMIT_TAG}" = "" ] && ./opsi-dev-tool -l info --uib-binaryindex-url=http://binaryindex.uib.gmbh --binary-push opsi-script-${version}.vsix vscode-extension-opsi-script all all "${version}" "${CI_JOB_ID}"'
-    - '[ "${CI_COMMIT_TAG}" = "" ] || ./opsi-dev-tool -l info --uib-binaryindex-url=http://binaryindex.uib.gmbh --binary-push opsi-script-${version}.vsix vscode-extension-opsi-script all all "${version}"'
+    - curl -sS "${OPSIDEVTOOLS_INSTALLER_URL_LINUX_X64}" | sh
+    - '[ "${CI_COMMIT_TAG}" = "" ] && opsi-dev-cli -l6 binary push opsi-script-${version}.vsix --product=vscode-extension-opsi-script --system=all --architecture=all --version="${version}" --prerelease="${CI_JOB_ID}"'
+    - '[ "${CI_COMMIT_TAG}" = "" ] || opsi-dev-cli -l6 binary push opsi-script-${version}.vsix --product=vscode-extension-opsi-script --system=all --architecture=all --version="${version}"'
   artifacts:
     name: 'vscode-extension-opsi-script'
     paths:
